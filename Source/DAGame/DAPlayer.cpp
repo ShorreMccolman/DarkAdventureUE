@@ -110,6 +110,19 @@ void ADAPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	InputComponent->BindAction("Run", IE_Pressed, this, &ADAPlayer::PressRun);
 	InputComponent->BindAction("Run", IE_Released, this, &ADAPlayer::ReleaseRun);
+
+	InputComponent->BindAction("Attack", IE_Pressed, this, &ADAPlayer::PressAttack);
+}
+
+void ADAPlayer::PressAttack()
+{
+	USkeletalMeshComponent* Mesh = GetMesh();
+	if (Mesh) {
+		UDAPlayerAnimInstance* Animation = Cast<UDAPlayerAnimInstance>(Mesh->GetAnimInstance());
+		if (Animation) {
+			Animation->ShouldAttack = true;
+		}
+	}
 }
 
 void ADAPlayer::PressRun()

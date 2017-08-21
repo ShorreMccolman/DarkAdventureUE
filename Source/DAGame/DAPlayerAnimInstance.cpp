@@ -3,5 +3,14 @@
 #include "DAPlayerAnimInstance.h"
 
 
+void UDAPlayerAnimInstance::ExecuteAction()
+{
+	ShouldRoll = false;
+	ShouldAttack = false;
+}
 
+void UDAPlayerAnimInstance::CompleteAction()
+{
+	ShouldRoll = false;
+}
 

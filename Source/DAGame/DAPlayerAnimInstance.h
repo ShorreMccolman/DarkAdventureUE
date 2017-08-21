@@ -24,10 +24,16 @@ public:
 	bool ShouldRoll;
 
 	UPROPERTY(BlueprintReadWrite)
-	float BlendValue;
+	bool ShouldAttack;
 
 protected:
 	UPROPERTY(BlueprintReadWrite)
 	class ADAPlayer* Player;
+
+	UFUNCTION(BlueprintCallable)
+	void ExecuteAction();
+
+	UFUNCTION(BlueprintCallable)
+	void CompleteAction();
 	
 };
