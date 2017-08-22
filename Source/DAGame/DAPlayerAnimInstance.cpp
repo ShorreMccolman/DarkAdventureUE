@@ -7,6 +7,7 @@ void UDAPlayerAnimInstance::ExecuteAction()
 {
 	ShouldRoll = false;
 	ShouldAttack = false;
+	ShouldImpact = false;
 }
 
 void UDAPlayerAnimInstance::CompleteAction()

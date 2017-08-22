@@ -74,7 +74,6 @@ void ADAPlayer::Tick(float DeltaTime)
 	if (MoveDirection.SizeSquared() > 0.0f) {
 		Velocity = MoveDirection;
 		Velocity.Normalize();
-		Facing = Velocity.Rotation();
 		Speed += Acceleration * DeltaTime;
 		if (Speed > max) {
 			Speed -= Decceleration * DeltaTime;
@@ -84,10 +83,9 @@ void ADAPlayer::Tick(float DeltaTime)
 		Speed -= Decceleration * DeltaTime;
 		Speed = FMath::Max(Speed, 0.f);
 	}
+	GetActorForwardVector();
 
-	GetCharacterMovement()->MaxWalkSpeed = Speed;
-
-	FVector FacingVect = FVector(FMath::Cos(FMath::DegreesToRadians(GetActorRotation().Yaw)), FMath::Sin(FMath::DegreesToRadians(GetActorRotation().Yaw)), 0.f);
+	FVector FacingVect = GetActorForwardVector();
 	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(Velocity, FacingVect)));
 	FVector Cross = FVector::CrossProduct(Velocity, FacingVect);
 
@@ -112,6 +110,19 @@ void ADAPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComponent->BindAction("Run", IE_Released, this, &ADAPlayer::ReleaseRun);
 
 	InputComponent->BindAction("Attack", IE_Pressed, this, &ADAPlayer::PressAttack);
+
+	InputComponent->BindAction("Test", IE_Pressed, this, &ADAPlayer::GetHit);
+}
+
+void ADAPlayer::GetHit()
+{
+	USkeletalMeshComponent* Mesh = GetMesh();
+	if (Mesh) {
+		UDAPlayerAnimInstance* Animation = Cast<UDAPlayerAnimInstance>(Mesh->GetAnimInstance());
+		if (Animation) {
+			Animation->ShouldImpact = true;
+		}
+	}
 }
 
 void ADAPlayer::PressAttack()
