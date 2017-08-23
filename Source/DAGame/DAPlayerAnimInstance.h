@@ -32,6 +32,12 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool IsLocked;
 
+	UPROPERTY(BlueprintReadWrite)
+	float StrafeSpeed;
+
+	UPROPERTY(BlueprintReadWrite)
+	float ApproachSpeed;
+
 protected:
 	UPROPERTY(BlueprintReadWrite)
 	class ADAPlayer* Player;

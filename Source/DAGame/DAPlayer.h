@@ -36,8 +36,11 @@ public:
 	UFUNCTION()
 	void ToggleLock();
 
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE bool GetIsLocked() { return Locked; }
+	UFUNCTION(BlueprintPure)
+	float GetStrafeValue();
+
+	UFUNCTION(BlueprintPure)
+	float GetApproachValue();
 
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
@@ -79,6 +82,12 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	class ADAPlayer* TargetEnemy;
+
+	UPROPERTY()
+	float StrafeValue;
+
+	UPROPERTY()
+	float ApproachValue;
 	
 private:
 

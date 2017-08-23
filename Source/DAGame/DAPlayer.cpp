@@ -95,10 +95,17 @@ void ADAPlayer::LockedMotion(float DeltaTime)
 	TargetDirection = TargetEnemy->GetActorLocation() - GetActorLocation();
 	TargetDirection.Normalize();
 
+	FVector InputNormalized = InputDirection;
+	InputNormalized.Normalize();
 
+	float Approach = FVector::DotProduct(TargetDirection, InputNormalized);
+	float Strafe = FVector::CrossProduct(TargetDirection, InputNormalized).Z;
 
+	FVector Movement = FVector(Strafe, Approach, 0.f);
+	Movement.Normalize();
 
-
+	ApproachValue = Movement.Y * 600.f;
+	StrafeValue = Movement.X * 600.f;
 
 	FVector FacingVect = GetActorForwardVector();
 	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, FacingVect)));
@@ -115,6 +122,16 @@ void ADAPlayer::LockedMotion(float DeltaTime)
 float ADAPlayer::GetCurrentSpeed()
 {
 	return Speed;
+}
+
+float ADAPlayer::GetStrafeValue()
+{
+	return StrafeValue;
+}
+
+float ADAPlayer::GetApproachValue()
+{
+	return ApproachValue;
 }
 
 void ADAPlayer::SetInputDirection(FVector Input)
