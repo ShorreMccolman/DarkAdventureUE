@@ -16,6 +16,38 @@ class DAGAME_API ADAPlayerController : public APlayerController
 	
 	
 public:
+	virtual void BeginPlay() override;
+
 	virtual void Tick(float DeltaTime) override;
-	
+
+	virtual void SetupInputComponent() override;
+
+protected:
+	UPROPERTY()
+	class ADAPlayer* DACharacter;
+
+	UPROPERTY()
+	bool HoldingRun;
+
+	UPROPERTY()
+	int RunBuffer;
+
+	UPROPERTY()
+	bool IsLocked;
+
+private:
+	UFUNCTION()
+	void PressRun();
+
+	UFUNCTION()
+	void ReleaseRun();
+
+	UFUNCTION()
+	void PressAttack();
+
+	UFUNCTION()
+	void PressTest();
+
+	UFUNCTION()
+	void PressLock();
 };

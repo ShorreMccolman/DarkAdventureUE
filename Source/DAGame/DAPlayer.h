@@ -18,6 +18,27 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetCurrentSpeed();
 
+	UFUNCTION()
+	void SetInputDirection(FVector Input);
+
+	UFUNCTION()
+	void SetIsRunning(bool ShouldRun);
+
+	UFUNCTION()
+	void TryRoll();
+
+	UFUNCTION()
+	void TryAttack();
+
+	UFUNCTION(BlueprintCallable)
+	void GetHit();
+
+	UFUNCTION()
+	void ToggleLock();
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool GetIsLocked() { return Locked; }
+
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
@@ -28,8 +49,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(EditAnywhere, Category = Motor)
 	float WalkSpeed;
@@ -47,36 +66,25 @@ protected:
 	float Speed;
 
 	UPROPERTY()
-	FVector Velocity;
+	FVector InputDirection;
 
 	UPROPERTY()
-	FRotator Facing;
-
-	UPROPERTY()
-	int RunBuffer;
-
-	UPROPERTY()
-	bool HoldingRun;
+	FVector TargetDirection;
 
 	UPROPERTY()
 	bool Running;
 
 	UPROPERTY()
-	bool ShouldRoll;
+	bool Locked;
+
+	UPROPERTY(EditAnywhere)
+	class ADAPlayer* TargetEnemy;
 	
 private:
 
-	UFUNCTION()
-	void PressRun();
+	void StandardMotion(float DeltaTime);
 
-	UFUNCTION()
-	void ReleaseRun();
-
-	UFUNCTION()
-	void PressAttack();
-
-	UFUNCTION()
-	void GetHit();
+	void LockedMotion(float DeltaTime);
 
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

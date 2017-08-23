@@ -39,8 +39,7 @@ void ADAPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Velocity = FVector(1.f, 0.f, 0.f);
-	
+	TargetDirection = GetActorForwardVector();
 }
 
 // Called every frame
@@ -48,70 +47,84 @@ void ADAPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Find movement direction
-	const float ForwardValue = GetInputAxisValue("MoveY");
-	const float RightValue = GetInputAxisValue("MoveX");
+	if (Locked)
+		LockedMotion(DeltaTime);
+	else
+		StandardMotion(DeltaTime);
+}
 
-	// Clamp max size so that (X=1, Y=1) doesn't cause faster movement in diagonal directions
-	const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f);
-
+void ADAPlayer::StandardMotion(float DeltaTime)
+{
 	float speedModifier = 1.f;
-
-	// Running Business
-	Running = false;
-	if (HoldingRun && RunBuffer == 0) {
-		Running = true;
-	}
-	if (RunBuffer > 0)
-		RunBuffer--;
 
 	if (Running) {
 		speedModifier *= 5.f / 3.f;
 	}
 
-	float max = WalkSpeed * speedModifier * MoveDirection.SizeSquared();
-
-	if (MoveDirection.SizeSquared() > 0.0f) {
-		Velocity = MoveDirection;
-		Velocity.Normalize();
+	float max = WalkSpeed * speedModifier * InputDirection.SizeSquared();
+	if (InputDirection.SizeSquared() > 0.0f) {
+		TargetDirection = InputDirection;
+		TargetDirection.Normalize();
 		Speed += Acceleration * DeltaTime;
+
+		// Using this to ease into lower max speed when releasing run
 		if (Speed > max) {
 			Speed -= Decceleration * DeltaTime;
 		}
-
-	} else {
+	}
+	else {
 		Speed -= Decceleration * DeltaTime;
 		Speed = FMath::Max(Speed, 0.f);
 	}
-	GetActorForwardVector();
 
 	FVector FacingVect = GetActorForwardVector();
-	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(Velocity, FacingVect)));
-	FVector Cross = FVector::CrossProduct(Velocity, FacingVect);
+	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, FacingVect)));
+	FVector Cross = FVector::CrossProduct(TargetDirection, FacingVect);
 
-	if (angle > 1.f && MoveDirection.SizeSquared() > 0.0f) {
-		if(Cross.Z < 0)
+	if (angle > 1.f && InputDirection.SizeSquared() > 0.0f) {
+		if (Cross.Z < 0)
 			AddControllerYawInput(TurnRate * DeltaTime);
 		else
 			AddControllerYawInput(-TurnRate * DeltaTime);
 	}
-
 }
 
-// Called to bind functionality to input
-void ADAPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ADAPlayer::LockedMotion(float DeltaTime)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	Speed = 0.f;
+	TargetDirection = TargetEnemy->GetActorLocation() - GetActorLocation();
+	TargetDirection.Normalize();
 
-	InputComponent->BindAxis("MoveX");
-	InputComponent->BindAxis("MoveY");
 
-	InputComponent->BindAction("Run", IE_Pressed, this, &ADAPlayer::PressRun);
-	InputComponent->BindAction("Run", IE_Released, this, &ADAPlayer::ReleaseRun);
 
-	InputComponent->BindAction("Attack", IE_Pressed, this, &ADAPlayer::PressAttack);
 
-	InputComponent->BindAction("Test", IE_Pressed, this, &ADAPlayer::GetHit);
+
+
+	FVector FacingVect = GetActorForwardVector();
+	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, FacingVect)));
+	FVector Cross = FVector::CrossProduct(TargetDirection, FacingVect);
+
+	if (angle > 1.f) {
+		if (Cross.Z < 0)
+			AddControllerYawInput(TurnRate * DeltaTime);
+		else
+			AddControllerYawInput(-TurnRate * DeltaTime);
+	}
+}
+
+float ADAPlayer::GetCurrentSpeed()
+{
+	return Speed;
+}
+
+void ADAPlayer::SetInputDirection(FVector Input)
+{
+	InputDirection = Input;
+}
+
+void ADAPlayer::SetIsRunning(bool ShouldRun)
+{
+	Running = ShouldRun;
 }
 
 void ADAPlayer::GetHit()
@@ -125,7 +138,7 @@ void ADAPlayer::GetHit()
 	}
 }
 
-void ADAPlayer::PressAttack()
+void ADAPlayer::TryAttack()
 {
 	USkeletalMeshComponent* Mesh = GetMesh();
 	if (Mesh) {
@@ -136,27 +149,30 @@ void ADAPlayer::PressAttack()
 	}
 }
 
-void ADAPlayer::PressRun()
+void ADAPlayer::TryRoll()
 {
-	HoldingRun = true;
-	RunBuffer = 30;
-}
-
-void ADAPlayer::ReleaseRun()
-{
-	HoldingRun = false;
-	if (RunBuffer > 0) {
-		USkeletalMeshComponent* Mesh = GetMesh();
-		if (Mesh) {
-			UDAPlayerAnimInstance* Animation = Cast<UDAPlayerAnimInstance>(Mesh->GetAnimInstance());
-			if (Animation) {
-				Animation->ShouldRoll = true;
-			}
+	USkeletalMeshComponent* Mesh = GetMesh();
+	if (Mesh) {
+		UDAPlayerAnimInstance* Animation = Cast<UDAPlayerAnimInstance>(Mesh->GetAnimInstance());
+		if (Animation) {
+			Animation->ShouldRoll = true;
 		}
 	}
 }
 
-float ADAPlayer::GetCurrentSpeed()
+void ADAPlayer::ToggleLock()
 {
-	return Speed;
+	Locked = !Locked;
+
+	if (!TargetEnemy) {
+		Locked = false;
+	}
+
+	USkeletalMeshComponent* Mesh = GetMesh();
+	if (Mesh) {
+		UDAPlayerAnimInstance* Animation = Cast<UDAPlayerAnimInstance>(Mesh->GetAnimInstance());
+		if (Animation) {
+			Animation->IsLocked = Locked;
+		}
+	}
 }

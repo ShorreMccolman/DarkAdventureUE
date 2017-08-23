@@ -29,6 +29,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool ShouldImpact;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool IsLocked;
+
 protected:
 	UPROPERTY(BlueprintReadWrite)
 	class ADAPlayer* Player;
