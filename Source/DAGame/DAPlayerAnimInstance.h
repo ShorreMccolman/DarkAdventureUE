@@ -46,7 +46,7 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadWrite)
-	class ADAPlayer* Player;
+	class ADACharacter* Character;
 
 	UFUNCTION(BlueprintCallable)
 	void ExecuteAction();

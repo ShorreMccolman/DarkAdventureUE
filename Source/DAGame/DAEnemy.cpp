@@ -23,12 +23,26 @@ void ADAEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-}
+	if (TargetEnemy) {
+		TargetDirection = TargetEnemy->GetActorLocation() - GetActorLocation();
+		FaceRotation(TargetDirection.Rotation());
 
-// Called to bind functionality to input
-void ADAEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+		float distance = TargetDirection.Size();
+		if (distance < 400.f) {
+			Speed += Acceleration * DeltaTime;
 
+			// Using this to ease into lower max speed when releasing run
+			if (Speed > 600.f) {
+				Speed -= Decceleration * DeltaTime;
+			}
+
+			if(distance < 150.f)
+				TryAttack();
+		}
+		else {
+			Speed -= Decceleration * DeltaTime;
+			Speed = FMath::Max(Speed, 0.f);
+		}
+	}
 }
 

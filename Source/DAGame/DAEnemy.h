@@ -3,12 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include "DAPlayer.h"
+#include "DACharacter.h"
 #include "DAEnemy.generated.h"
 
 UCLASS()
-class DAGAME_API ADAEnemy : public ADAPlayer
+class DAGAME_API ADAEnemy : public ADACharacter
 {
 	GENERATED_BODY()
 
@@ -24,8 +23,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	
 	
