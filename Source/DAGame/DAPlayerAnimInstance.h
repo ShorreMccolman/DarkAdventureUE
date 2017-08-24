@@ -36,7 +36,13 @@ public:
 	float StrafeSpeed;
 
 	UPROPERTY(BlueprintReadWrite)
+	float LockedStrafeSpeed;
+
+	UPROPERTY(BlueprintReadWrite)
 	float ApproachSpeed;
+
+	UPROPERTY(BlueprintReadWrite)
+	float LockedApproachSpeed;
 
 protected:
 	UPROPERTY(BlueprintReadWrite)

@@ -24,6 +24,9 @@ public:
 	UFUNCTION()
 	void SetIsRunning(bool ShouldRun);
 
+	UFUNCTION(BlueprintCallable)
+	void ForceCurrentFacing();
+
 	UFUNCTION()
 	void TryRoll();
 

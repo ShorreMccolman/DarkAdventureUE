@@ -134,6 +134,17 @@ float ADAPlayer::GetApproachValue()
 	return ApproachValue;
 }
 
+void ADAPlayer::ForceCurrentFacing()
+{
+	FVector Normalized = InputDirection;
+	Normalized.Normalize();
+
+	float angle = FMath::RadiansToDegrees(FMath::Acos(Normalized.X));
+
+	FRotator rotation = FRotator(-180.f,0.f, -180.f);
+	FaceRotation(rotation);
+}
+
 void ADAPlayer::SetInputDirection(FVector Input)
 {
 	InputDirection = Input;

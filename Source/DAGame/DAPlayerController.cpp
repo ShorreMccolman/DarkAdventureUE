@@ -78,7 +78,7 @@ void ADAPlayerController::ReleaseRun()
 
 void ADAPlayerController::PressTest()
 {
-	DACharacter->GetHit();
+	DACharacter->ForceCurrentFacing();
 }
 
 void ADAPlayerController::PressLock()

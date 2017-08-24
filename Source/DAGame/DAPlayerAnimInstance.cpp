@@ -8,6 +8,9 @@ void UDAPlayerAnimInstance::ExecuteAction()
 	ShouldRoll = false;
 	ShouldAttack = false;
 	ShouldImpact = false;
+
+	LockedStrafeSpeed = StrafeSpeed;
+	LockedApproachSpeed = ApproachSpeed;
 }
 
 void UDAPlayerAnimInstance::CompleteAction()
