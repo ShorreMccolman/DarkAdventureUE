@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DAWeaponBase.h"
-
+#include "Components/BoxComponent.h"
 
 // Sets default values
 ADAWeaponBase::ADAWeaponBase()
@@ -25,3 +25,16 @@ void ADAWeaponBase::Tick(float DeltaTime)
 
 }
 
+void ADAWeaponBase::DisableCollision()
+{
+	if (BoxCollider) {
+		BoxCollider->bGenerateOverlapEvents = false;
+	}
+}
+
+void ADAWeaponBase::EnableCollision()
+{
+	if (BoxCollider) {
+		BoxCollider->bGenerateOverlapEvents = true;
+	}
+}
