@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "DACharacterAttributes.h"
 #include "DACharacter.generated.h"
 
 UCLASS()
@@ -43,6 +44,12 @@ public:
 	float GetApproachValue();
 
 	UFUNCTION(BlueprintPure)
+	float GetCurrentHealthPercent();
+
+	UFUNCTION(BlueprintPure)
+	float GetCurrentStaminaPercent();
+
+	UFUNCTION(BlueprintPure)
 	FORCEINLINE class ADAWeaponBase* const GetEquippedWeapon() { return Weapon; };
 
 protected:
@@ -75,6 +82,9 @@ protected:
 
 	UPROPERTY()
 	bool Locked;
+
+	UPROPERTY()
+	FDACharacterAttributes Attributes;
 
 	UPROPERTY(EditAnywhere)
 	class ADACharacter* TargetEnemy;

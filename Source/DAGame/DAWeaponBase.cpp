@@ -16,6 +16,7 @@ void ADAWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	DisableCollision();
 }
 
 // Called every frame

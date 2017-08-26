@@ -172,3 +172,13 @@ void ADACharacter::ToggleLock()
 		}
 	}
 }
+
+float ADACharacter::GetCurrentHealthPercent()
+{
+	return Attributes.CurHealth / Attributes.MaxHealth;
+}
+
+float ADACharacter::GetCurrentStaminaPercent()
+{
+	return Attributes.CurStamina / Attributes.MaxStamina;
+}
