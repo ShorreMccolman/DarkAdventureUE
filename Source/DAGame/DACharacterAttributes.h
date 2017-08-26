@@ -18,21 +18,29 @@ struct FDACharacterAttributes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CurStamina;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int Vitality;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int Endurance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int Strength;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int Dexterity;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int Intellect;
+
 	FDACharacterAttributes()
 	{
-		MaxHealth = 100.f;
+		Vitality = 10;
+		Endurance = 10;
+		Strength = 10;
+		Dexterity = 10;
+		Intellect = 10;
+
+		MaxHealth = 10.f * Vitality;
 		CurHealth = MaxHealth;
 
-		MaxStamina = 100.f;
-		CurStamina = MaxStamina;
-	}
-
-	FDACharacterAttributes(float Health, float Stamina)
-	{
-		MaxHealth = Health;
-		CurHealth = MaxHealth;
-
-		MaxStamina = Stamina;
+		MaxStamina = 10.f * Endurance;
 		CurStamina = MaxStamina;
 	}
 

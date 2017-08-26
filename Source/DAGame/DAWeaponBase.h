@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "DACharacterAttributes.h"
 #include "DAWeaponBase.generated.h"
 
 UCLASS()
@@ -21,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EnableCollision();
 
+	UFUNCTION(BlueprintPure)
+	float GetCurrentDamage(FDACharacterAttributes OwnerAttributes, FDACharacterAttributes TargetAttributes);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -30,5 +34,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* BoxCollider;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float BaseDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float StrengthModifier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DexModifier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ADACharacter* DAOwner;
 	
 };

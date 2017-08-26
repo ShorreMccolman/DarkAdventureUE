@@ -30,6 +30,9 @@ public:
 	bool ShouldImpact;
 
 	UPROPERTY(BlueprintReadWrite)
+	bool ShouldDie;
+
+	UPROPERTY(BlueprintReadWrite)
 	bool IsLocked;
 
 	UPROPERTY(BlueprintReadWrite)

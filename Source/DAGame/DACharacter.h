@@ -13,7 +13,6 @@ class DAGAME_API ADACharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ADACharacter();
 
 	UFUNCTION(BlueprintPure)
@@ -32,7 +31,10 @@ public:
 	void TryAttack();
 
 	UFUNCTION(BlueprintCallable)
-	void GetHit();
+	void GetHit(float Damage);    // Set the incoming damage from the weapon hit and trigger animation
+
+	UFUNCTION(BlueprintCallable)
+	void TriggerIncomingDamage();	// Actually apply the incoming damage, called from animation blueprint
 
 	UFUNCTION()
 	void ToggleLock();
@@ -50,11 +52,15 @@ public:
 	float GetCurrentStaminaPercent();
 
 	UFUNCTION(BlueprintPure)
+	FORCEINLINE FDACharacterAttributes GetAttributes() { return Attributes; };
+
+	UFUNCTION(BlueprintPure)
 	FORCEINLINE class ADAWeaponBase* const GetEquippedWeapon() { return Weapon; };
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, Category = Motor)
 	float WalkSpeed;
@@ -84,6 +90,9 @@ protected:
 	bool Locked;
 
 	UPROPERTY()
+	bool TakingDamage;
+
+	UPROPERTY()
 	FDACharacterAttributes Attributes;
 
 	UPROPERTY(EditAnywhere)
@@ -91,6 +100,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class ADAWeaponBase* Weapon;
+
+	UPROPERTY()
+	float IncomingDamage;
+
+	UPROPERTY()
+	class UDAPlayerAnimInstance* Animation;
 
 	UPROPERTY()
 	float StrafeValue;
@@ -101,9 +116,5 @@ protected:
 	void StandardMotion(float DeltaTime);
 
 	void LockedMotion(float DeltaTime);
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 	
 };

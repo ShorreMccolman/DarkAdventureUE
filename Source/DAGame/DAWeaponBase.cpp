@@ -2,6 +2,7 @@
 
 #include "DAWeaponBase.h"
 #include "Components/BoxComponent.h"
+#include "DACharacter.h"
 
 // Sets default values
 ADAWeaponBase::ADAWeaponBase()
@@ -38,4 +39,13 @@ void ADAWeaponBase::EnableCollision()
 	if (BoxCollider) {
 		BoxCollider->bGenerateOverlapEvents = true;
 	}
+}
+
+float ADAWeaponBase::GetCurrentDamage(FDACharacterAttributes OwnerAttributes, FDACharacterAttributes TargetAttributes)
+{
+	float Damage = BaseDamage;
+
+	Damage +=  OwnerAttributes.Strength * StrengthModifier + OwnerAttributes.Dexterity * DexModifier;
+
+	return BaseDamage;
 }

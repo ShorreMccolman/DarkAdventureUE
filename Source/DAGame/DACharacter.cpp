@@ -22,6 +22,11 @@ ADACharacter::ADACharacter()
 void ADACharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	USkeletalMeshComponent* Mesh = GetMesh();
+	if (Mesh) {
+		Animation = Cast<UDAPlayerAnimInstance>(Mesh->GetAnimInstance());
+	}
 	
 }
 
@@ -123,36 +128,39 @@ void ADACharacter::SetIsRunning(bool ShouldRun)
 	Running = ShouldRun;
 }
 
-void ADACharacter::GetHit()
+void ADACharacter::GetHit(float Damage)
 {
-	USkeletalMeshComponent* Mesh = GetMesh();
-	if (Mesh) {
-		UDAPlayerAnimInstance* Animation = Cast<UDAPlayerAnimInstance>(Mesh->GetAnimInstance());
+	if (!TakingDamage) {
+		IncomingDamage = Damage;
+		TakingDamage = true;
 		if (Animation) {
 			Animation->ShouldImpact = true;
 		}
 	}
 }
 
+void ADACharacter::TriggerIncomingDamage()
+{
+	Attributes.CurHealth -= IncomingDamage;
+	IncomingDamage = 0;
+	TakingDamage = false;
+
+	if (Attributes.CurHealth <= 0.f && Animation) {
+		Animation->ShouldDie = true;
+	}
+}
+
 void ADACharacter::TryAttack()
 {
-	USkeletalMeshComponent* Mesh = GetMesh();
-	if (Mesh) {
-		UDAPlayerAnimInstance* Animation = Cast<UDAPlayerAnimInstance>(Mesh->GetAnimInstance());
-		if (Animation) {
-			Animation->ShouldAttack = true;
-		}
+	if (Animation) {
+		Animation->ShouldAttack = true;
 	}
 }
 
 void ADACharacter::TryRoll()
 {
-	USkeletalMeshComponent* Mesh = GetMesh();
-	if (Mesh) {
-		UDAPlayerAnimInstance* Animation = Cast<UDAPlayerAnimInstance>(Mesh->GetAnimInstance());
-		if (Animation) {
-			Animation->ShouldRoll = true;
-		}
+	if (Animation) {
+		Animation->ShouldRoll = true;
 	}
 }
 
@@ -164,12 +172,8 @@ void ADACharacter::ToggleLock()
 		Locked = false;
 	}
 
-	USkeletalMeshComponent* Mesh = GetMesh();
-	if (Mesh) {
-		UDAPlayerAnimInstance* Animation = Cast<UDAPlayerAnimInstance>(Mesh->GetAnimInstance());
-		if (Animation) {
-			Animation->IsLocked = Locked;
-		}
+	if (Animation) {
+		Animation->IsLocked = Locked;
 	}
 }
 
