@@ -46,83 +46,17 @@ void ADACharacter::Tick(float DeltaTime)
 
 }
 
-void ADACharacter::StandardMotion(float DeltaTime)
-{
-	float speedModifier = 1.f;
-
-	if (Running) {
-		speedModifier *= 5.f / 3.f;
-	}
-
-	float max = WalkSpeed * speedModifier * InputDirection.SizeSquared();
-	if (InputDirection.SizeSquared() > 0.0f) {
-		TargetDirection = InputDirection;
-		TargetDirection.Normalize();
-		Speed += Acceleration * DeltaTime;
-
-		// Using this to ease into lower max speed when releasing run
-		if (Speed > max) {
-			Speed -= Decceleration * DeltaTime;
-		}
-	}
-	else {
-		Speed -= Decceleration * DeltaTime;
-		Speed = FMath::Max(Speed, 0.f);
-	}
-
-	FVector FacingVect = GetActorForwardVector();
-	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, FacingVect)));
-	FVector Cross = FVector::CrossProduct(TargetDirection, FacingVect);
-
-	if (angle > 1.f && InputDirection.SizeSquared() > 0.0f) {
-		if (Cross.Z < 0)
-			AddControllerYawInput(TurnRate * DeltaTime);
-		else
-			AddControllerYawInput(-TurnRate * DeltaTime);
-	}
-}
-
-void ADACharacter::LockedMotion(float DeltaTime)
-{
-	Speed = 0.f;
-	TargetDirection = TargetEnemy->GetActorLocation() - GetActorLocation();
-	TargetDirection.Normalize();
-
-	FVector InputNormalized = InputDirection;
-	InputNormalized.Normalize();
-
-	float Approach = FVector::DotProduct(TargetDirection, InputNormalized);
-	float Strafe = FVector::CrossProduct(TargetDirection, InputNormalized).Z;
-
-	FVector Movement = FVector(Strafe, Approach, 0.f);
-	Movement.Normalize();
-
-	ApproachValue = Movement.Y * 600.f;
-	StrafeValue = Movement.X * 600.f;
-
-	FVector FacingVect = GetActorForwardVector();
-	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, FacingVect)));
-	FVector Cross = FVector::CrossProduct(TargetDirection, FacingVect);
-
-	if (angle > 1.f) {
-		if (Cross.Z < 0)
-			AddControllerYawInput(TurnRate * DeltaTime);
-		else
-			AddControllerYawInput(-TurnRate * DeltaTime);
-	}
-}
-
-float ADACharacter::GetCurrentSpeed()
+float ADACharacter::GetCurrentSpeed() const
 {
 	return Speed;
 }
 
-float ADACharacter::GetStrafeValue()
+float ADACharacter::GetStrafeValue() const
 {
 	return StrafeValue;
 }
 
-float ADACharacter::GetApproachValue()
+float ADACharacter::GetApproachValue() const
 {
 	return ApproachValue;
 }
@@ -187,12 +121,12 @@ void ADACharacter::ToggleLock()
 	}
 }
 
-float ADACharacter::GetCurrentHealthPercent()
+float ADACharacter::GetCurrentHealthPercent() const
 {
 	return Attributes.CurHealth / Attributes.MaxHealth;
 }
 
-float ADACharacter::GetCurrentStaminaPercent()
+float ADACharacter::GetCurrentStaminaPercent() const
 {
 	return Attributes.CurStamina / Attributes.MaxStamina;
 }
@@ -201,4 +135,76 @@ void ADACharacter::ConsumeStamina(float Amount)
 {
 	Attributes.CurStamina = FMath::Max(0.f, Attributes.CurStamina - Amount);
 	StaminaBuffer = 2.f;
+}
+
+void ADACharacter::StandardMotion(float DeltaTime)
+{
+	float speedModifier = 1.f;
+
+	if (Running) {
+		speedModifier *= 5.f / 3.f;
+	}
+
+	float max = WalkSpeed * speedModifier * InputDirection.SizeSquared();
+	if (InputDirection.SizeSquared() > 0.0f) {
+		TargetDirection = InputDirection;
+		TargetDirection.Normalize();
+		Speed += Acceleration * DeltaTime;
+
+		// Using this to ease into lower max speed when releasing run
+		if (Speed > max) {
+			Speed -= Decceleration * DeltaTime;
+		}
+	}
+	else {
+		Speed -= Decceleration * DeltaTime;
+		Speed = FMath::Max(Speed, 0.f);
+	}
+
+	FVector FacingVect = GetActorForwardVector();
+	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, FacingVect)));
+	FVector Cross = FVector::CrossProduct(TargetDirection, FacingVect);
+
+	if (angle > 1.f && InputDirection.SizeSquared() > 0.0f) {
+		if (Cross.Z < 0)
+			AddControllerYawInput(TurnRate * DeltaTime);
+		else
+			AddControllerYawInput(-TurnRate * DeltaTime);
+	}
+}
+
+void ADACharacter::LockedMotion(float DeltaTime)
+{
+	Speed = 0.f;
+	TargetDirection = TargetEnemy->GetActorLocation() - GetActorLocation();
+	TargetDirection.Normalize();
+
+	float Approach = FVector::DotProduct(TargetDirection, InputDirection) * 600.f;
+	float Strafe = FVector::CrossProduct(TargetDirection, InputDirection).Z * 600.f;
+
+	ApproachValue = InterpolateSpeed(ApproachValue, Approach, 2000.f, DeltaTime);
+	StrafeValue = InterpolateSpeed(StrafeValue, Strafe, 2000.f, DeltaTime);
+
+	FVector FacingVect = GetActorForwardVector();
+	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, FacingVect)));
+	FVector Cross = FVector::CrossProduct(TargetDirection, FacingVect);
+
+	if (angle > 1.f) {
+		if (Cross.Z < 0)
+			AddControllerYawInput(TurnRate * DeltaTime);
+		else
+			AddControllerYawInput(-TurnRate * DeltaTime);
+	}
+}
+
+float ADACharacter::InterpolateSpeed(float Current, float Target, float Acceleration, float DeltaTime)
+{
+	if (Target == 0.f && FMath::Abs(Current) < 0.1f)
+		Current = 0.f;
+	else if (Current > Target)
+		Current -= Acceleration * DeltaTime;
+	else if (Current < Target)
+		Current += Acceleration * DeltaTime;
+
+	return Current;
 }

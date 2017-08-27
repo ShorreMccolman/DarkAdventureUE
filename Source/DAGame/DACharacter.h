@@ -16,7 +16,19 @@ public:
 	ADACharacter();
 
 	UFUNCTION(BlueprintPure)
-	float GetCurrentSpeed();
+	float GetCurrentSpeed() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetStrafeValue() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetApproachValue() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetCurrentHealthPercent() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetCurrentStaminaPercent() const;
 
 	UFUNCTION()
 	void SetInputDirection(FVector Input);
@@ -39,26 +51,14 @@ public:
 	UFUNCTION()
 	void ToggleLock();
 
-	UFUNCTION(BlueprintPure)
-	float GetStrafeValue();
-
-	UFUNCTION(BlueprintPure)
-	float GetApproachValue();
-
-	UFUNCTION(BlueprintPure)
-	float GetCurrentHealthPercent();
-
-	UFUNCTION(BlueprintPure)
-	float GetCurrentStaminaPercent();
-
 	UFUNCTION(BlueprintCallable)
 	void ConsumeStamina(float Amount);
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE FDACharacterAttributes GetAttributes() { return Attributes; };
+	FORCEINLINE FDACharacterAttributes GetAttributes() const { return Attributes; };
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE class ADAWeaponBase* const GetEquippedWeapon() { return Weapon; };
+	FORCEINLINE class ADAWeaponBase* GetEquippedWeapon() const { return Weapon; };
 
 protected:
 	virtual void BeginPlay() override;
@@ -125,5 +125,7 @@ protected:
 	void StandardMotion(float DeltaTime);
 
 	void LockedMotion(float DeltaTime);
+
+	float InterpolateSpeed(float Current, float Target, float Acceleration, float DeltaTime);
 	
 };
