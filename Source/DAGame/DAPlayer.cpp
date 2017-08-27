@@ -46,6 +46,9 @@ void ADAPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (IsDead)
+		return;
+
 	if (Locked)
 		LockedMotion(DeltaTime);
 	else

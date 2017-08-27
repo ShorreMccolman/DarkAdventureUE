@@ -27,6 +27,8 @@ void ADACharacter::BeginPlay()
 	if (Mesh) {
 		Animation = Cast<UDAPlayerAnimInstance>(Mesh->GetAnimInstance());
 	}
+
+	IsDead = false;
 	
 }
 
@@ -34,6 +36,13 @@ void ADACharacter::BeginPlay()
 void ADACharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (StaminaBuffer <= 0.f) {
+		Attributes.RegainStamina(16.f * DeltaTime);
+	}
+	else {
+		StaminaBuffer -= DeltaTime;
+	}
 
 }
 
@@ -146,20 +155,21 @@ void ADACharacter::TriggerIncomingDamage()
 	TakingDamage = false;
 
 	if (Attributes.CurHealth <= 0.f && Animation) {
+		IsDead = true;
 		Animation->ShouldDie = true;
 	}
 }
 
 void ADACharacter::TryAttack()
 {
-	if (Animation) {
+	if (Animation && Attributes.CurStamina > 1.f) {
 		Animation->ShouldAttack = true;
 	}
 }
 
 void ADACharacter::TryRoll()
 {
-	if (Animation) {
+	if (Animation && Attributes.CurStamina > 1.f) {
 		Animation->ShouldRoll = true;
 	}
 }
@@ -185,4 +195,10 @@ float ADACharacter::GetCurrentHealthPercent()
 float ADACharacter::GetCurrentStaminaPercent()
 {
 	return Attributes.CurStamina / Attributes.MaxStamina;
+}
+
+void ADACharacter::ConsumeStamina(float Amount)
+{
+	Attributes.CurStamina = FMath::Max(0.f, Attributes.CurStamina - Amount);
+	StaminaBuffer = 2.f;
 }

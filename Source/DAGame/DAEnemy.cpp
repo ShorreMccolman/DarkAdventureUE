@@ -23,7 +23,7 @@ void ADAEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (TargetEnemy) {
+	if (TargetEnemy && !IsDead) {
 		TargetDirection = TargetEnemy->GetActorLocation() - GetActorLocation();
 		FaceRotation(TargetDirection.Rotation());
 

@@ -51,6 +51,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetCurrentStaminaPercent();
 
+	UFUNCTION(BlueprintCallable)
+	void ConsumeStamina(float Amount);
+
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE FDACharacterAttributes GetAttributes() { return Attributes; };
 
@@ -91,6 +94,12 @@ protected:
 
 	UPROPERTY()
 	bool TakingDamage;
+
+	UPROPERTY()
+	bool IsDead;
+
+	UPROPERTY()
+	float StaminaBuffer;
 
 	UPROPERTY()
 	FDACharacterAttributes Attributes;

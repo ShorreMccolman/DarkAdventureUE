@@ -49,11 +49,13 @@ void ADAPlayerController::Tick(float DeltaTime)
 	if (RunBuffer > 0)
 		RunBuffer--;
 
-	DACharacter->SetIsRunning(ShouldRun);
-
-	if (DACharacter->GetCurrentSpeed() > 600.f) {
-		
+	if (ShouldRun) {
+		DACharacter->ConsumeStamina(8.f * DeltaTime);
+		if (DACharacter->GetCurrentStaminaPercent() == 0.f)
+			HoldingRun = false;
 	}
+
+	DACharacter->SetIsRunning(ShouldRun);
 }
 
 
