@@ -3,6 +3,11 @@
 #include "DAEnemy.h"
 #include "DAPlayer.h"
 #include "DAPlayerAnimInstance.h"
+#include "NavigationSystemHelpers.h"
+#include "AI/Navigation/NavigationSystem.h"
+#include "AI/Navigation/NavigationPath.h"
+
+#include "Engine.h"
 
 
 // Sets default values
@@ -35,25 +40,38 @@ void ADAEnemy::Tick(float DeltaTime)
 
 void ADAEnemy::Pursue(float DeltaTime)
 {
-	TargetDirection = TargetEnemy->GetActorLocation() - GetActorLocation();
+	UNavigationPath *tpath;
+	UNavigationSystem* system = GetWorld()->GetNavigationSystem();
+	tpath = system->FindPathToActorSynchronously(GetWorld(), GetActorLocation(), TargetEnemy);
+
+	int Num = tpath->PathPoints.Num();
+
+	FVector Targ;
+	if (tpath->PathPoints.Num() > 1)
+		Targ = tpath->PathPoints[1];
+	else
+		Targ = GetActorLocation();
+
+	TargetDirection = Targ - GetActorLocation();
+
 	FaceRotation(TargetDirection.Rotation());
 
-	float distance = TargetDirection.Size();
-	if (distance < 400.f) {
+	float distance = FVector::Distance(GetActorLocation(), TargetEnemy->GetActorLocation());
+	if (distance > 150.f) {
 		Speed += Acceleration * DeltaTime;
 
 		// Using this to ease into lower max speed when releasing run
 		if (Speed > 600.f) {
 			Speed -= Decceleration * DeltaTime;
 		}
-
-		if (distance < 150.f)
-			TryAttack();
 	}
 	else {
 		Speed -= Decceleration * DeltaTime;
 		Speed = FMath::Max(Speed, 0.f);
 	}
+
+	if (distance < 160.f)
+		TryAttack();
 }
 
 void ADAEnemy::NoticePlayer(ADAPlayer* Player)
