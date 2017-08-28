@@ -65,6 +65,12 @@ protected:
 
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable)
+	void AddPotentialTarget(class ADACharacter *Target);
+
+	UFUNCTION(BlueprintCallable)
+	void RemovePotentialTarget(class ADACharacter* Target);
+
 	UPROPERTY(EditAnywhere, Category = Motor)
 	float WalkSpeed;
 
@@ -108,6 +114,9 @@ protected:
 	class ADACharacter* TargetEnemy;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<class ADACharacter*> PotentialTargets;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class ADAWeaponBase* Weapon;
 
 	UPROPERTY()
@@ -122,10 +131,14 @@ protected:
 	UPROPERTY()
 	float ApproachValue; 
 
+	void UpdateBestTarget();
+
 	void StandardMotion(float DeltaTime);
 
 	void LockedMotion(float DeltaTime);
 
 	float InterpolateSpeed(float Current, float Target, float Acceleration, float DeltaTime);
+
+	void SetIsLocked(bool ShouldLock);
 	
 };

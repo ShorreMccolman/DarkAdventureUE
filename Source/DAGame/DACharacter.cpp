@@ -110,15 +110,44 @@ void ADACharacter::TryRoll()
 
 void ADACharacter::ToggleLock()
 {
-	Locked = !Locked;
+	bool ShouldLock = !Locked;
+
+	if (ShouldLock)
+		UpdateBestTarget();
 
 	if (!TargetEnemy) {
-		Locked = false;
+		ShouldLock = false;
 	}
 
-	if (Animation) {
-		Animation->IsLocked = Locked;
+	SetIsLocked(ShouldLock);
+}
+
+void ADACharacter::AddPotentialTarget(ADACharacter *Target)
+{
+	PotentialTargets.Add(Target);
+}
+
+void ADACharacter::RemovePotentialTarget(ADACharacter* Target)
+{
+	PotentialTargets.Remove(Target);
+	if (TargetEnemy == Target) {
+		UpdateBestTarget();
 	}
+}
+
+void ADACharacter::UpdateBestTarget()
+{
+	if (PotentialTargets.Num() == 0) {
+		TargetEnemy = nullptr;
+		SetIsLocked(false);
+		return;
+	}
+
+	FVector Location = GetActorLocation();
+	PotentialTargets.Sort([Location](const ADACharacter& A, const ADACharacter& B) {
+		return FVector::Distance(A.GetActorLocation(), Location) < FVector::Distance(B.GetActorLocation(), Location);
+	});
+	TargetEnemy = PotentialTargets[0];
 }
 
 float ADACharacter::GetCurrentHealthPercent() const
@@ -194,6 +223,14 @@ void ADACharacter::LockedMotion(float DeltaTime)
 			AddControllerYawInput(TurnRate * DeltaTime);
 		else
 			AddControllerYawInput(-TurnRate * DeltaTime);
+	}
+}
+
+void ADACharacter::SetIsLocked(bool ShouldLock)
+{
+	Locked = ShouldLock;
+	if (Animation) {
+		Animation->IsLocked = Locked;
 	}
 }
 

@@ -8,6 +8,8 @@ void UDAPlayerAnimInstance::ExecuteAction()
 	ShouldRoll = false;
 	ShouldAttack = false;
 	ShouldImpact = false;
+	ShouldConfuse = false;
+	ShouldTaunt = false;
 
 	LockedStrafeSpeed = StrafeSpeed;
 	LockedApproachSpeed = ApproachSpeed;
@@ -16,6 +18,8 @@ void UDAPlayerAnimInstance::ExecuteAction()
 void UDAPlayerAnimInstance::CompleteAction()
 {
 	ShouldRoll = false;
+	ShouldConfuse = false;
+	ShouldTaunt = false;
 
 }
 

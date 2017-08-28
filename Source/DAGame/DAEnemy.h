@@ -16,13 +16,16 @@ public:
 	ADAEnemy();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void Pursue(float DeltaTime);
 
+	UFUNCTION(BlueprintCallable)
+	void NoticePlayer(class ADAPlayer* Player);
+
+	UFUNCTION(BlueprintCallable)
+	void LosePlayer(class ADAPlayer* Player);
 	
 };

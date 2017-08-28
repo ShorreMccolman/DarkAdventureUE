@@ -33,6 +33,12 @@ public:
 	bool ShouldDie;
 
 	UPROPERTY(BlueprintReadWrite)
+	bool ShouldTaunt;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool ShouldConfuse;
+
+	UPROPERTY(BlueprintReadWrite)
 	bool IsLocked;
 
 	UPROPERTY(BlueprintReadWrite)
