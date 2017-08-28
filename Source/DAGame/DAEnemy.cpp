@@ -79,7 +79,7 @@ void ADAEnemy::NoticePlayer(ADAPlayer* Player)
 	TargetEnemy = Player;
 
 	if (Animation) {
-		Animation->ShouldTaunt = true;
+		Animation->SetupNextAnimation("Taunt");
 	}
 }
 
@@ -88,6 +88,6 @@ void ADAEnemy::LosePlayer(ADAPlayer* Player)
 	TargetEnemy = nullptr;
 
 	if (Animation) {
-		Animation->ShouldConfuse = true;
+		Animation->SetupNextAnimation("Confuse");
 	}
 }

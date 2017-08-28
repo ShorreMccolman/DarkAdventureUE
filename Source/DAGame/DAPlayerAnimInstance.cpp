@@ -3,13 +3,20 @@
 #include "DAPlayerAnimInstance.h"
 #include "DAPlayer.h"
 
+void UDAPlayerAnimInstance::SetupNextAnimation(FString AnimationName)
+{
+	NextAnimation = AnimationName;
+}
+
+void UDAPlayerAnimInstance::ActivateAction()
+{
+	CurrentAnimation = NextAnimation;
+	IsActive = true;
+}
+
 void UDAPlayerAnimInstance::ExecuteAction()
 {
-	ShouldRoll = false;
-	ShouldAttack = false;
-	ShouldImpact = false;
-	ShouldConfuse = false;
-	ShouldTaunt = false;
+	NextAnimation = "";
 
 	LockedStrafeSpeed = StrafeSpeed;
 	LockedApproachSpeed = ApproachSpeed;
@@ -17,9 +24,7 @@ void UDAPlayerAnimInstance::ExecuteAction()
 
 void UDAPlayerAnimInstance::CompleteAction()
 {
-	ShouldRoll = false;
-	ShouldConfuse = false;
-	ShouldTaunt = false;
-
+	CurrentAnimation = "";
+	IsActive = false;
 }
 

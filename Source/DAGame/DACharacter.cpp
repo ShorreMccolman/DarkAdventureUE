@@ -77,7 +77,7 @@ void ADACharacter::GetHit(float Damage)
 		IncomingDamage = Damage;
 		TakingDamage = true;
 		if (Animation) {
-			Animation->ShouldImpact = true;
+			Animation->SetupNextAnimation("Impact");
 		}
 	}
 }
@@ -90,21 +90,21 @@ void ADACharacter::TriggerIncomingDamage()
 
 	if (Attributes.CurHealth <= 0.f && Animation) {
 		IsDead = true;
-		Animation->ShouldDie = true;
+		Animation->SetupNextAnimation("Death");
 	}
 }
 
 void ADACharacter::TryAttack()
 {
 	if (Animation && Attributes.CurStamina > 1.f) {
-		Animation->ShouldAttack = true;
+		Animation->SetupNextAnimation("Attack");
 	}
 }
 
 void ADACharacter::TryRoll()
 {
 	if (Animation && Attributes.CurStamina > 1.f) {
-		Animation->ShouldRoll = true;
+		Animation->SetupNextAnimation("Roll");
 	}
 }
 

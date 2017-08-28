@@ -18,25 +18,19 @@ class UDAPlayerAnimInstance : public UAnimInstance
 public:
 
 	UPROPERTY(BlueprintReadWrite)
+	FString NextAnimation;
+
+	UPROPERTY(BlueprintReadWrite)
+	FString CurrentAnimation;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool IsActive;
+
+	UFUNCTION()
+	void SetupNextAnimation(FString AnimationName);
+
+	UPROPERTY(BlueprintReadWrite)
 	float Speed;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool ShouldRoll;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool ShouldAttack;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool ShouldImpact;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool ShouldDie;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool ShouldTaunt;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool ShouldConfuse;
 
 	UPROPERTY(BlueprintReadWrite)
 	bool IsLocked;
@@ -56,6 +50,9 @@ public:
 protected:
 	UPROPERTY(BlueprintReadWrite)
 	class ADACharacter* Character;
+
+	UFUNCTION(BlueprintCallable)
+	void ActivateAction();
 
 	UFUNCTION(BlueprintCallable)
 	void ExecuteAction();
