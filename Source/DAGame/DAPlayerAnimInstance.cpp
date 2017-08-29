@@ -3,6 +3,12 @@
 #include "DAPlayerAnimInstance.h"
 #include "DAPlayer.h"
 
+void UDAPlayerAnimInstance::SetupNextAnimationUnique(FString AnimationName)
+{
+	if (NextAnimation == "" && CurrentAnimation == "")
+		NextAnimation = AnimationName;
+}
+
 void UDAPlayerAnimInstance::SetupNextAnimation(FString AnimationName, bool ShouldOverride)
 {
 	if(NextAnimation == "" || ShouldOverride)
@@ -27,5 +33,12 @@ void UDAPlayerAnimInstance::CompleteAction()
 {
 	CurrentAnimation = "";
 	IsActive = false;
+	FreezeRotation = false;
+}
+
+void UDAPlayerAnimInstance::SetIsLockedOn(bool Locked)
+{
+	IsLocked = Locked;
+	FreezeRotation = false;
 }
 

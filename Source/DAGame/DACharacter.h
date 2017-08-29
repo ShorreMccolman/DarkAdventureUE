@@ -60,9 +60,6 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE class ADAWeaponBase* GetEquippedWeapon() const { return Weapon; };
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool Turning;
-
 protected:
 	virtual void BeginPlay() override;
 
@@ -136,9 +133,13 @@ protected:
 
 	void UpdateBestTarget();
 
+	void FaceTargetDirection(FVector Target, float angle, float DeltaTime);
+
 	void StandardMotion(float DeltaTime);
 
 	void LockedMotion(float DeltaTime);
+
+	void Pursue(float Distance, float DeltaTime);
 
 	float InterpolateSpeed(float Current, float Target, float Acceleration, float DeltaTime);
 

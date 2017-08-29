@@ -7,6 +7,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "DAPlayerAnimInstance.h"
 #include "DAWeaponBase.h"
+#include "AI/Navigation/NavigationSystem.h"
+#include "AI/Navigation/NavigationPath.h"
 
 
 // Sets default values
@@ -166,41 +168,13 @@ void ADACharacter::ConsumeStamina(float Amount)
 	StaminaBuffer = 2.f;
 }
 
-void ADACharacter::StandardMotion(float DeltaTime)
+void ADACharacter::FaceTargetDirection(FVector Direction, float angle, float DeltaTime)
 {
-	float speedModifier = 1.f;
+	if (Animation && Animation->FreezeRotation)
+		return;
 
-	if (Running) {
-		speedModifier *= 5.f / 3.f;
-	}
-
-	float max = WalkSpeed * speedModifier * InputDirection.SizeSquared();
-	if (InputDirection.SizeSquared() > 0.0f) {
-		TargetDirection = InputDirection;
-		TargetDirection.Normalize();
-		Speed += Acceleration * DeltaTime;
-
-		// Using this to ease into lower max speed when releasing run
-		if (Speed > max) {
-			Speed -= Decceleration * DeltaTime;
-		}
-	}
-	else {
-		Speed -= Decceleration * DeltaTime;
-		Speed = FMath::Max(Speed, 0.f);
-	}
-
-	FVector FacingVect = GetActorForwardVector();
-	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, FacingVect)));
-	FVector Cross = FVector::CrossProduct(TargetDirection, FacingVect);
-
-	if (angle > 140.f && InputDirection.SizeSquared() > 0.0f && !Turning) {
-		if (Animation) {
-			Turning = true;
-			Animation->SetupNextAnimation("TurnAround", false);
-		}
-
-	} else if (!Turning && angle > 1.f && InputDirection.SizeSquared() > 0.0f) {
+	FVector Cross = FVector::CrossProduct(Direction, GetActorForwardVector());
+	if (angle > 1.f) {
 		FVector Vect = GetActorRotation().Euler();
 		if (Cross.Z < 0)
 			Vect += FVector(0.f, 0.f, TurnRate * DeltaTime);
@@ -210,6 +184,36 @@ void ADACharacter::StandardMotion(float DeltaTime)
 
 		FRotator Rot = FRotator::MakeFromEuler(Vect);
 		SetActorRotation(Rot);
+	}
+
+}
+
+void ADACharacter::StandardMotion(float DeltaTime)
+{
+	float speedModifier = 1.f;
+	float inputSquareMagnitude = InputDirection.SizeSquared();
+
+	if (Running) {
+		speedModifier *= 5.f / 3.f;
+	}
+
+	float max = WalkSpeed * speedModifier * inputSquareMagnitude;
+	if (inputSquareMagnitude > 0.0f) {
+		TargetDirection = InputDirection;
+		TargetDirection.Normalize();
+		Speed = InterpolateSpeed(Speed, max, Acceleration, DeltaTime);
+	} else {
+		Speed = InterpolateSpeed(Speed, 0.f, Decceleration, DeltaTime);
+	}
+
+	if (inputSquareMagnitude > 0.f) {
+		float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, GetActorForwardVector())));
+		if (angle > 140.f) {
+			if (Animation) {
+				Animation->SetupNextAnimationUnique("TurnAround");
+			}
+		}
+		FaceTargetDirection(TargetDirection, angle, DeltaTime);
 	}
 }
 
@@ -225,18 +229,36 @@ void ADACharacter::LockedMotion(float DeltaTime)
 	ApproachValue = InterpolateSpeed(ApproachValue, Approach, 2000.f, DeltaTime);
 	StrafeValue = InterpolateSpeed(StrafeValue, Strafe, 2000.f, DeltaTime);
 
-	FVector FacingVect = GetActorForwardVector();
-	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, FacingVect)));
-	FVector Cross = FVector::CrossProduct(TargetDirection, FacingVect);
+	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, GetActorForwardVector())));
+	FaceTargetDirection(TargetDirection, angle, DeltaTime);
+}
 
-	if (angle > 1.f) {
-		FVector Vect = GetActorRotation().Euler();
-		if (Cross.Z < 0)
-			Vect += FVector(0.f, 0.f, TurnRate * DeltaTime);
-		else
-			Vect += FVector(0.f, 0.f, -TurnRate * DeltaTime);
-		FRotator Rot = FRotator::MakeFromEuler(Vect);
-		SetActorRotation(Rot);
+void ADACharacter::Pursue(float Distance, float DeltaTime)
+{
+	UNavigationPath *tpath;
+	UNavigationSystem* system = GetWorld()->GetNavigationSystem();
+	tpath = system->FindPathToActorSynchronously(GetWorld(), GetActorLocation(), TargetEnemy);
+
+	int Num = tpath->PathPoints.Num();
+
+	FVector Targ;
+	if (tpath->PathPoints.Num() > 1)
+		Targ = tpath->PathPoints[1];
+	else
+		Targ = GetActorLocation();
+
+	TargetDirection = Targ - GetActorLocation();
+	TargetDirection.Normalize();
+
+	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, GetActorForwardVector())));
+	FaceTargetDirection(TargetDirection, angle, DeltaTime);
+
+	if (Distance > 150.f) {
+		Speed = InterpolateSpeed(Speed, 600.f, Acceleration, DeltaTime);
+	} else if (Distance < 140.f) {
+		Speed = InterpolateSpeed(Speed, -100.f, Decceleration, DeltaTime);
+	} else {
+		Speed = InterpolateSpeed(Speed, 0.f, Decceleration, DeltaTime);
 	}
 }
 
@@ -244,7 +266,7 @@ void ADACharacter::SetIsLocked(bool ShouldLock)
 {
 	Locked = ShouldLock;
 	if (Animation) {
-		Animation->IsLocked = Locked;
+		Animation->SetIsLockedOn(Locked);
 	}
 }
 

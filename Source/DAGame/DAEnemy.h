@@ -20,8 +20,6 @@ protected:
 
 	virtual void Tick(float DeltaTime) override;
 
-	void Pursue(float DeltaTime);
-
 	UFUNCTION(BlueprintCallable)
 	void NoticePlayer(class ADAPlayer* Player);
 

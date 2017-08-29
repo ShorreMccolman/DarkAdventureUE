@@ -26,11 +26,20 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool IsActive;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool FreezeRotation;
+
+	UFUNCTION()
+	void SetupNextAnimationUnique(FString AnimationName);
+
 	UFUNCTION()
 	void SetupNextAnimation(FString AnimationName, bool ShouldOverride);
 
 	UPROPERTY(BlueprintReadWrite)
 	float Speed;
+
+	UFUNCTION()
+	void SetIsLockedOn(bool Locked);
 
 	UPROPERTY(BlueprintReadWrite)
 	bool IsLocked;
