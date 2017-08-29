@@ -53,8 +53,21 @@ void ADAEnemy::Pursue(float DeltaTime)
 		Targ = GetActorLocation();
 
 	TargetDirection = Targ - GetActorLocation();
+	TargetDirection.Normalize();
 
-	FaceRotation(TargetDirection.Rotation());
+	FVector FacingVect = GetActorForwardVector();
+	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, FacingVect)));
+	FVector Cross = FVector::CrossProduct(TargetDirection, FacingVect);
+
+	if (angle > 1.f) {
+		FVector Vect = GetActorRotation().Euler();
+		if (Cross.Z < 0)
+			Vect += FVector(0.f, 0.f, TurnRate * DeltaTime);
+		else
+			Vect += FVector(0.f, 0.f, -TurnRate * DeltaTime);
+		FRotator Rot = FRotator::MakeFromEuler(Vect);
+		SetActorRotation(Rot);
+	}
 
 	float distance = FVector::Distance(GetActorLocation(), TargetEnemy->GetActorLocation());
 	if (distance > 150.f) {
@@ -64,8 +77,7 @@ void ADAEnemy::Pursue(float DeltaTime)
 		if (Speed > 600.f) {
 			Speed -= Decceleration * DeltaTime;
 		}
-	}
-	else {
+	} else {
 		Speed -= Decceleration * DeltaTime;
 		Speed = FMath::Max(Speed, 0.f);
 	}
@@ -79,7 +91,7 @@ void ADAEnemy::NoticePlayer(ADAPlayer* Player)
 	TargetEnemy = Player;
 
 	if (Animation) {
-		Animation->SetupNextAnimation("Taunt");
+		Animation->SetupNextAnimation("Taunt", false);
 	}
 }
 
@@ -88,6 +100,6 @@ void ADAEnemy::LosePlayer(ADAPlayer* Player)
 	TargetEnemy = nullptr;
 
 	if (Animation) {
-		Animation->SetupNextAnimation("Confuse");
+		Animation->SetupNextAnimation("Confuse", false);
 	}
 }

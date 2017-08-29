@@ -60,6 +60,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE class ADAWeaponBase* GetEquippedWeapon() const { return Weapon; };
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Turning;
+
 protected:
 	virtual void BeginPlay() override;
 

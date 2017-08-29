@@ -3,9 +3,10 @@
 #include "DAPlayerAnimInstance.h"
 #include "DAPlayer.h"
 
-void UDAPlayerAnimInstance::SetupNextAnimation(FString AnimationName)
+void UDAPlayerAnimInstance::SetupNextAnimation(FString AnimationName, bool ShouldOverride)
 {
-	NextAnimation = AnimationName;
+	if(NextAnimation == "" || ShouldOverride)
+		NextAnimation = AnimationName;
 }
 
 void UDAPlayerAnimInstance::ActivateAction()

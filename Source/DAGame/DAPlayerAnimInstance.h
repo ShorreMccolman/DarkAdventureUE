@@ -27,7 +27,7 @@ public:
 	bool IsActive;
 
 	UFUNCTION()
-	void SetupNextAnimation(FString AnimationName);
+	void SetupNextAnimation(FString AnimationName, bool ShouldOverride);
 
 	UPROPERTY(BlueprintReadWrite)
 	float Speed;

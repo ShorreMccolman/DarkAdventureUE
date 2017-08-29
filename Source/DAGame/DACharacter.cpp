@@ -77,7 +77,7 @@ void ADACharacter::GetHit(float Damage)
 		IncomingDamage = Damage;
 		TakingDamage = true;
 		if (Animation) {
-			Animation->SetupNextAnimation("Impact");
+			Animation->SetupNextAnimation("Impact", true);
 		}
 	}
 }
@@ -90,21 +90,21 @@ void ADACharacter::TriggerIncomingDamage()
 
 	if (Attributes.CurHealth <= 0.f && Animation) {
 		IsDead = true;
-		Animation->SetupNextAnimation("Death");
+		Animation->SetupNextAnimation("Death", true);
 	}
 }
 
 void ADACharacter::TryAttack()
 {
 	if (Animation && Attributes.CurStamina > 1.f) {
-		Animation->SetupNextAnimation("Attack");
+		Animation->SetupNextAnimation("Attack", false);
 	}
 }
 
 void ADACharacter::TryRoll()
 {
 	if (Animation && Attributes.CurStamina > 1.f) {
-		Animation->SetupNextAnimation("Roll");
+		Animation->SetupNextAnimation("Roll", false);
 	}
 }
 
@@ -194,11 +194,22 @@ void ADACharacter::StandardMotion(float DeltaTime)
 	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, FacingVect)));
 	FVector Cross = FVector::CrossProduct(TargetDirection, FacingVect);
 
-	if (angle > 1.f && InputDirection.SizeSquared() > 0.0f) {
+	if (angle > 140.f && InputDirection.SizeSquared() > 0.0f && !Turning) {
+		if (Animation) {
+			Turning = true;
+			Animation->SetupNextAnimation("TurnAround", false);
+		}
+
+	} else if (!Turning && angle > 1.f && InputDirection.SizeSquared() > 0.0f) {
+		FVector Vect = GetActorRotation().Euler();
 		if (Cross.Z < 0)
-			AddControllerYawInput(TurnRate * DeltaTime);
+			Vect += FVector(0.f, 0.f, TurnRate * DeltaTime);
 		else
-			AddControllerYawInput(-TurnRate * DeltaTime);
+			Vect += FVector(0.f, 0.f, -TurnRate * DeltaTime);
+
+
+		FRotator Rot = FRotator::MakeFromEuler(Vect);
+		SetActorRotation(Rot);
 	}
 }
 
@@ -219,10 +230,13 @@ void ADACharacter::LockedMotion(float DeltaTime)
 	FVector Cross = FVector::CrossProduct(TargetDirection, FacingVect);
 
 	if (angle > 1.f) {
+		FVector Vect = GetActorRotation().Euler();
 		if (Cross.Z < 0)
-			AddControllerYawInput(TurnRate * DeltaTime);
+			Vect += FVector(0.f, 0.f, TurnRate * DeltaTime);
 		else
-			AddControllerYawInput(-TurnRate * DeltaTime);
+			Vect += FVector(0.f, 0.f, -TurnRate * DeltaTime);
+		FRotator Rot = FRotator::MakeFromEuler(Vect);
+		SetActorRotation(Rot);
 	}
 }
 
