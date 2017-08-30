@@ -42,6 +42,9 @@ public:
 	UFUNCTION()
 	void TryAttack();
 
+	UFUNCTION()
+	void TryStrongAttack();
+
 	UFUNCTION(BlueprintCallable)
 	void GetHit(float Damage);    // Set the incoming damage from the weapon hit and trigger animation
 
@@ -110,7 +113,7 @@ protected:
 	UPROPERTY()
 	FDACharacterAttributes Attributes;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadWrite)
 	class ADACharacter* TargetEnemy;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

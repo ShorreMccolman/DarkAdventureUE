@@ -103,6 +103,13 @@ void ADACharacter::TryAttack()
 	}
 }
 
+void ADACharacter::TryStrongAttack()
+{
+	if (Animation && Attributes.CurStamina > 1.f) {
+		Animation->SetupNextAnimation("StrongAttack", false);
+	}
+}
+
 void ADACharacter::TryRoll()
 {
 	if (Animation && Attributes.CurStamina > 1.f) {
@@ -206,6 +213,9 @@ void ADACharacter::StandardMotion(float DeltaTime)
 		Speed = InterpolateSpeed(Speed, 0.f, Decceleration, DeltaTime);
 	}
 
+	if (Locked && Speed < 300.f)
+		Speed = 300.f;
+
 	if (inputSquareMagnitude > 0.f) {
 		float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, GetActorForwardVector())));
 		if (angle > 140.f) {
@@ -230,7 +240,7 @@ void ADACharacter::LockedMotion(float DeltaTime)
 	StrafeValue = InterpolateSpeed(StrafeValue, Strafe, 2000.f, DeltaTime);
 
 	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, GetActorForwardVector())));
-	FaceTargetDirection(TargetDirection, angle, DeltaTime);
+	FaceTargetDirection(TargetDirection, angle, 2.f * DeltaTime);
 }
 
 void ADACharacter::Pursue(float Distance, float DeltaTime)

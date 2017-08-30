@@ -49,8 +49,12 @@ void ADAPlayer::Tick(float DeltaTime)
 	if (IsDead)
 		return;
 
-	if (Locked)
+	if (Locked && !Running) {
+		Animation->SetIsLockedOn(true);
 		LockedMotion(DeltaTime);
-	else
+	} 
+	else {
+		Animation->SetIsLockedOn(false);
 		StandardMotion(DeltaTime);
+	}
 }

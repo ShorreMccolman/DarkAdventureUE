@@ -18,6 +18,8 @@ void ADAPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("Attack", IE_Pressed, this, &ADAPlayerController::PressAttack);
 
+	InputComponent->BindAction("StrongAttack", IE_Pressed, this, &ADAPlayerController::PressStrongAttack);
+
 	InputComponent->BindAction("Lock", IE_Pressed, this, &ADAPlayerController::PressLock);
 
 	InputComponent->BindAction("Test", IE_Pressed, this, &ADAPlayerController::PressTest);
@@ -62,6 +64,11 @@ void ADAPlayerController::Tick(float DeltaTime)
 void ADAPlayerController::PressAttack()
 {
 	DACharacter->TryAttack();
+}
+
+void ADAPlayerController::PressStrongAttack()
+{
+	DACharacter->TryStrongAttack();
 }
 
 void ADAPlayerController::PressRun()

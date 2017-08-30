@@ -46,6 +46,9 @@ private:
 	void PressAttack();
 
 	UFUNCTION()
+	void PressStrongAttack();
+
+	UFUNCTION()
 	void PressTest();
 
 	UFUNCTION()

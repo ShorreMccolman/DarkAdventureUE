@@ -19,6 +19,7 @@ void UDAPlayerAnimInstance::ActivateAction()
 {
 	CurrentAnimation = NextAnimation;
 	IsActive = true;
+	FreezeRotation = false;
 }
 
 void UDAPlayerAnimInstance::ExecuteAction()
