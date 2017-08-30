@@ -79,7 +79,7 @@ void ADACharacter::GetHit(float Damage)
 		IncomingDamage = Damage;
 		TakingDamage = true;
 		if (Animation) {
-			Animation->SetupNextAnimation("Impact", true);
+			Animation->DamageCharacter();
 		}
 	}
 }
@@ -216,6 +216,9 @@ void ADACharacter::StandardMotion(float DeltaTime)
 	if (Locked && Speed < 300.f)
 		Speed = 300.f;
 
+	if (Animation)
+		Animation->Speed = Speed;
+
 	if (inputSquareMagnitude > 0.f) {
 		float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, GetActorForwardVector())));
 		if (angle > 140.f) {
@@ -238,6 +241,11 @@ void ADACharacter::LockedMotion(float DeltaTime)
 
 	ApproachValue = InterpolateSpeed(ApproachValue, Approach, 2000.f, DeltaTime);
 	StrafeValue = InterpolateSpeed(StrafeValue, Strafe, 2000.f, DeltaTime);
+
+	if (Animation) {
+		Animation->ApproachSpeed = ApproachValue;
+		Animation->StrafeSpeed = StrafeValue;
+	}
 
 	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, GetActorForwardVector())));
 	FaceTargetDirection(TargetDirection, angle, 2.f * DeltaTime);
@@ -270,6 +278,9 @@ void ADACharacter::Pursue(float Distance, float DeltaTime)
 	} else {
 		Speed = InterpolateSpeed(Speed, 0.f, Decceleration, DeltaTime);
 	}
+
+	if (Animation)
+		Animation->Speed = Speed;
 }
 
 void ADACharacter::SetIsLocked(bool ShouldLock)

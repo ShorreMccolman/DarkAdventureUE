@@ -3,6 +3,11 @@
 #include "DAPlayerAnimInstance.h"
 #include "DAPlayer.h"
 
+void UDAPlayerAnimInstance::DamageCharacter()
+{
+	PlayDamageMontage();
+}
+
 void UDAPlayerAnimInstance::SetupNextAnimationUnique(FString AnimationName)
 {
 	if (NextAnimation == "" && CurrentAnimation == "")

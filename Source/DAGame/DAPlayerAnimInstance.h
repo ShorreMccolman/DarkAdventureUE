@@ -17,6 +17,9 @@ class UDAPlayerAnimInstance : public UAnimInstance
 	
 public:
 
+	UFUNCTION()
+	void DamageCharacter();
+
 	UPROPERTY(BlueprintReadWrite)
 	FString NextAnimation;
 
@@ -68,5 +71,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void CompleteAction();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayDamageMontage();
 	
 };
