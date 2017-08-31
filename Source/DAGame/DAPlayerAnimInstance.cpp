@@ -23,8 +23,7 @@ void UDAPlayerAnimInstance::SetupNextAnimation(FString AnimationName, bool Shoul
 void UDAPlayerAnimInstance::ActivateAction()
 {
 	CurrentAnimation = NextAnimation;
-	IsActive = true;
-	FreezeRotation = false;
+	Character->SetCharacterRotationLock(false);
 }
 
 void UDAPlayerAnimInstance::ExecuteAction()
@@ -38,13 +37,14 @@ void UDAPlayerAnimInstance::ExecuteAction()
 void UDAPlayerAnimInstance::CompleteAction()
 {
 	CurrentAnimation = "";
-	IsActive = false;
-	FreezeRotation = false;
+	Character->SetCharacterRotationLock(false);
 }
 
 void UDAPlayerAnimInstance::SetIsLockedOn(bool Locked)
 {
+	if(Locked != IsLocked)
+		Character->SetCharacterRotationLock(false);
+
 	IsLocked = Locked;
-	FreezeRotation = false;
 }
 

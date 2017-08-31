@@ -26,12 +26,6 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	FString CurrentAnimation;
 
-	UPROPERTY(BlueprintReadWrite)
-	bool IsActive;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool FreezeRotation;
-
 	UFUNCTION()
 	void SetupNextAnimationUnique(FString AnimationName);
 

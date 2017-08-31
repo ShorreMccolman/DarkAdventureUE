@@ -36,6 +36,9 @@ public:
 	UFUNCTION()
 	void SetIsRunning(bool ShouldRun);
 
+	UFUNCTION(BlueprintCallable)
+	void SetCharacterRotationLock(bool Lock);
+
 	UFUNCTION()
 	void TryRoll();
 
@@ -101,6 +104,9 @@ protected:
 	UPROPERTY()
 	bool Locked;
 
+	UPROPERTY(EditAnywhere)
+	bool LockRotation;
+
 	UPROPERTY()
 	bool TakingDamage;
 
@@ -143,6 +149,8 @@ protected:
 	void LockedMotion(float DeltaTime);
 
 	void Pursue(float Distance, float DeltaTime);
+
+	void HoldPosition(float DeltaTime);
 
 	float InterpolateSpeed(float Current, float Target, float Acceleration, float DeltaTime);
 

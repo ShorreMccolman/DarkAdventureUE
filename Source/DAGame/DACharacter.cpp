@@ -73,9 +73,14 @@ void ADACharacter::SetIsRunning(bool ShouldRun)
 	Running = ShouldRun;
 }
 
+void ADACharacter::SetCharacterRotationLock(bool Lock)
+{
+	LockRotation = Lock;
+}
+
 void ADACharacter::GetHit(float Damage)
 {
-	if (!TakingDamage) {
+	if (!TakingDamage && !IsDead) {
 		IncomingDamage = Damage;
 		TakingDamage = true;
 		if (Animation) {
@@ -177,11 +182,11 @@ void ADACharacter::ConsumeStamina(float Amount)
 
 void ADACharacter::FaceTargetDirection(FVector Direction, float angle, float DeltaTime)
 {
-	if (Animation && Animation->FreezeRotation)
+	if (LockRotation)
 		return;
 
 	FVector Cross = FVector::CrossProduct(Direction, GetActorForwardVector());
-	if (angle > 1.f) {
+	if (angle > 3.f) {
 		FVector Vect = GetActorRotation().Euler();
 		if (Cross.Z < 0)
 			Vect += FVector(0.f, 0.f, TurnRate * DeltaTime);
@@ -278,6 +283,14 @@ void ADACharacter::Pursue(float Distance, float DeltaTime)
 	} else {
 		Speed = InterpolateSpeed(Speed, 0.f, Decceleration, DeltaTime);
 	}
+
+	if (Animation)
+		Animation->Speed = Speed;
+}
+
+void ADACharacter::HoldPosition(float DeltaTime)
+{
+	Speed = InterpolateSpeed(Speed, 0.f, Decceleration, DeltaTime);
 
 	if (Animation)
 		Animation->Speed = Speed;

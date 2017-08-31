@@ -29,20 +29,14 @@ void ADAEnemy::Tick(float DeltaTime)
 		return;
 
 	if (TargetEnemy) {
-
-		// FOR IN THE FUTURE 
-		//					 
-		// - Score all possible options
-		// - Select best option
-		// - Execute movement phase
-		// - Execute action phase
-
-
 		float distance = FVector::Distance(GetActorLocation(), TargetEnemy->GetActorLocation());
 		Pursue(distance, DeltaTime);
 
 		if (distance < 160.f && distance > 140.f)
 			TryAttack();
+	}
+	else {
+		HoldPosition(DeltaTime);
 	}
 }
 
