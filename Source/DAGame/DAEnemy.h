@@ -20,6 +20,8 @@ protected:
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void OnCharacterDeath() override;
+
 	UFUNCTION(BlueprintCallable)
 	void NoticePlayer(class ADAPlayer* Player);
 

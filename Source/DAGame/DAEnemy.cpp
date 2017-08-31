@@ -3,6 +3,7 @@
 #include "DAEnemy.h"
 #include "DAPlayer.h"
 #include "DAPlayerAnimInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -38,6 +39,13 @@ void ADAEnemy::Tick(float DeltaTime)
 	else {
 		HoldPosition(DeltaTime);
 	}
+}
+
+void ADAEnemy::OnCharacterDeath()
+{
+	Super::OnCharacterDeath();
+
+	APlayerController* Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 }
 
 void ADAEnemy::NoticePlayer(ADAPlayer* Player)

@@ -23,7 +23,6 @@ void UDAPlayerAnimInstance::SetupNextAnimation(FString AnimationName, bool Shoul
 void UDAPlayerAnimInstance::ActivateAction()
 {
 	CurrentAnimation = NextAnimation;
-	Character->SetCharacterRotationLock(false);
 }
 
 void UDAPlayerAnimInstance::ExecuteAction()

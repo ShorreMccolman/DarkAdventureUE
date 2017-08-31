@@ -70,6 +70,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+	
+	virtual void OnCharacterDeath();
 
 	UFUNCTION(BlueprintCallable)
 	void AddPotentialTarget(class ADACharacter *Target);
@@ -127,6 +129,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class ADAWeaponBase* Weapon;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UCapsuleComponent* Collider;
 
 	UPROPERTY()
 	float IncomingDamage;

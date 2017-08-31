@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "DAPlayerAnimInstance.h"
 #include "DAWeaponBase.h"
 #include "AI/Navigation/NavigationSystem.h"
@@ -31,7 +32,6 @@ void ADACharacter::BeginPlay()
 	}
 
 	IsDead = false;
-	
 }
 
 // Called every frame
@@ -46,6 +46,13 @@ void ADACharacter::Tick(float DeltaTime)
 		StaminaBuffer -= DeltaTime;
 	}
 
+}
+
+void ADACharacter::OnCharacterDeath()
+{
+	IsDead = true;
+	Animation->SetupNextAnimation("Death", true);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 float ADACharacter::GetCurrentSpeed() const
@@ -96,8 +103,7 @@ void ADACharacter::TriggerIncomingDamage()
 	TakingDamage = false;
 
 	if (Attributes.CurHealth <= 0.f && Animation) {
-		IsDead = true;
-		Animation->SetupNextAnimation("Death", true);
+		OnCharacterDeath();
 	}
 }
 
@@ -306,8 +312,9 @@ void ADACharacter::SetIsLocked(bool ShouldLock)
 
 float ADACharacter::InterpolateSpeed(float Current, float Target, float Acceleration, float DeltaTime)
 {
-	if (Target == 0.f && FMath::Abs(Current) < 0.1f)
-		Current = 0.f;
+	if (Current < Target + 1.f && Current > Target - 1.f) {
+		Current = Target;
+	}
 	else if (Current > Target)
 		Current -= Acceleration * DeltaTime;
 	else if (Current < Target)
