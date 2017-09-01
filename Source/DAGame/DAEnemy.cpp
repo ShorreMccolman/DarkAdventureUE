@@ -4,6 +4,7 @@
 #include "DAPlayer.h"
 #include "DAPlayerAnimInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "TimerManager.h"
 #include "Components/WidgetComponent.h"
 
 
@@ -44,6 +45,24 @@ void ADAEnemy::Tick(float DeltaTime)
 	}
 }
 
+void ADAEnemy::TriggerIncomingDamage()
+{
+	DamageLabelNumber += IncomingDamage;
+	Super::TriggerIncomingDamage();
+
+	UpdateDetailsWidget();
+	GetWorldTimerManager().ClearTimer(DamageLabelTimerHandle);
+	GetWorldTimerManager().SetTimer(DamageLabelTimerHandle, this, &ADAEnemy::ClearDamageLabelNumer, 3.f, false);
+}
+
+void ADAEnemy::ClearDamageLabelNumer()
+{
+	DamageLabelNumber = 0;
+	UpdateDetailsWidget();
+
+	GetWorldTimerManager().ClearTimer(DamageLabelTimerHandle);
+}
+
 void ADAEnemy::OnCharacterDeath()
 {
 	Super::OnCharacterDeath();
@@ -56,6 +75,7 @@ void ADAEnemy::ShowDetails(bool ShouldShow)
 	Super::ShowDetails(ShouldShow);
 
 	HealthBar->SetVisibility(ShouldShow);
+	UpdateDetailsWidget();
 }
 
 void ADAEnemy::NoticePlayer(ADAPlayer* Player)

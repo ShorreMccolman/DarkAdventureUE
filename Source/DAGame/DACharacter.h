@@ -58,7 +58,7 @@ public:
 	void GetHit(float Damage);    // Set the incoming damage from the weapon hit and trigger animation
 
 	UFUNCTION(BlueprintCallable)
-	void TriggerIncomingDamage();	// Actually apply the incoming damage, called from animation blueprint
+	virtual void TriggerIncomingDamage();	// Actually apply the incoming damage, called from animation blueprint
 
 	UFUNCTION()
 	void ToggleLock();

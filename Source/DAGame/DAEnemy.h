@@ -18,6 +18,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void ShowDetails(bool ShouldShow) override;
 
+	UFUNCTION(BlueprintCallable)
+	virtual void TriggerIncomingDamage() override;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -33,5 +36,17 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=DisplayDetails)
 	class UWidgetComponent* HealthBar;
+
+	UPROPERTY(BlueprintReadWrite)
+	float DamageLabelNumber;
+
+	UPROPERTY()
+	FTimerHandle DamageLabelTimerHandle;
+
+	UFUNCTION()
+	void ClearDamageLabelNumer();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateDetailsWidget();
 	
 };
