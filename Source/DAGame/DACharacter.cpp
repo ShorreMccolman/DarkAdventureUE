@@ -29,6 +29,8 @@ void ADACharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	ShowTarget(false);
+
 	USkeletalMeshComponent* Mesh = GetMesh();
 	if (Mesh) {
 		Animation = Cast<UDAPlayerAnimInstance>(Mesh->GetAnimInstance());
@@ -171,7 +173,7 @@ void ADACharacter::RemovePotentialTarget(ADACharacter* Target)
 {
 	PotentialTargets.Remove(Target);
 	if (TargetEnemy == Target) {
-		TargetEnemy->ShowDetails(false);
+		TargetEnemy->ShowTarget(false);
 		UpdateBestTarget();
 	}
 }
@@ -328,12 +330,17 @@ void ADACharacter::SetIsLocked(bool ShouldLock)
 	Locked = ShouldLock;
 
 	if (TargetEnemy) {
-		TargetEnemy->ShowDetails(ShouldLock);
+		TargetEnemy->ShowTarget(Locked);
 	}
 
 	if (Animation) {
 		Animation->SetIsLockedOn(Locked);
 	}
+}
+
+void ADACharacter::ShowTarget(bool ShouldTarget)
+{
+
 }
 
 float ADACharacter::InterpolateSpeed(float Current, float Target, float Acceleration, float DeltaTime)

@@ -14,6 +14,7 @@ ADAEnemy::ADAEnemy()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	Target = CreateDefaultSubobject<UWidgetComponent>(TEXT("Target"));
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
 }
 
@@ -45,12 +46,19 @@ void ADAEnemy::Tick(float DeltaTime)
 	}
 }
 
+void ADAEnemy::ShowTarget(bool ShouldTarget)
+{
+	Super::ShowTarget(ShouldTarget);
+
+	Target->SetVisibility(ShouldTarget);
+}
+
 void ADAEnemy::TriggerIncomingDamage()
 {
 	DamageLabelNumber += IncomingDamage;
 	Super::TriggerIncomingDamage();
 
-	UpdateDetailsWidget();
+	ShowDetails(true);
 	GetWorldTimerManager().ClearTimer(DamageLabelTimerHandle);
 	GetWorldTimerManager().SetTimer(DamageLabelTimerHandle, this, &ADAEnemy::ClearDamageLabelNumer, 3.f, false);
 }
@@ -58,7 +66,7 @@ void ADAEnemy::TriggerIncomingDamage()
 void ADAEnemy::ClearDamageLabelNumer()
 {
 	DamageLabelNumber = 0;
-	UpdateDetailsWidget();
+	ShowDetails(false);
 
 	GetWorldTimerManager().ClearTimer(DamageLabelTimerHandle);
 }

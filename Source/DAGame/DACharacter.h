@@ -63,6 +63,9 @@ public:
 	UFUNCTION()
 	void ToggleLock();
 
+	UFUNCTION()
+	virtual void ShowTarget(bool ShouldTarget);
+
 	UFUNCTION(BlueprintCallable)
 	void ConsumeStamina(float Amount);
 
