@@ -44,6 +44,12 @@ struct FDACharacterAttributes
 		CurStamina = MaxStamina;
 	}
 
+	void Reset()
+	{
+		CurHealth = MaxHealth;
+		CurStamina = MaxStamina;
+	}
+
 	bool HasSufficientStamina(float amount)
 	{
 		return CurStamina >= amount;

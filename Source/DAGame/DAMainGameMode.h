@@ -20,6 +20,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void ChangeMenuWidget(TSubclassOf<class UUserWidget> NewWidgetClass);
 
+	UFUNCTION(BlueprintCallable)
+	void TriggerDeathEvent();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -28,5 +31,11 @@ protected:
 
 	UPROPERTY()
 	class UUserWidget* CurrentWidget;
+
+	UPROPERTY()
+	FTimerHandle DeathTimerHandle;
+
+	UFUNCTION()
+	void RestartLevel();
 	
 };

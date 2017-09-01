@@ -15,6 +15,9 @@ public:
 	// Sets default values for this character's properties
 	ADAPlayer();
 
+	UFUNCTION()
+	virtual void Reset() override;
+
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
@@ -25,6 +28,9 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere)
+	class APlayerStart* PlayerStart;
 
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

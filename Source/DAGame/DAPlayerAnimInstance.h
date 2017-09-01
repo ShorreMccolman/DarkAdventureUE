@@ -18,6 +18,9 @@ class UDAPlayerAnimInstance : public UAnimInstance
 public:
 
 	UFUNCTION()
+	void ResetCharacter();
+
+	UFUNCTION()
 	void DamageCharacter();
 
 	UPROPERTY(BlueprintReadWrite)
@@ -32,14 +35,18 @@ public:
 	UFUNCTION()
 	void SetupNextAnimation(FString AnimationName, bool ShouldOverride);
 
-	UPROPERTY(BlueprintReadWrite)
-	float Speed;
-
 	UFUNCTION()
 	void SetIsLockedOn(bool Locked);
 
 	UPROPERTY(BlueprintReadWrite)
 	bool IsLocked;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool IsDead;
+	
+
+	UPROPERTY(BlueprintReadWrite)
+	float Speed;
 
 	UPROPERTY(BlueprintReadWrite)
 	float StrafeSpeed;

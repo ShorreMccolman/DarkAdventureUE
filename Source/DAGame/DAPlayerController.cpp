@@ -2,7 +2,6 @@
 
 #include "DAPlayerController.h"
 #include "DAPlayer.h"
-
 #include "Components/InputComponent.h"
 
 void ADAPlayerController::SetupInputComponent()
@@ -28,7 +27,6 @@ void ADAPlayerController::SetupInputComponent()
 void ADAPlayerController::BeginPlay()
 {
 	DACharacter = Cast<ADAPlayer>(GetPawn());
-
 }
 
 
@@ -59,7 +57,6 @@ void ADAPlayerController::Tick(float DeltaTime)
 
 	DACharacter->SetIsRunning(ShouldRun);
 }
-
 
 void ADAPlayerController::PressAttack()
 {

@@ -3,6 +3,19 @@
 #include "DAPlayerAnimInstance.h"
 #include "DAPlayer.h"
 
+void UDAPlayerAnimInstance::ResetCharacter()
+{
+	NextAnimation = "";
+	CurrentAnimation = "";
+
+	IsDead = false;
+	IsLocked = false;
+
+	Speed = 0;
+	StrafeSpeed = 0;
+	ApproachSpeed = 0;
+}
+
 void UDAPlayerAnimInstance::DamageCharacter()
 {
 	PlayDamageMontage();

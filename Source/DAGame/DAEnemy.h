@@ -15,6 +15,9 @@ public:
 	// Sets default values for this character's properties
 	ADAEnemy();
 
+	UFUNCTION(BlueprintCallable)
+	virtual void ShowDetails(bool ShouldShow) override;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -27,5 +30,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void LosePlayer(class ADAPlayer* Player);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=DisplayDetails)
+	class UWidgetComponent* HealthBar;
 	
 };

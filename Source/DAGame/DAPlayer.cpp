@@ -5,6 +5,7 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PlayerStart.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "DAPlayerAnimInstance.h"
 
@@ -56,5 +57,14 @@ void ADAPlayer::Tick(float DeltaTime)
 	else {
 		Animation->SetIsLockedOn(false);
 		StandardMotion(DeltaTime);
+	}
+}
+
+void ADAPlayer::Reset()
+{
+	Super::Reset();
+
+	if (PlayerStart) {
+		SetActorLocation(PlayerStart->GetActorLocation());
 	}
 }

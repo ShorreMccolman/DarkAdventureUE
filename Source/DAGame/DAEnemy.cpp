@@ -4,6 +4,7 @@
 #include "DAPlayer.h"
 #include "DAPlayerAnimInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/WidgetComponent.h"
 
 
 // Sets default values
@@ -12,6 +13,7 @@ ADAEnemy::ADAEnemy()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	HealthBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
 }
 
 // Called when the game starts or when spawned
@@ -19,6 +21,7 @@ void ADAEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	ShowDetails(false);
 }
 
 // Called every frame
@@ -46,6 +49,13 @@ void ADAEnemy::OnCharacterDeath()
 	Super::OnCharacterDeath();
 
 	APlayerController* Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+}
+
+void ADAEnemy::ShowDetails(bool ShouldShow)
+{
+	Super::ShowDetails(ShouldShow);
+
+	HealthBar->SetVisibility(ShouldShow);
 }
 
 void ADAEnemy::NoticePlayer(ADAPlayer* Player)

@@ -15,6 +15,12 @@ class DAGAME_API ADACharacter : public ACharacter
 public:
 	ADACharacter();
 
+	UFUNCTION()
+	virtual void Reset();
+
+	UFUNCTION()
+	virtual void ShowDetails(bool ShouldShow);
+
 	UFUNCTION(BlueprintPure)
 	float GetCurrentSpeed() const;
 
@@ -91,7 +97,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Motor)
 	float TurnRate;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Motor)
+	UPROPERTY()
 	float Speed;
 
 	UPROPERTY()
@@ -129,9 +135,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class ADAWeaponBase* Weapon;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class UCapsuleComponent* Collider;
 
 	UPROPERTY()
 	float IncomingDamage;

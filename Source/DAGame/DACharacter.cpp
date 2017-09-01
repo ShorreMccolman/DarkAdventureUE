@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DACharacter.h"
+#include "DAEnemy.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -10,6 +11,8 @@
 #include "DAWeaponBase.h"
 #include "AI/Navigation/NavigationSystem.h"
 #include "AI/Navigation/NavigationPath.h"
+
+#include "GameFramework/PlayerStart.h"
 
 
 // Sets default values
@@ -48,9 +51,26 @@ void ADACharacter::Tick(float DeltaTime)
 
 }
 
+void ADACharacter::Reset()
+{
+	IsDead = false;
+	Attributes.Reset();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+	if (Animation) {
+		Animation->ResetCharacter();
+	}
+}
+
+void ADACharacter::ShowDetails(bool ShouldShow)
+{
+
+}
+
 void ADACharacter::OnCharacterDeath()
 {
 	IsDead = true;
+	Animation->IsDead = true;
 	Animation->SetupNextAnimation("Death", true);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
@@ -138,7 +158,7 @@ void ADACharacter::ToggleLock()
 	if (!TargetEnemy) {
 		ShouldLock = false;
 	}
-
+	
 	SetIsLocked(ShouldLock);
 }
 
@@ -151,6 +171,7 @@ void ADACharacter::RemovePotentialTarget(ADACharacter* Target)
 {
 	PotentialTargets.Remove(Target);
 	if (TargetEnemy == Target) {
+		TargetEnemy->ShowDetails(false);
 		UpdateBestTarget();
 	}
 }
@@ -305,6 +326,11 @@ void ADACharacter::HoldPosition(float DeltaTime)
 void ADACharacter::SetIsLocked(bool ShouldLock)
 {
 	Locked = ShouldLock;
+
+	if (TargetEnemy) {
+		TargetEnemy->ShowDetails(ShouldLock);
+	}
+
 	if (Animation) {
 		Animation->SetIsLockedOn(Locked);
 	}
