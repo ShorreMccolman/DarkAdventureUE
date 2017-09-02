@@ -16,6 +16,9 @@ public:
 	ADAEnemy();
 
 	UFUNCTION()
+	virtual void Reset() override;
+
+	UFUNCTION()
 	void ShowTarget(bool ShouldTarget) override;
 
 	UFUNCTION(BlueprintCallable)

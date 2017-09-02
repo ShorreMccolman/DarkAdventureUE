@@ -23,6 +23,7 @@ void ADAEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	Origin = GetActorLocation();
 	ShowDetails(false);
 }
 
@@ -44,6 +45,13 @@ void ADAEnemy::Tick(float DeltaTime)
 	else {
 		HoldPosition(DeltaTime);
 	}
+}
+
+void ADAEnemy::Reset()
+{
+	Super::Reset();
+
+	
 }
 
 void ADAEnemy::ShowTarget(bool ShouldTarget)

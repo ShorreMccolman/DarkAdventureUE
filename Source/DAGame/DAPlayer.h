@@ -18,6 +18,12 @@ public:
 	UFUNCTION()
 	virtual void Reset() override;
 
+	UFUNCTION()
+	void TryInteract();
+
+	UFUNCTION()
+	void SetCurrentInteractable(class ADAInteractable* Interactable);
+
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
@@ -31,6 +37,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	class APlayerStart* PlayerStart;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ADAInteractable* CurrentInteractable;
 
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

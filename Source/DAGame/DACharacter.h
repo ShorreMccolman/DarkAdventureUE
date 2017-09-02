@@ -149,7 +149,10 @@ protected:
 	float StrafeValue;
 
 	UPROPERTY()
-	float ApproachValue; 
+	float ApproachValue;
+
+	UPROPERTY()
+	FVector Origin;
 
 	void UpdateBestTarget();
 

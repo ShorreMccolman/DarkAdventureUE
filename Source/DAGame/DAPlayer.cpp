@@ -8,6 +8,7 @@
 #include "GameFramework/PlayerStart.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "DAPlayerAnimInstance.h"
+#include "DAInteractable.h"
 
 
 // Sets default values
@@ -40,6 +41,10 @@ void ADAPlayer::BeginPlay()
 	Super::BeginPlay();
 
 	TargetDirection = GetActorForwardVector();
+
+	if (PlayerStart) {
+		Origin = PlayerStart->GetActorLocation();
+	}
 }
 
 // Called every frame
@@ -64,7 +69,15 @@ void ADAPlayer::Reset()
 {
 	Super::Reset();
 
-	if (PlayerStart) {
-		SetActorLocation(PlayerStart->GetActorLocation());
-	}
+}
+
+void ADAPlayer::TryInteract()
+{
+	if(CurrentInteractable)
+		CurrentInteractable->Interact();
+}
+
+void ADAPlayer::SetCurrentInteractable(ADAInteractable* Interactable)
+{
+	CurrentInteractable = Interactable;
 }

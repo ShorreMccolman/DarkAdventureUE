@@ -22,6 +22,8 @@ ADACharacter::ADACharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	IsDead = false;
 }
 
 // Called when the game starts or when spawned
@@ -35,8 +37,6 @@ void ADACharacter::BeginPlay()
 	if (Mesh) {
 		Animation = Cast<UDAPlayerAnimInstance>(Mesh->GetAnimInstance());
 	}
-
-	IsDead = false;
 }
 
 // Called every frame
@@ -58,6 +58,7 @@ void ADACharacter::Reset()
 	IsDead = false;
 	Attributes.Reset();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	SetActorLocation(Origin);
 
 	if (Animation) {
 		Animation->ResetCharacter();

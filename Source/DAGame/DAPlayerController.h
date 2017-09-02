@@ -43,6 +43,9 @@ private:
 	void ReleaseRun();
 
 	UFUNCTION()
+	void PressInteract();
+
+	UFUNCTION()
 	void PressAttack();
 
 	UFUNCTION()

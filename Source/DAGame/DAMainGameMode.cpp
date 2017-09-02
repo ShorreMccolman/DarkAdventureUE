@@ -8,7 +8,9 @@
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "DACharacter.h"
+#include "DAEnemy.h"
 #include "DAPlayerController.h"
+#include "EngineUtils.h" 
 
 
 ADAMainGameMode::ADAMainGameMode()
@@ -36,6 +38,11 @@ void ADAMainGameMode::RestartLevel()
 	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (Player) {
 		Player->Reset();
+	}
+
+	for (TActorIterator<ADAEnemy> ActorItr(GetWorld()); ActorItr; ++ActorItr) {
+		ADAEnemy* Enemy = *ActorItr;
+		Enemy->Reset();
 	}
 }
 
