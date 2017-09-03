@@ -24,6 +24,8 @@ public:
 	UFUNCTION()
 	void SetCurrentInteractable(class ADAInteractable* Interactable);
 
+	FORCEINLINE class ADAInteractable* GetCurrentInteractable() const { return CurrentInteractable; }
+
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/

@@ -20,8 +20,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void ChangeMenuWidget(TSubclassOf<class UUserWidget> NewWidgetClass);
 
+	UFUNCTION()
+	void FadeIn();
+
+	UFUNCTION()
+	void FadeOut();
+
 	UFUNCTION(BlueprintCallable)
 	void TriggerDeathEvent();
+
+	UFUNCTION(BlueprintCallable)
+	void TriggerRestEvent();
 
 protected:
 	virtual void BeginPlay() override;
@@ -31,6 +40,18 @@ protected:
 
 	UPROPERTY()
 	class UUserWidget* CurrentWidget;
+
+	UPROPERTY()
+	class ULevelSequence* FadeInSequence;
+
+	UPROPERTY()
+	class ULevelSequence* FadeOutSequence;
+
+	UPROPERTY()
+	class ULevelSequencePlayer* SequencePlayer;
+
+	UPROPERTY()
+	FTimerHandle RestTimerHandle;
 
 	UPROPERTY()
 	FTimerHandle DeathTimerHandle;

@@ -12,6 +12,8 @@
 #include "DAPlayerController.h"
 #include "EngineUtils.h" 
 
+#include "LevelSequencePlayer.h"
+
 
 ADAMainGameMode::ADAMainGameMode()
 {
@@ -24,16 +26,52 @@ void ADAMainGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	ChangeMenuWidget(StartingWidgetClass);
+
+	FStringAssetReference FISequenceName("/Game/Sequences/FadeIn");
+	FadeInSequence = Cast<ULevelSequence>(FISequenceName.TryLoad());
+
+	FStringAssetReference FOSequenceName("/Game/Sequences/FadeOut");
+	FadeOutSequence = Cast<ULevelSequence>(FOSequenceName.TryLoad());
+
+	FadeIn();
+}
+
+void ADAMainGameMode::FadeIn()
+{
+	if (FadeInSequence) {
+		FMovieSceneSequencePlaybackSettings Settings;
+		SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), FadeInSequence, Settings);
+		if (SequencePlayer)
+			SequencePlayer->Play();
+	}
+}
+
+void ADAMainGameMode::FadeOut()
+{
+	if (FadeOutSequence) {
+		FMovieSceneSequencePlaybackSettings Settings;
+		SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), FadeOutSequence, Settings);
+		if (SequencePlayer)
+			SequencePlayer->Play();
+	}
+}
+
+void ADAMainGameMode::TriggerRestEvent()
+{
+	FadeOut();
+	GetWorldTimerManager().SetTimer(RestTimerHandle, this, &ADAMainGameMode::RestartLevel, 3.f, false);
 }
 
 void ADAMainGameMode::TriggerDeathEvent()
 {
-	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ADAMainGameMode::RestartLevel, 1.f, false);
+	FadeOut();
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ADAMainGameMode::RestartLevel, 3.f, false);
 }
 
 void ADAMainGameMode::RestartLevel()
 {
 	GetWorldTimerManager().ClearTimer(DeathTimerHandle);
+	GetWorldTimerManager().ClearTimer(RestTimerHandle);
 
 	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (Player) {
@@ -44,6 +82,8 @@ void ADAMainGameMode::RestartLevel()
 		ADAEnemy* Enemy = *ActorItr;
 		Enemy->Reset();
 	}
+
+	FadeIn();
 }
 
 void ADAMainGameMode::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass)

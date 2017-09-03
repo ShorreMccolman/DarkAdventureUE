@@ -3,6 +3,8 @@
 #include "DARestPoint.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
+#include "DAMainGameMode.h"
+#include "DAPlayer.h"
 
 
 // Sets default values
@@ -20,7 +22,10 @@ void ADARestPoint::BeginPlay()
 
 void ADARestPoint::Interact()
 {
-
+	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
+	if (Mode) {
+		Mode->TriggerRestEvent();
+	}
 }
 
 
