@@ -11,11 +11,6 @@ void UDAWidget::Accept()
 	}
 }
 
-void UDAWidget::Cancel()
-{
-
-}
-
 void UDAWidget::OnOpen()
 {
 	SetHighlightedButton(DefaultSelection);

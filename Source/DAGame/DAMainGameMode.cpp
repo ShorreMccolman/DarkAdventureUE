@@ -24,7 +24,7 @@ void ADAMainGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ChangeMenuWidget(StartingWidgetClass);
+	ShowHUDWidget(true);
 
 	FStringAssetReference FISequenceName("/Game/Sequences/FadeIn");
 	FadeInSequence = Cast<ULevelSequence>(FISequenceName.TryLoad());
@@ -36,51 +36,55 @@ void ADAMainGameMode::BeginPlay()
 	FadeIn();
 }
 
-void ADAMainGameMode::OpenMenu()
+void ADAMainGameMode::OpenStartMenu()
 {
-	ChangeMenuWidget(MenuWidgetClass);
+	AddMenu(StartMenuWidgetClass);
+}
 
-	ADAPlayerController* Controller = Cast<ADAPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (Controller) {
-		Controller->SetDAControlMode(EDAControlMode::DAControlMode_PlayMenu);
-	}
+void ADAMainGameMode::OpenRestMenu()
+{
+	AddMenu(RestMenuWidgetClass);
+	ResetLevel();
 }
 
 void ADAMainGameMode::AcceptCurrent()
 {
-	UDAWidget* Menu = Cast<UDAWidget>(CurrentWidget);
-	if (Menu) {
-		Menu->Accept();
+	if (MenuStack.Size() > 0) {
+		MenuStack.Peek()->Accept();
 	}
 }
 
 void ADAMainGameMode::CancelCurrent()
 {
-
+	if (MenuStack.Size() > 0) {
+		MenuStack.Peek()->Cancel();
+	}
 }
 
 void ADAMainGameMode::NavigateCurrent(EDAInputDirection Direction)
 {
-	UDAWidget* Menu = Cast<UDAWidget>(CurrentWidget);
-	if (Menu) {
-		switch (Direction)
-		{
-		case EDAInputDirection::DAInputDirection_Up:
-			Menu->NavigateUp();
-			break;
-		case EDAInputDirection::DAInputDirection_Right:
-			Menu->NavigateRight();
-			break;
-		case EDAInputDirection::DAInputDirection_Down:
-			Menu->NavigateDown();
-			break;
-		case EDAInputDirection::DAInputDirection_Left:
-			Menu->NavigateLeft();
-			break;
-		default:
-			break;
+	if (MenuStack.Size() > 0) {
+		UDAWidget* Menu = MenuStack.Peek();
+		if (Menu) {
+			switch (Direction)
+			{
+			case EDAInputDirection::DAInputDirection_Up:
+				Menu->NavigateUp();
+				break;
+			case EDAInputDirection::DAInputDirection_Right:
+				Menu->NavigateRight();
+				break;
+			case EDAInputDirection::DAInputDirection_Down:
+				Menu->NavigateDown();
+				break;
+			case EDAInputDirection::DAInputDirection_Left:
+				Menu->NavigateLeft();
+				break;
+			default:
+				break;
+			}
+
 		}
-		
 	}
 }
 
@@ -103,7 +107,7 @@ void ADAMainGameMode::FadeOut()
 void ADAMainGameMode::TriggerRestEvent()
 {
 	FadeOut();
-	GetWorldTimerManager().SetTimer(RestTimerHandle, this, &ADAMainGameMode::OpenMenu, 3.f, false);
+	GetWorldTimerManager().SetTimer(RestTimerHandle, this, &ADAMainGameMode::OpenRestMenu, 3.f, false);
 }
 
 void ADAMainGameMode::TriggerDeathEvent()
@@ -112,11 +116,8 @@ void ADAMainGameMode::TriggerDeathEvent()
 	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ADAMainGameMode::RestartLevel, 3.f, false);
 }
 
-void ADAMainGameMode::RestartLevel()
+void ADAMainGameMode::ResetLevel()
 {
-	GetWorldTimerManager().ClearTimer(DeathTimerHandle);
-	GetWorldTimerManager().ClearTimer(RestTimerHandle);
-
 	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (Player) {
 		Player->Reset();
@@ -126,25 +127,119 @@ void ADAMainGameMode::RestartLevel()
 		ADAEnemy* Enemy = *ActorItr;
 		Enemy->Reset();
 	}
+}
+
+void ADAMainGameMode::RestartLevel()
+{
+	GetWorldTimerManager().ClearTimer(DeathTimerHandle);
+	GetWorldTimerManager().ClearTimer(RestTimerHandle);
+
+	ResetLevel();
 
 	FadeIn();
 }
 
-void ADAMainGameMode::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass)
+void ADAMainGameMode::ShowHUDWidget(bool ShouldShow)
 {
-	if (CurrentWidget != nullptr) {
-		CurrentWidget->RemoveFromViewport();
-		CurrentWidget = nullptr;
+	if (ShouldShow && CurrentHUDWidget == nullptr) {
+		CurrentHUDWidget = CreateWidget<UUserWidget>(GetWorld(), HUDWidgetClass);
+		if (CurrentHUDWidget != nullptr) {
+			CurrentHUDWidget->AddToViewport();
+		}
+	} else if (!ShouldShow && CurrentHUDWidget != nullptr) {
+		CurrentHUDWidget->RemoveFromViewport();
+		CurrentHUDWidget = nullptr;
 	}
+}
+
+void ADAMainGameMode::ChangeMenu(TSubclassOf<UUserWidget> NewWidgetClass)
+{
+	HideCurrentMenu();
+
 	if (NewWidgetClass != nullptr) {
-		CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), NewWidgetClass);
-		if (CurrentWidget != nullptr) {
-			CurrentWidget->AddToViewport();
-			UDAWidget* DAW = Cast<UDAWidget>(CurrentWidget);
+		UUserWidget* CurrentMenuWidget = CreateWidget<UUserWidget>(GetWorld(), NewWidgetClass);
+		if (CurrentMenuWidget != nullptr) {
+			UDAWidget* DAW = Cast<UDAWidget>(CurrentMenuWidget);
 			if (DAW) {
+				DAW->AddToViewport();
 				DAW->OnOpen();
+				MenuStack.Push(DAW);
+
+				ADAPlayerController* Controller = Cast<ADAPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+				if (Controller) {
+					Controller->SetDAControlMode(EDAControlMode::DAControlMode_PlayMenu);
+				}
 			}
 
 		}
 	}
+}
+
+void ADAMainGameMode::AddMenu(TSubclassOf<UUserWidget> NewWidgetClass)
+{
+	if (MenuStack.Size() > 0) {
+		UDAWidget* DAW = MenuStack.Peek();
+		if (DAW) {
+			if (DAW->StaticClass() == NewWidgetClass->GetSuperClass()) {
+				UE_LOG(LogTemp, Warning, TEXT("Already open"));
+				return;
+			}
+		}
+	}
+
+	if (NewWidgetClass != nullptr) {
+		UUserWidget* CurrentMenuWidget = CreateWidget<UUserWidget>(GetWorld(), NewWidgetClass);
+		if (CurrentMenuWidget != nullptr) {
+			UDAWidget* DAW = Cast<UDAWidget>(CurrentMenuWidget);
+			if (DAW) {
+				DAW->AddToViewport();
+				DAW->OnOpen();
+				MenuStack.Push(DAW);
+
+				ADAPlayerController* Controller = Cast<ADAPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+				if (Controller) {
+					Controller->SetDAControlMode(EDAControlMode::DAControlMode_PlayMenu);
+				}
+			}
+		}
+	}
+}
+
+void ADAMainGameMode::HideCurrentMenu()
+{
+	if (MenuStack.Size() > 0) {
+		UDAWidget* Old = MenuStack.Peek();
+		Old->OnClose();
+		Old->RemoveFromViewport();
+	}
+}
+
+void ADAMainGameMode::CloseCurrentMenu(bool OpenPrevious)
+{
+	if (MenuStack.Size() > 0) {
+		UDAWidget* Old = MenuStack.Pop();
+		Old->OnClose();
+		Old->RemoveFromViewport();
+	}
+
+	if (OpenPrevious && MenuStack.Size() > 0) {
+		UDAWidget* DAW = MenuStack.Peek();
+		if (DAW) {
+			DAW->AddToViewport();
+			DAW->OnOpen();
+		}
+	}
+
+	if (MenuStack.Size() == 0) {
+		ADAPlayerController* Controller = Cast<ADAPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		if (Controller) {
+			Controller->SetDAControlMode(EDAControlMode::DAControlMode_Play);
+		}
+	}
+}
+
+void ADAMainGameMode::CloseAllMenus()
+{
+	CloseCurrentMenu(false);
+	MenuStack.Clear();
 }

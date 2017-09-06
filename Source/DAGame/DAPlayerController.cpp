@@ -73,8 +73,17 @@ void ADAPlayerController::SetDAControlMode(EDAControlMode Mode)
 
 void ADAPlayerController::PressStart()
 {
-	if (GameMode) {
-		GameMode->OpenMenu();
+	switch (ControlMode)
+	{
+	case EDAControlMode::DAControlMode_Play:
+		GameMode->OpenStartMenu();
+		break;
+	case EDAControlMode::DAControlMode_FullMenu:
+	case EDAControlMode::DAControlMode_PlayMenu:
+		GameMode->CancelCurrent();
+		break;
+	default:
+		break;
 	}
 }
 

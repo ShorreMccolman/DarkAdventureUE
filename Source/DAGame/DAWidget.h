@@ -24,8 +24,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void Accept();
 
-	UFUNCTION(BlueprintCallable)
-	virtual void Cancel();
+	UFUNCTION(BlueprintImplementableEvent)
+	void Cancel();
 
 	UFUNCTION(BlueprintCallable)
 	virtual void OnOpen();
