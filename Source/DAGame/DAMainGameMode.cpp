@@ -9,9 +9,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "DACharacter.h"
 #include "DAEnemy.h"
-#include "DAPlayerController.h"
 #include "EngineUtils.h" 
-
+#include "DAWidget.h"
 #include "LevelSequencePlayer.h"
 
 
@@ -29,37 +28,82 @@ void ADAMainGameMode::BeginPlay()
 
 	FStringAssetReference FISequenceName("/Game/Sequences/FadeIn");
 	FadeInSequence = Cast<ULevelSequence>(FISequenceName.TryLoad());
-
-	FStringAssetReference FOSequenceName("/Game/Sequences/FadeOut");
-	FadeOutSequence = Cast<ULevelSequence>(FOSequenceName.TryLoad());
+	if (FadeInSequence) {
+		FMovieSceneSequencePlaybackSettings Settings;
+		SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), FadeInSequence, Settings);
+	}
 
 	FadeIn();
 }
 
+void ADAMainGameMode::OpenMenu()
+{
+	ChangeMenuWidget(MenuWidgetClass);
+
+	ADAPlayerController* Controller = Cast<ADAPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (Controller) {
+		Controller->SetDAControlMode(EDAControlMode::DAControlMode_PlayMenu);
+	}
+}
+
+void ADAMainGameMode::AcceptCurrent()
+{
+	UDAWidget* Menu = Cast<UDAWidget>(CurrentWidget);
+	if (Menu) {
+		Menu->Accept();
+	}
+}
+
+void ADAMainGameMode::CancelCurrent()
+{
+
+}
+
+void ADAMainGameMode::NavigateCurrent(EDAInputDirection Direction)
+{
+	UDAWidget* Menu = Cast<UDAWidget>(CurrentWidget);
+	if (Menu) {
+		switch (Direction)
+		{
+		case EDAInputDirection::DAInputDirection_Up:
+			Menu->NavigateUp();
+			break;
+		case EDAInputDirection::DAInputDirection_Right:
+			Menu->NavigateRight();
+			break;
+		case EDAInputDirection::DAInputDirection_Down:
+			Menu->NavigateDown();
+			break;
+		case EDAInputDirection::DAInputDirection_Left:
+			Menu->NavigateLeft();
+			break;
+		default:
+			break;
+		}
+		
+	}
+}
+
 void ADAMainGameMode::FadeIn()
 {
-	if (FadeInSequence) {
-		FMovieSceneSequencePlaybackSettings Settings;
-		SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), FadeInSequence, Settings);
-		if (SequencePlayer)
-			SequencePlayer->Play();
+	if (SequencePlayer) {
+		SequencePlayer->SetPlayRate(1.f);
+		SequencePlayer->Play();
 	}
 }
 
 void ADAMainGameMode::FadeOut()
 {
-	if (FadeOutSequence) {
-		FMovieSceneSequencePlaybackSettings Settings;
-		SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), FadeOutSequence, Settings);
-		if (SequencePlayer)
-			SequencePlayer->Play();
+	if (SequencePlayer) {
+		SequencePlayer->SetPlayRate(-1.f);
+		SequencePlayer->Play();
 	}
 }
 
 void ADAMainGameMode::TriggerRestEvent()
 {
 	FadeOut();
-	GetWorldTimerManager().SetTimer(RestTimerHandle, this, &ADAMainGameMode::RestartLevel, 3.f, false);
+	GetWorldTimerManager().SetTimer(RestTimerHandle, this, &ADAMainGameMode::OpenMenu, 3.f, false);
 }
 
 void ADAMainGameMode::TriggerDeathEvent()
@@ -96,6 +140,11 @@ void ADAMainGameMode::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass)
 		CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), NewWidgetClass);
 		if (CurrentWidget != nullptr) {
 			CurrentWidget->AddToViewport();
+			UDAWidget* DAW = Cast<UDAWidget>(CurrentWidget);
+			if (DAW) {
+				DAW->OnOpen();
+			}
+
 		}
 	}
 }

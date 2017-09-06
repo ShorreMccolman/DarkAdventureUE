@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "DAPlayerController.h"
 #include "DAMainGameMode.generated.h"
 
 /**
@@ -16,6 +17,14 @@ class ADAMainGameMode : public AGameModeBase
 	
 public:
 	ADAMainGameMode();
+
+	UFUNCTION()
+	void AcceptCurrent();
+
+	UFUNCTION()
+	void CancelCurrent();
+
+	void NavigateCurrent(EDAInputDirection Direction);
 
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void ChangeMenuWidget(TSubclassOf<class UUserWidget> NewWidgetClass);
@@ -32,20 +41,23 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void TriggerRestEvent();
 
+	UFUNCTION()
+	void OpenMenu();
+
 protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HUD")
 	TSubclassOf<class UUserWidget> StartingWidgetClass;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HUD")
+	TSubclassOf<class UUserWidget> MenuWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
 	class UUserWidget* CurrentWidget;
 
 	UPROPERTY()
 	class ULevelSequence* FadeInSequence;
-
-	UPROPERTY()
-	class ULevelSequence* FadeOutSequence;
 
 	UPROPERTY()
 	class ULevelSequencePlayer* SequencePlayer;
