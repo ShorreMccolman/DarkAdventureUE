@@ -44,7 +44,7 @@ public:
 
 protected:
 	UPROPERTY()
-	class ADAMainGameMode* GameMode;
+	class ADAGameMode* GameMode;
 
 	UPROPERTY()
 	class ADAPlayer* DACharacter;
@@ -61,12 +61,11 @@ protected:
 	UPROPERTY()
 	bool IsLocked;
 
-private:
 	UFUNCTION()
-	void PressStart();
+	virtual void PressStart();
 
 	UFUNCTION()
-	void PressInteract();
+	virtual void PressInteract();
 
 	UFUNCTION()
 	void PressRun();
@@ -79,15 +78,6 @@ private:
 
 	UFUNCTION()
 	void PressHeal();
-
-	UFUNCTION()
-	void PressAttack();
-
-	UFUNCTION()
-	void PressStrongAttack();
-
-	UFUNCTION()
-	void PressLock();
 
 	UFUNCTION()
 	void PressDUp();

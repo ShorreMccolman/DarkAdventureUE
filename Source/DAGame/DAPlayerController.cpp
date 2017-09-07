@@ -3,7 +3,7 @@
 #include "DAPlayerController.h"
 #include "DAPlayer.h"
 #include "Components/InputComponent.h"
-#include "DAMainGameMode.h"
+#include "DAGameMode.h"
 
 void ADAPlayerController::SetupInputComponent()
 {
@@ -17,14 +17,8 @@ void ADAPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("Interact", IE_Pressed, this, &ADAPlayerController::PressInteract);
 	InputComponent->BindAction("Run", IE_Pressed, this, &ADAPlayerController::PressRun);
-	InputComponent->BindAction("Run", IE_Released, this, &ADAPlayerController::ReleaseRun);
-	InputComponent->BindAction("Heal", IE_Pressed, this, &ADAPlayerController::PressHeal);
 	InputComponent->BindAction("Use", IE_Pressed, this, &ADAPlayerController::PressUse);
 
-	InputComponent->BindAction("Attack", IE_Pressed, this, &ADAPlayerController::PressAttack);
-	InputComponent->BindAction("StrongAttack", IE_Pressed, this, &ADAPlayerController::PressStrongAttack);
-
-	InputComponent->BindAction("Lock", IE_Pressed, this, &ADAPlayerController::PressLock);
 	InputComponent->BindAction("DUP", IE_Pressed, this, &ADAPlayerController::PressDUp);
 	InputComponent->BindAction("DRIGHT", IE_Pressed, this, &ADAPlayerController::PressDRight);
 	InputComponent->BindAction("DDOWN", IE_Pressed, this, &ADAPlayerController::PressDDown);
@@ -33,8 +27,9 @@ void ADAPlayerController::SetupInputComponent()
 
 void ADAPlayerController::BeginPlay()
 {
-	DACharacter = Cast<ADAPlayer>(GetPawn());
-	GameMode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
+	Super::BeginPlay();
+
+	GameMode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
 }
 
 
@@ -42,28 +37,6 @@ void ADAPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	const float ForwardValue = GetInputAxisValue("MoveY");
-	const float RightValue = GetInputAxisValue("MoveX");
-
-	const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f); // Clamped to length 1
-
-	DACharacter->SetInputDirection(MoveDirection);
-
-	// Running Business
-	bool ShouldRun = false;
-	if (HoldingRun && RunBuffer == 0) {
-		ShouldRun = true;
-	}
-	if (RunBuffer > 0)
-		RunBuffer--;
-
-	if (ShouldRun) {
-		DACharacter->ConsumeStamina(8.f * DeltaTime);
-		if (DACharacter->GetCurrentStaminaPercent() == 0.f)
-			HoldingRun = false;
-	}
-
-	DACharacter->SetIsRunning(ShouldRun);
 }
 
 void ADAPlayerController::SetDAControlMode(EDAControlMode Mode)
@@ -76,7 +49,7 @@ void ADAPlayerController::PressStart()
 	switch (ControlMode)
 	{
 	case EDAControlMode::DAControlMode_Play:
-		GameMode->OpenStartMenu();
+		GameMode->StartButton();
 		break;
 	case EDAControlMode::DAControlMode_FullMenu:
 	case EDAControlMode::DAControlMode_PlayMenu:
@@ -101,16 +74,6 @@ void ADAPlayerController::PressInteract()
 	default:
 		break;
 	}
-}
-
-void ADAPlayerController::PressAttack()
-{
-	DACharacter->TryAttack();
-}
-
-void ADAPlayerController::PressStrongAttack()
-{
-	DACharacter->TryStrongAttack();
 }
 
 void ADAPlayerController::PressRun()
@@ -156,11 +119,6 @@ void ADAPlayerController::PressUse()
 void ADAPlayerController::PressHeal()
 {
 	
-}
-
-void ADAPlayerController::PressLock()
-{
-	DACharacter->ToggleLock();
 }
 
 void ADAPlayerController::PressDUp()
