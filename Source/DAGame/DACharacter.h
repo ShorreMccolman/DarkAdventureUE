@@ -82,6 +82,8 @@ protected:
 	
 	virtual void OnCharacterDeath();
 
+	void EquipWeapon(FString AssetPath, FName SocketName);
+
 	UFUNCTION(BlueprintCallable)
 	void AddPotentialTarget(class ADACharacter *Target);
 

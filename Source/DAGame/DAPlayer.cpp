@@ -9,6 +9,9 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "DAPlayerAnimInstance.h"
 #include "DAInteractable.h"
+#include "DAWeaponBase.h"
+
+#include "Blueprint/BlueprintSupport.h"
 
 
 // Sets default values
@@ -45,6 +48,7 @@ void ADAPlayer::BeginPlay()
 	if (PlayerStart) {
 		Origin = PlayerStart->GetActorLocation();
 	}
+	EquipWeapon("Blueprint'/Game/Weapons/BP_DA2HWeapon.BP_DA2HWeapon'", "RightHandSocket");
 }
 
 // Called every frame

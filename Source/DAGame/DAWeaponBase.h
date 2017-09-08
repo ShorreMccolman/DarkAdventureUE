@@ -25,6 +25,12 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetCurrentDamage(FDACharacterAttributes OwnerAttributes, FDACharacterAttributes TargetAttributes);
 
+	UFUNCTION()
+	void SetDAOwner(class ADACharacter* TheOwner);
+
+	UFUNCTION()
+	TSubclassOf<class UAnimInstance> GetAnimBP() const;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -45,5 +51,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ADACharacter* DAOwner;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+	TSubclassOf<class UAnimInstance> AnimationBPClass;
 	
 };

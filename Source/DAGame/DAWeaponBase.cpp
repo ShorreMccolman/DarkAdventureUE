@@ -3,6 +3,7 @@
 #include "DAWeaponBase.h"
 #include "Components/BoxComponent.h"
 #include "DACharacter.h"
+#include "Animation/AnimInstance.h"
 
 // Sets default values
 ADAWeaponBase::ADAWeaponBase()
@@ -27,6 +28,11 @@ void ADAWeaponBase::Tick(float DeltaTime)
 
 }
 
+void ADAWeaponBase::SetDAOwner(class ADACharacter* TheOwner)
+{
+	DAOwner = TheOwner;
+}
+
 void ADAWeaponBase::DisableCollision()
 {
 	if (BoxCollider) {
@@ -48,4 +54,9 @@ float ADAWeaponBase::GetCurrentDamage(FDACharacterAttributes OwnerAttributes, FD
 	Damage +=  OwnerAttributes.Strength * StrengthModifier + OwnerAttributes.Dexterity * DexModifier;
 
 	return BaseDamage;
+}
+
+TSubclassOf<UAnimInstance> ADAWeaponBase::GetAnimBP() const
+{
+	return AnimationBPClass;
 }

@@ -78,6 +78,32 @@ void ADACharacter::OnCharacterDeath()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+void ADACharacter::EquipWeapon(FString AssetPath, FName SocketName)
+{
+	if (Weapon) {
+		Weapon->Destroy();
+		Weapon = nullptr;
+	}
+
+	FStringAssetReference WpnRef(AssetPath);
+	UObject* WpnObj = WpnRef.ResolveObject();
+	if (WpnObj) {
+		UBlueprint* Wpn_BP = Cast<UBlueprint>(WpnObj);
+		if (Wpn_BP) {
+			FVector Location(0.f, 0.f, 0.f);
+			FRotator Rotation(0.f, 0.f, 0.f);
+			FActorSpawnParameters SpawnInfo;
+			Weapon = GetWorld()->SpawnActor<ADAWeaponBase>(Wpn_BP->GeneratedClass, Location, Rotation, SpawnInfo);
+			if (Weapon) {
+				Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, SocketName);
+				Weapon->DisableCollision();
+				Weapon->SetDAOwner(this);
+				GetMesh()->SetAnimInstanceClass(Weapon->GetAnimBP());
+			}
+		}
+	}
+}
+
 float ADACharacter::GetCurrentSpeed() const
 {
 	return Speed;

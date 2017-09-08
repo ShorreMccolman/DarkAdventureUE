@@ -6,6 +6,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "Components/WidgetComponent.h"
+#include "DAWeaponBase.h"
+#include "Animation/AnimInstance.h"
 
 
 // Sets default values
@@ -25,6 +27,8 @@ void ADAEnemy::BeginPlay()
 	
 	Origin = GetActorLocation();
 	ShowDetails(false);
+
+	EquipWeapon("Blueprint'/Game/Weapons/BP_MutantClawWeapon.BP_MutantClawWeapon'", "LeftHandSocket");
 }
 
 // Called every frame
