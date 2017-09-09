@@ -69,6 +69,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ConsumeStamina(float Amount);
 
+	UFUNCTION(BlueprintCallable)
+	void EquipWeapon(FName ID, FName SocketName);
+
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE FDACharacterAttributes GetAttributes() const { return Attributes; };
 
@@ -81,8 +84,6 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	
 	virtual void OnCharacterDeath();
-
-	void EquipWeapon(FString AssetPath, FName SocketName);
 
 	UFUNCTION(BlueprintCallable)
 	void AddPotentialTarget(class ADACharacter *Target);

@@ -49,14 +49,14 @@ struct FDAStack
 
 private:
 	UPROPERTY()
-		TArray<UDAWidget*> Stack;
+	TArray<UDAWidget*> Stack;
 };
 
 /**
  * 
  */
 UCLASS()
-class DAGAME_API ADAGameMode : public AGameModeBase
+class ADAGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
@@ -95,8 +95,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void FadeOut();
 
+	UFUNCTION()
+	FORCEINLINE class UDAItemManager* GetItemManager() const { return ItemManager; }
+
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UDAItemManager* ItemManager;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
 	FDAStack MenuStack;

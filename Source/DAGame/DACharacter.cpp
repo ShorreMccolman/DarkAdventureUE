@@ -11,8 +11,10 @@
 #include "DAWeaponBase.h"
 #include "AI/Navigation/NavigationSystem.h"
 #include "AI/Navigation/NavigationPath.h"
-
+#include "DAGameMode.h"
 #include "GameFramework/PlayerStart.h"
+#include "DAItemManager.h"
+#include "DAItem.h"
 
 
 // Sets default values
@@ -78,27 +80,28 @@ void ADACharacter::OnCharacterDeath()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-void ADACharacter::EquipWeapon(FString AssetPath, FName SocketName)
+void ADACharacter::EquipWeapon(FName ID, FName SocketName)
 {
 	if (Weapon) {
 		Weapon->Destroy();
 		Weapon = nullptr;
 	}
 
-	FStringAssetReference WpnRef(AssetPath);
-	UObject* WpnObj = WpnRef.ResolveObject();
-	if (WpnObj) {
-		UBlueprint* Wpn_BP = Cast<UBlueprint>(WpnObj);
-		if (Wpn_BP) {
+	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
+	UDAItemManager* IM = Mode->GetItemManager();
+	if (IM) {
+		UDAItem* Item = IM->GetItemByID(ID);
+		if (Item) {
 			FVector Location(0.f, 0.f, 0.f);
 			FRotator Rotation(0.f, 0.f, 0.f);
 			FActorSpawnParameters SpawnInfo;
-			Weapon = GetWorld()->SpawnActor<ADAWeaponBase>(Wpn_BP->GeneratedClass, Location, Rotation, SpawnInfo);
+			Weapon = GetWorld()->SpawnActor<ADAWeaponBase>(Item->ObjClass, Location, Rotation, SpawnInfo);
 			if (Weapon) {
 				Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, SocketName);
 				Weapon->DisableCollision();
 				Weapon->SetDAOwner(this);
 				GetMesh()->SetAnimInstanceClass(Weapon->GetAnimBP());
+				Animation = Cast<UDAPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 			}
 		}
 	}

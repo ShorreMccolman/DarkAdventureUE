@@ -48,7 +48,7 @@ void ADAPlayer::BeginPlay()
 	if (PlayerStart) {
 		Origin = PlayerStart->GetActorLocation();
 	}
-	EquipWeapon("Blueprint'/Game/Weapons/BP_DA2HWeapon.BP_DA2HWeapon'", "RightHandSocket");
+	EquipWeapon("Hammer", "RightHandSocket");
 }
 
 // Called every frame

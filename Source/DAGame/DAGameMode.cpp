@@ -12,11 +12,14 @@
 #include "EngineUtils.h" 
 #include "DAWidget.h"
 #include "LevelSequencePlayer.h"
+#include "DAItemManager.h"
 
 ADAGameMode::ADAGameMode()
 {
 	if (!PlayerControllerClass)
 		PlayerControllerClass = ADAPlayerController::StaticClass();
+
+	ItemManager = CreateDefaultSubobject<UDAItemManager>(TEXT("ItemManager"));
 }
 
 void ADAGameMode::BeginPlay()

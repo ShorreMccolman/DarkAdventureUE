@@ -28,7 +28,7 @@ void ADAEnemy::BeginPlay()
 	Origin = GetActorLocation();
 	ShowDetails(false);
 
-	EquipWeapon("Blueprint'/Game/Weapons/BP_MutantClawWeapon.BP_MutantClawWeapon'", "LeftHandSocket");
+	EquipWeapon("Claw", "LeftHandSocket");
 }
 
 // Called every frame
