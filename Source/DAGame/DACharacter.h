@@ -54,6 +54,9 @@ public:
 	UFUNCTION()
 	void TryStrongAttack();
 
+	UFUNCTION()
+	void TryHeal();
+
 	UFUNCTION(BlueprintCallable)
 	void GetHit(float Damage);    // Set the incoming damage from the weapon hit and trigger animation
 

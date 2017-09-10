@@ -32,8 +32,5 @@ public:
 	EDAItemType ItemType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<AActor> ActorClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UClass* ObjClass;
 };

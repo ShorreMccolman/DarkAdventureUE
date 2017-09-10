@@ -118,7 +118,17 @@ void ADAPlayerController::PressUse()
 
 void ADAPlayerController::PressHeal()
 {
-	
+	switch (ControlMode)
+	{
+	case EDAControlMode::DAControlMode_Play:
+		DACharacter->TryHeal();
+		break;
+	case EDAControlMode::DAControlMode_FullMenu:
+	case EDAControlMode::DAControlMode_PlayMenu:
+		break;
+	default:
+		break;
+	}
 }
 
 void ADAPlayerController::PressDUp()
