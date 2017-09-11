@@ -21,6 +21,9 @@ public:
 	void ResetCharacter();
 
 	UFUNCTION()
+	void KillCharacter();
+
+	UFUNCTION()
 	void DamageCharacter();
 
 	UPROPERTY(BlueprintReadWrite)

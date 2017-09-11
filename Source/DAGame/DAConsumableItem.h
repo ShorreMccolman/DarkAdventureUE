@@ -16,5 +16,8 @@ class UDAConsumableItem : public UDAItem
 
 public:
 	UDAConsumableItem();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int MaxQuantity;
 	
 };

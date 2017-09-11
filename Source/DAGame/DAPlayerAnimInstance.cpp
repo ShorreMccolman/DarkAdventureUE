@@ -21,6 +21,12 @@ void UDAPlayerAnimInstance::DamageCharacter()
 	PlayDamageMontage();
 }
 
+void UDAPlayerAnimInstance::KillCharacter()
+{
+	IsDead = true;
+	NextAnimation = "Death";
+}
+
 void UDAPlayerAnimInstance::SetupNextAnimationUnique(FString AnimationName)
 {
 	if (NextAnimation == "" && CurrentAnimation == "")

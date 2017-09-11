@@ -64,4 +64,9 @@ struct FDACharacterAttributes
 	{
 		CurStamina = FMath::Clamp<float>(CurStamina + amount, 0.f, MaxStamina);
 	}
+
+	void AdjustCurrentHealth(float amount)
+	{
+		CurHealth = FMath::Clamp<float>(CurHealth + amount, 0.f, MaxHealth);
+	}
 };

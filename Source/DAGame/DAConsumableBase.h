@@ -18,6 +18,12 @@ public:
 	UFUNCTION()
 	void Activate();
 
+	UFUNCTION()
+	void SetDAOwner(class ADACharacter* Character);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Potency;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -25,16 +31,28 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool DoesRepeat;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TimeStep;
+
 	UPROPERTY(BlueprintReadWrite)
-	float CurrentFill;
+	float Progress;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float TargetFill;
+	float Duration;
+
+	UPROPERTY(BlueprintReadWrite)
+	class ADACharacter* DAOwner;
 
 	UPROPERTY()
 	FTimerHandle LifetimeHandle;
-	
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnActivate();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnTimer();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnFinish();
 
 };

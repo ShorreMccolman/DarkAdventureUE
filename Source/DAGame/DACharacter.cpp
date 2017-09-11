@@ -76,8 +76,7 @@ void ADACharacter::ShowDetails(bool ShouldShow)
 void ADACharacter::OnCharacterDeath()
 {
 	IsDead = true;
-	Animation->IsDead = true;
-	Animation->SetupNextAnimation("Death", true);
+	Animation->KillCharacter();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
@@ -104,6 +103,22 @@ void ADACharacter::EquipWeapon(FName ID, FName SocketName)
 				GetMesh()->SetAnimInstanceClass(Weapon->GetAnimBP());
 				Animation = Cast<UDAPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 			}
+		}
+	}
+}
+
+void ADACharacter::UseHealItem()
+{
+	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
+	UDAItemManager* IM = Mode->GetItemManager();
+	if (IM) {
+		UDAItem* Item = IM->GetItemByID("Heal");
+		if (Item) {
+			FVector Location(0.f, 0.f, 0.f);
+			FRotator Rotation(0.f, 0.f, 0.f);
+			FActorSpawnParameters SpawnInfo;
+			ADAConsumableBase* Consumable = GetWorld()->SpawnActor<ADAConsumableBase>(Item->ObjClass, Location, Rotation, SpawnInfo);
+			Consumable->SetDAOwner(this);
 		}
 	}
 }
@@ -176,16 +191,8 @@ void ADACharacter::TryStrongAttack()
 
 void ADACharacter::TryHeal()
 {
-	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
-	UDAItemManager* IM = Mode->GetItemManager();
-	if (IM) {
-		UDAItem* Item = IM->GetItemByID("Heal");
-		if (Item) {
-			FVector Location(0.f, 0.f, 0.f);
-			FRotator Rotation(0.f, 0.f, 0.f);
-			FActorSpawnParameters SpawnInfo;
-			ADAConsumableBase* Consumable = GetWorld()->SpawnActor<ADAConsumableBase>(Item->ObjClass, Location, Rotation, SpawnInfo);
-		}
+	if (Animation) {
+		Animation->SetupNextAnimation("Heal", false);
 	}
 }
 
@@ -249,9 +256,17 @@ float ADACharacter::GetCurrentStaminaPercent() const
 	return Attributes.CurStamina / Attributes.MaxStamina;
 }
 
+void ADACharacter::HealCharacter(float Amount)
+{
+	if (IsDead)
+		return;
+
+	Attributes.AdjustCurrentHealth(Amount);
+}
+
 void ADACharacter::ConsumeStamina(float Amount)
 {
-	Attributes.CurStamina = FMath::Max(0.f, Attributes.CurStamina - Amount);
+	Attributes.ConsumeStamina(Amount);
 	StaminaBuffer = 2.f;
 }
 
@@ -263,7 +278,9 @@ void ADACharacter::FaceTargetDirection(FVector Direction, float angle, float Del
 	FVector Cross = FVector::CrossProduct(Direction, GetActorForwardVector());
 	if (angle > 3.f) {
 		FVector Vect = GetActorRotation().Euler();
-		if (Cross.Z < 0)
+		if (FMath::Abs(Cross.Z) < 0.01f) {
+
+		} else if (Cross.Z < 0)
 			Vect += FVector(0.f, 0.f, TurnRate * DeltaTime);
 		else
 			Vect += FVector(0.f, 0.f, -TurnRate * DeltaTime);

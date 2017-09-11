@@ -8,7 +8,7 @@ ADAConsumableBase::ADAConsumableBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-
+	Progress = 0.f;
 }
 
 // Called when the game starts or when spawned
@@ -16,18 +16,24 @@ void ADAConsumableBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	CurrentFill = 0.f;
-	GetWorldTimerManager().SetTimer(LifetimeHandle, this, &ADAConsumableBase::Activate, 0.1f, DoesRepeat);
+	OnActivate();
+	GetWorldTimerManager().SetTimer(LifetimeHandle, this, &ADAConsumableBase::Activate, TimeStep, DoesRepeat);
 }
 
 void ADAConsumableBase::Activate()
 {
-	OnActivate();
+	OnTimer();
 
-	CurrentFill += 0.1f;
-	if (CurrentFill >= TargetFill) {
+	Progress += 0.01f;
+	if (Progress >= Duration) {
+		OnFinish();
 		GetWorldTimerManager().ClearTimer(LifetimeHandle);
 		this->Destroy();
 	}
+}
+
+void ADAConsumableBase::SetDAOwner(class ADACharacter* Character)
+{
+	DAOwner = Character;
 }
 

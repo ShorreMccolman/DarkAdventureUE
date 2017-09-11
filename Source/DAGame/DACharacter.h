@@ -58,6 +58,9 @@ public:
 	void TryHeal();
 
 	UFUNCTION(BlueprintCallable)
+	void UseHealItem();
+
+	UFUNCTION(BlueprintCallable)
 	void GetHit(float Damage);    // Set the incoming damage from the weapon hit and trigger animation
 
 	UFUNCTION(BlueprintCallable)
@@ -68,6 +71,9 @@ public:
 
 	UFUNCTION()
 	virtual void ShowTarget(bool ShouldTarget);
+
+	UFUNCTION(BlueprintCallable)
+	void HealCharacter(float Amount);
 
 	UFUNCTION(BlueprintCallable)
 	void ConsumeStamina(float Amount);
