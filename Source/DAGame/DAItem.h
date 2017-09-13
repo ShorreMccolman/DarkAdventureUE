@@ -26,6 +26,9 @@ public:
 	UDAItem();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int MaxQuantity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName DisplayName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

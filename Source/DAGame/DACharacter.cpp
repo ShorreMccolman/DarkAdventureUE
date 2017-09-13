@@ -59,6 +59,7 @@ void ADACharacter::Tick(float DeltaTime)
 void ADACharacter::Reset()
 {
 	IsDead = false;
+	Inventory.Reset();
 	Attributes.Reset();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	SetActorLocation(Origin);
@@ -78,6 +79,31 @@ void ADACharacter::OnCharacterDeath()
 	IsDead = true;
 	Animation->KillCharacter();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void ADACharacter::EquipSecondaryWeapon(FName ID, FName SocketName)
+{
+	if (Weapon2) {
+		Weapon2->Destroy();
+		Weapon2 = nullptr;
+	}
+
+	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
+	UDAItemManager* IM = Mode->GetItemManager();
+	if (IM) {
+		UDAItem* Item = IM->GetItemByID(ID);
+		if (Item) {
+			FVector Location(0.f, 0.f, 0.f);
+			FRotator Rotation(0.f, 0.f, 0.f);
+			FActorSpawnParameters SpawnInfo;
+			Weapon2 = GetWorld()->SpawnActor<ADAWeaponBase>(Item->ObjClass, Location, Rotation, SpawnInfo);
+			if (Weapon2) {
+				Weapon2->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, SocketName);
+				Weapon2->DisableCollision();
+				Weapon2->SetDAOwner(this);
+			}
+		}
+	}
 }
 
 void ADACharacter::EquipWeapon(FName ID, FName SocketName)
@@ -112,13 +138,14 @@ void ADACharacter::UseHealItem()
 	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
 	UDAItemManager* IM = Mode->GetItemManager();
 	if (IM) {
-		UDAItem* Item = IM->GetItemByID("Heal");
+		UDAItem* Item = IM->GetItemByID(Inventory.Heals.ID);
 		if (Item) {
 			FVector Location(0.f, 0.f, 0.f);
 			FRotator Rotation(0.f, 0.f, 0.f);
 			FActorSpawnParameters SpawnInfo;
 			ADAConsumableBase* Consumable = GetWorld()->SpawnActor<ADAConsumableBase>(Item->ObjClass, Location, Rotation, SpawnInfo);
 			Consumable->SetDAOwner(this);
+			Inventory.ConsumeHeal();
 		}
 	}
 }
@@ -191,7 +218,7 @@ void ADACharacter::TryStrongAttack()
 
 void ADACharacter::TryHeal()
 {
-	if (Animation) {
+	if (Animation && Inventory.HasHeal()) {
 		Animation->SetupNextAnimation("Heal", false);
 	}
 }

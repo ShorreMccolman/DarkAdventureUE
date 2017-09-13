@@ -10,7 +10,8 @@
 #include "DAPlayerAnimInstance.h"
 #include "DAInteractable.h"
 #include "DAWeaponBase.h"
-
+#include "DAPlayerSave.h"
+#include "Kismet/GameplayStatics.h"
 #include "Blueprint/BlueprintSupport.h"
 
 
@@ -38,17 +39,52 @@ ADAPlayer::ADAPlayer()
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 }
 
+void ADAPlayer::LoadPlayer()
+{
+	PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::LoadGameFromSlot("DA_Default", 0));
+
+	if (!PlayerSave) {
+		PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::CreateSaveGameObject(UDAPlayerSave::StaticClass()));
+		if (PlayerStart) {
+			PlayerSave->Position = PlayerStart->GetActorLocation();
+			PlayerSave->Facing = PlayerStart->GetActorForwardVector();
+		}
+	}
+	Attributes = PlayerSave->Attributes;
+	Inventory = PlayerSave->Inventory;
+	TargetDirection = PlayerSave->Facing;
+	SetActorLocation(PlayerSave->Position);
+
+}
+
+void ADAPlayer::SavePlayer()
+{
+	if(!PlayerSave) {
+		PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::CreateSaveGameObject(UDAPlayerSave::StaticClass()));
+	}
+
+	PlayerSave->Attributes = Attributes;
+	PlayerSave->Inventory = Inventory;
+	PlayerSave->Position = GetActorLocation();
+	PlayerSave->Facing = GetActorForwardVector();
+
+	UGameplayStatics::SaveGameToSlot(PlayerSave, "DA_Default", 0);
+}
+
 // Called when the game starts or when spawned
 void ADAPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	LoadPlayer();
 
 	TargetDirection = GetActorForwardVector();
 
 	if (PlayerStart) {
 		Origin = PlayerStart->GetActorLocation();
 	}
-	EquipWeapon("Hammer", "RightHandSocket");
+	EquipWeapon("Sword", "RightHandSocket");
+	//EquipSecondaryWeapon("Shield", "LeftHandShield");
 }
 
 // Called every frame
@@ -72,7 +108,7 @@ void ADAPlayer::Tick(float DeltaTime)
 void ADAPlayer::Reset()
 {
 	Super::Reset();
-
+	SavePlayer();
 }
 
 void ADAPlayer::TryInteract()

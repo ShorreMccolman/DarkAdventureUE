@@ -42,6 +42,10 @@ void ADAMainGameMode::ShowHUDWidget(bool ShouldShow)
 
 void ADAMainGameMode::StartButton()
 {
+	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (Player) {
+		Player->SavePlayer();
+	}
 	AddMenu(StartMenuWidgetClass);
 }
 

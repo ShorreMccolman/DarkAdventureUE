@@ -16,6 +16,11 @@ public:
 	ADAPlayer();
 
 	UFUNCTION()
+	void LoadPlayer();
+	UFUNCTION()
+	void SavePlayer();
+
+	UFUNCTION()
 	virtual void Reset() override;
 
 	UFUNCTION()
@@ -39,6 +44,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	class APlayerStart* PlayerStart;
+
+	UPROPERTY()
+	class UDAPlayerSave* PlayerSave;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ADAInteractable* CurrentInteractable;

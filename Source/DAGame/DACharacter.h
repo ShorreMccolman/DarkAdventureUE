@@ -81,6 +81,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EquipWeapon(FName ID, FName SocketName);
 
+	UFUNCTION(BlueprintCallable)
+	void EquipSecondaryWeapon(FName ID, FName SocketName);
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int GetCurrentHeals() const { return Inventory.Heals.Quantity; }
+
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE FDACharacterAttributes GetAttributes() const { return Attributes; };
 
@@ -142,6 +148,9 @@ protected:
 	UPROPERTY()
 	FDACharacterAttributes Attributes;
 
+	UPROPERTY()
+	FDACharacterInventory Inventory;
+
 	UPROPERTY(BlueprintReadWrite)
 	class ADACharacter* TargetEnemy;
 
@@ -150,6 +159,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class ADAWeaponBase* Weapon;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class ADAWeaponBase* Weapon2;
 
 	UPROPERTY()
 	float IncomingDamage;
