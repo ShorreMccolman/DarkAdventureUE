@@ -2,18 +2,22 @@
 
 #include "DAWidget.h"
 #include "DAButton.h"
+#include "DASelectable.h"
 #include "WidgetNavigation.h"
 
 void UDAWidget::Accept()
 {
-	if (HighlightedButton) {
-		HighlightedButton->OnClicked.Broadcast();
+	if (CurrentHighlight) {
+		IDASelectable* TheInterface = Cast<IDASelectable>(CurrentHighlight);
+		if (TheInterface) {
+			TheInterface->Execute_OnSelect(CurrentHighlight);
+		}
 	}
 }
 
 void UDAWidget::OnOpen()
 {
-	SetHighlightedButton(DefaultSelection);
+	SetHighlight(DefaultSelection);
 }
 
 void UDAWidget::OnClose()
@@ -23,12 +27,12 @@ void UDAWidget::OnClose()
 
 void UDAWidget::NavigateUp()
 {
-	if (HighlightedButton) {
-		UWidgetNavigation* Nav = HighlightedButton->Navigation;
+	if (CurrentHighlight) {
+		UWidgetNavigation* Nav = CurrentHighlight->Navigation;
 		if (Nav) {
-			UDAButton *Button = Cast<UDAButton>(Nav->Up.Widget.Get());
+			UWidget *Button = Nav->Up.Widget.Get();
 			if (Button) {
-				SetHighlightedButton(Button);
+				SetHighlight(Button);
 			}
 		}
 	}
@@ -36,12 +40,12 @@ void UDAWidget::NavigateUp()
 
 void UDAWidget::NavigateRight()
 {
-	if (HighlightedButton) {
-		UWidgetNavigation* Nav = HighlightedButton->Navigation;
+	if (CurrentHighlight) {
+		UWidgetNavigation* Nav = CurrentHighlight->Navigation;
 		if (Nav) {
-			UDAButton *Button = Cast<UDAButton>(Nav->Right.Widget.Get());
+			UWidget *Button = Nav->Right.Widget.Get();
 			if (Button) {
-				SetHighlightedButton(Button);
+				SetHighlight(Button);
 			}
 		}
 	}
@@ -49,12 +53,12 @@ void UDAWidget::NavigateRight()
 
 void UDAWidget::NavigateDown()
 {
-	if (HighlightedButton) {
-		UWidgetNavigation* Nav = HighlightedButton->Navigation;
+	if (CurrentHighlight) {
+		UWidgetNavigation* Nav = CurrentHighlight->Navigation;
 		if (Nav) {
-			UDAButton *Button = Cast<UDAButton>(Nav->Down.Widget.Get());
+			UWidget *Button = Nav->Down.Widget.Get();
 			if (Button) {
-				SetHighlightedButton(Button);
+				SetHighlight(Button);
 			}
 		}
 	}
@@ -62,23 +66,29 @@ void UDAWidget::NavigateDown()
 
 void UDAWidget::NavigateLeft()
 {
-	if (HighlightedButton) {
-		UWidgetNavigation* Nav = HighlightedButton->Navigation;
+	if (CurrentHighlight) {
+		UWidgetNavigation* Nav = CurrentHighlight->Navigation;
 		if (Nav) {
-			UDAButton *Button = Cast<UDAButton>(Nav->Left.Widget.Get());
+			UWidget *Button = Nav->Left.Widget.Get();
 			if (Button) {
-				SetHighlightedButton(Button);
+				SetHighlight(Button);
 			}
 		}
 	}
 }
 
-void UDAWidget::SetHighlightedButton(UDAButton* Button)
+void UDAWidget::SetHighlight(UWidget* Widget)
 {
-	if (HighlightedButton) {
-		HighlightedButton->SetBackgroundColor(FLinearColor::White);
+	if (CurrentHighlight) {
+		IDASelectable* TheInterface = Cast<IDASelectable>(CurrentHighlight);
+		if (TheInterface) {
+			TheInterface->Execute_UnHighlight(CurrentHighlight);
+		}
 	}
 
-	HighlightedButton = Button;
-	HighlightedButton->SetBackgroundColor(FLinearColor::Blue);
+	CurrentHighlight = Widget;
+	IDASelectable* TheInterface = Cast<IDASelectable>(CurrentHighlight);
+	if (TheInterface) {
+		TheInterface->Execute_Highlight(CurrentHighlight);
+	}
 }

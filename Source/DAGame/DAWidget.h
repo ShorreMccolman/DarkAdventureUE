@@ -19,7 +19,7 @@ class UDAWidget : public UUserWidget
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UDAButton* DefaultSelection;
+	class UWidget* DefaultSelection;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void Accept();
@@ -48,9 +48,9 @@ public:
 
 protected:
 	UFUNCTION()
-	void SetHighlightedButton(class UDAButton* Button);
+	void SetHighlight(class UWidget* Widget);
 
 	UPROPERTY()
-	class UDAButton* HighlightedButton;
+	class UWidget* CurrentHighlight;
 	
 };
