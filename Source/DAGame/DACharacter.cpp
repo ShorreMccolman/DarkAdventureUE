@@ -26,7 +26,7 @@ ADACharacter::ADACharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	IsDead = false;
+	bIsDead = false;
 }
 
 // Called when the game starts or when spawned
@@ -58,7 +58,7 @@ void ADACharacter::Tick(float DeltaTime)
 
 void ADACharacter::Reset()
 {
-	IsDead = false;
+	bIsDead = false;
 	Inventory.Reset();
 	Attributes.Reset();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -76,7 +76,7 @@ void ADACharacter::ShowDetails(bool ShouldShow)
 
 void ADACharacter::OnCharacterDeath()
 {
-	IsDead = true;
+	bIsDead = true;
 	Animation->KillCharacter();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
@@ -172,19 +172,19 @@ void ADACharacter::SetInputDirection(FVector Input)
 
 void ADACharacter::SetIsRunning(bool ShouldRun)
 {
-	Running = ShouldRun;
+	bIsRunning = ShouldRun;
 }
 
 void ADACharacter::SetCharacterRotationLock(bool Lock)
 {
-	LockRotation = Lock;
+	bShouldLockRotation = Lock;
 }
 
 void ADACharacter::GetHit(float Damage)
 {
-	if (!TakingDamage && !IsDead) {
+	if (!bIsTakingDamage && !bIsDead) {
 		IncomingDamage = Damage;
-		TakingDamage = true;
+		bIsTakingDamage = true;
 		if (Animation) {
 			Animation->DamageCharacter();
 		}
@@ -195,7 +195,7 @@ void ADACharacter::TriggerIncomingDamage()
 {
 	Attributes.CurHealth -= IncomingDamage;
 	IncomingDamage = 0;
-	TakingDamage = false;
+	bIsTakingDamage = false;
 
 	if (Attributes.CurHealth <= 0.f && Animation) {
 		OnCharacterDeath();
@@ -232,7 +232,7 @@ void ADACharacter::TryRoll()
 
 void ADACharacter::ToggleLock()
 {
-	bool ShouldLock = !Locked;
+	bool ShouldLock = !bIsTargetLocked;
 
 	if (ShouldLock)
 		UpdateBestTarget();
@@ -285,7 +285,7 @@ float ADACharacter::GetCurrentStaminaPercent() const
 
 void ADACharacter::HealCharacter(float Amount)
 {
-	if (IsDead)
+	if (bIsDead)
 		return;
 
 	Attributes.AdjustCurrentHealth(Amount);
@@ -299,7 +299,7 @@ void ADACharacter::ConsumeStamina(float Amount)
 
 void ADACharacter::FaceTargetDirection(FVector Direction, float angle, float DeltaTime)
 {
-	if (LockRotation)
+	if (bShouldLockRotation)
 		return;
 
 	FVector Cross = FVector::CrossProduct(Direction, GetActorForwardVector());
@@ -324,7 +324,7 @@ void ADACharacter::StandardMotion(float DeltaTime)
 	float speedModifier = 1.f;
 	float inputSquareMagnitude = InputDirection.SizeSquared();
 
-	if (Running) {
+	if (bIsRunning) {
 		speedModifier *= 5.f / 3.f;
 	}
 
@@ -337,7 +337,7 @@ void ADACharacter::StandardMotion(float DeltaTime)
 		Speed = InterpolateSpeed(Speed, 0.f, Decceleration, DeltaTime);
 	}
 
-	if (Locked && Speed < 300.f)
+	if (bIsTargetLocked && Speed < 300.f)
 		Speed = 300.f;
 
 	if (Animation)
@@ -417,14 +417,14 @@ void ADACharacter::HoldPosition(float DeltaTime)
 
 void ADACharacter::SetIsLocked(bool ShouldLock)
 {
-	Locked = ShouldLock;
+	bIsTargetLocked = ShouldLock;
 
 	if (TargetEnemy) {
-		TargetEnemy->ShowTarget(Locked);
+		TargetEnemy->ShowTarget(bIsTargetLocked);
 	}
 
 	if (Animation) {
-		Animation->SetIsLockedOn(Locked);
+		Animation->SetIsLockedOn(bIsTargetLocked);
 	}
 }
 

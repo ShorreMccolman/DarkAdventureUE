@@ -4,15 +4,32 @@
 
 void UDAButton::Highlight_Implementation()
 {
-	SetBackgroundColor(FLinearColor::Blue);
+	if (bIsDisabled) 
+	{
+		SetBackgroundColor(FLinearColor(0.15f, 0.15f, 0.8f));
+	} 
+	else 
+	{
+		SetBackgroundColor(FLinearColor::Blue);
+	}
 }
 
 void UDAButton::UnHighlight_Implementation()
 {
-	SetBackgroundColor(FLinearColor::White);
+	if (bIsDisabled)
+	{
+		SetBackgroundColor(FLinearColor(0.15f, 0.15f, 0.15f));
+	}
+	else
+	{
+		SetBackgroundColor(FLinearColor::White);
+	}
 }
 
 void UDAButton::OnSelect_Implementation()
 {
-	OnClicked.Broadcast();
+	if (!bIsDisabled) 
+	{
+		OnClicked.Broadcast();
+	}
 }

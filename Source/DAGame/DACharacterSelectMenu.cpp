@@ -3,11 +3,25 @@
 #include "DACharacterSelectMenu.h"
 #include "WidgetNavigation.h"
 #include "DACharacterProfileButton.h"
+#include "Kismet/GameplayStatics.h"
+#include "DAMasterSettings.h"
 
 UDACharacterSelectMenu::UDACharacterSelectMenu()
 {
 	CharacterNames = { "John","Jack","Steve","Tom" };
 	CurrentIndex = 0;
+}
+
+void UDACharacterSelectMenu::LoadCharacterNames()
+{
+	UDAMasterSettings* Settings = Cast<UDAMasterSettings>(UGameplayStatics::LoadGameFromSlot("Master", 0));
+	if (!Settings) {
+		Settings = Cast<UDAMasterSettings>(UGameplayStatics::CreateSaveGameObject(UDAMasterSettings::StaticClass()));
+		if (Settings) {
+			Settings->CharacterNames.Add("DA_Default");
+		}
+	}
+	CharacterNames = Settings->CharacterNames;
 }
 
 

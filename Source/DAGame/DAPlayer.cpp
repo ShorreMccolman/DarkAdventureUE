@@ -54,7 +54,6 @@ void ADAPlayer::LoadPlayer()
 	Inventory = PlayerSave->Inventory;
 	TargetDirection = PlayerSave->Facing;
 	SetActorLocation(PlayerSave->Position);
-
 }
 
 void ADAPlayer::SavePlayer()
@@ -92,10 +91,10 @@ void ADAPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsDead)
+	if (bIsDead)
 		return;
 
-	if (Locked && !Running) {
+	if (bIsTargetLocked && !bIsRunning) {
 		Animation->SetIsLockedOn(true);
 		LockedMotion(DeltaTime);
 	} 

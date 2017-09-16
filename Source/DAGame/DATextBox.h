@@ -3,22 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/Button.h"
+#include "Blueprint/UserWidget.h"
 #include "DASelectable.h"
-#include "DAButton.generated.h"
+#include "DATextBox.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UDAButton : public UButton, public IDASelectable
+class DAGAME_API UDATextBox : public UUserWidget, public IDASelectable
 {
 	GENERATED_BODY()
-	
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsDisabled;
 
+public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Highlight();
 	virtual void Highlight_Implementation() override;
@@ -30,5 +27,13 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnSelect();
 	virtual void OnSelect_Implementation() override;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBorder* Border;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UEditableTextBox* TextBox;
+	
 	
 };

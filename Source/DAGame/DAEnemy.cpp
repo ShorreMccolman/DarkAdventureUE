@@ -36,7 +36,7 @@ void ADAEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsDead)
+	if (bIsDead)
 		return;
 
 	if (TargetEnemy) {

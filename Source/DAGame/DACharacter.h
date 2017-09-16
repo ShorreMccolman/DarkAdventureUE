@@ -15,12 +15,20 @@ class DAGAME_API ADACharacter : public ACharacter
 public:
 	ADACharacter();
 
-	UFUNCTION()
-	virtual void Reset();
+protected:
+	UPROPERTY(EditAnywhere, Category = Motor)
+	float WalkSpeed;
 
-	UFUNCTION()
-	virtual void ShowDetails(bool ShouldShow);
+	UPROPERTY(EditAnywhere, Category = Motor)
+	float Acceleration;
 
+	UPROPERTY(EditAnywhere, Category = Motor)
+	float Decceleration;
+
+	UPROPERTY(EditAnywhere, Category = Motor)
+	float TurnRate;
+
+public:
 	UFUNCTION(BlueprintPure)
 	float GetCurrentSpeed() const;
 
@@ -36,55 +44,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetCurrentStaminaPercent() const;
 
-	UFUNCTION()
-	void SetInputDirection(FVector Input);
-
-	UFUNCTION()
-	void SetIsRunning(bool ShouldRun);
-
-	UFUNCTION(BlueprintCallable)
-	void SetCharacterRotationLock(bool Lock);
-
-	UFUNCTION()
-	void TryRoll();
-
-	UFUNCTION()
-	void TryAttack();
-
-	UFUNCTION()
-	void TryStrongAttack();
-
-	UFUNCTION()
-	void TryHeal();
-
-	UFUNCTION(BlueprintCallable)
-	void UseHealItem();
-
-	UFUNCTION(BlueprintCallable)
-	void GetHit(float Damage);    // Set the incoming damage from the weapon hit and trigger animation
-
-	UFUNCTION(BlueprintCallable)
-	virtual void TriggerIncomingDamage();	// Actually apply the incoming damage, called from animation blueprint
-
-	UFUNCTION()
-	void ToggleLock();
-
-	UFUNCTION()
-	virtual void ShowTarget(bool ShouldTarget);
-
-	UFUNCTION(BlueprintCallable)
-	void HealCharacter(float Amount);
-
-	UFUNCTION(BlueprintCallable)
-	void ConsumeStamina(float Amount);
-
-	UFUNCTION(BlueprintCallable)
-	void EquipWeapon(FName ID, FName SocketName);
-
-	UFUNCTION(BlueprintCallable)
-	void EquipSecondaryWeapon(FName ID, FName SocketName);
-
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	FORCEINLINE int GetCurrentHeals() const { return Inventory.Heals.Quantity; }
 
 	UFUNCTION(BlueprintPure)
@@ -93,12 +53,30 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE class ADAWeaponBase* GetEquippedWeapon() const { return Weapon; };
 
-protected:
-	virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaTime) override;
-	
-	virtual void OnCharacterDeath();
+	UFUNCTION(BlueprintCallable)
+	void SetCharacterRotationLock(bool Lock);
+
+	UFUNCTION(BlueprintCallable)
+	void UseHealItem();
+
+	UFUNCTION(BlueprintCallable)
+	void HealCharacter(float Amount);
+
+	UFUNCTION(BlueprintCallable)
+	void ConsumeStamina(float Amount);
+
+	UFUNCTION(BlueprintCallable)
+	void GetHit(float Damage);    // Set the incoming damage from the weapon hit and trigger animation
+
+	UFUNCTION(BlueprintCallable)
+	virtual void TriggerIncomingDamage();	// Actually apply the incoming damage, called from animation blueprint
+
+	UFUNCTION(BlueprintCallable)
+	void EquipWeapon(FName ID, FName SocketName);
+
+	UFUNCTION(BlueprintCallable)
+	void EquipSecondaryWeapon(FName ID, FName SocketName);
 
 	UFUNCTION(BlueprintCallable)
 	void AddPotentialTarget(class ADACharacter *Target);
@@ -106,77 +84,72 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void RemovePotentialTarget(class ADACharacter* Target);
 
-	UPROPERTY(EditAnywhere, Category = Motor)
-	float WalkSpeed;
 
-	UPROPERTY(EditAnywhere, Category = Motor)
-	float Acceleration;
+	void SetInputDirection(FVector Input);
 
-	UPROPERTY(EditAnywhere, Category = Motor)
-	float Decceleration;
+	void SetIsRunning(bool ShouldRun);
 
-	UPROPERTY(EditAnywhere, Category = Motor)
-	float TurnRate;
+	void ToggleLock();
 
-	UPROPERTY()
-	float Speed;
+	void TryRoll();
 
-	UPROPERTY()
+	void TryAttack();
+
+	void TryStrongAttack();
+
+	void TryHeal();
+
+	virtual void Reset();
+
+	virtual void ShowDetails(bool ShouldShow);
+
+	virtual void ShowTarget(bool ShouldTarget);
+
+protected:
+	bool bIsRunning;
+
+	bool bIsTargetLocked;
+
+	bool bShouldLockRotation;
+
+	bool bIsTakingDamage;
+
+	bool bIsDead;
+
+	float IncomingDamage;
+
 	FVector InputDirection;
 
-	UPROPERTY()
 	FVector TargetDirection;
 
-	UPROPERTY()
-	bool Running;
+	FVector Origin;
 
-	UPROPERTY()
-	bool Locked;
-
-	UPROPERTY(EditAnywhere)
-	bool LockRotation;
-
-	UPROPERTY()
-	bool TakingDamage;
-
-	UPROPERTY()
-	bool IsDead;
-
-	UPROPERTY()
-	float StaminaBuffer;
-
-	UPROPERTY()
 	FDACharacterAttributes Attributes;
 
-	UPROPERTY()
 	FDACharacterInventory Inventory;
 
-	UPROPERTY(BlueprintReadWrite)
-	class ADACharacter* TargetEnemy;
+	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TArray<class ADACharacter*> PotentialTargets;
+	virtual void Tick(float DeltaTime) override;
+	
+	virtual void OnCharacterDeath();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class ADAWeaponBase* Weapon;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class ADAWeaponBase* Weapon2;
 
 	UPROPERTY()
-	float IncomingDamage;
+	class ADACharacter* TargetEnemy;
+
+	UPROPERTY()
+	TArray<class ADACharacter*> PotentialTargets;
+
+	UPROPERTY()
+	class ADAWeaponBase* Weapon;
+
+	UPROPERTY()
+	class ADAWeaponBase* Weapon2;
 
 	UPROPERTY()
 	class UDAPlayerAnimInstance* Animation;
 
-	UPROPERTY()
-	float StrafeValue;
-
-	UPROPERTY()
-	float ApproachValue;
-
-	UPROPERTY()
-	FVector Origin;
 
 	void UpdateBestTarget();
 
@@ -193,5 +166,14 @@ protected:
 	float InterpolateSpeed(float Current, float Target, float Acceleration, float DeltaTime);
 
 	void SetIsLocked(bool ShouldLock);
+
+private:
+	float Speed;
+
+	float StrafeValue;
+
+	float ApproachValue;
+
+	float StaminaBuffer;
 	
 };

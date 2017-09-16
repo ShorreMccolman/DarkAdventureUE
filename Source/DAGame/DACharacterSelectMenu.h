@@ -29,6 +29,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void NavigateLeft() override;
 
+	UFUNCTION(BlueprintCallable)
+	void LoadCharacterNames();
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FString> CharacterNames;
