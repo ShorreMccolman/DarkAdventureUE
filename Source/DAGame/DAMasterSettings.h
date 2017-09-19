@@ -17,6 +17,13 @@ class DAGAME_API UDAMasterSettings : public USaveGame
 public:
 	UDAMasterSettings();
 
+	UPROPERTY()
+	bool bHasCharacter;
+
+	UPROPERTY()
+	FString CurrentCharacterName;
+
+	UPROPERTY()
 	TArray<FString> CharacterNames;
 	
 	

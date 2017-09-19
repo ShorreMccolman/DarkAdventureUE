@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "DACharacterAttributes.h"
 #include "DAGameInstance.generated.h"
 
 /**
@@ -14,6 +15,15 @@ class DAGAME_API UDAGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 	
+public:
+	UFUNCTION(BlueprintCallable)
+	void TryLoadGame(FString PlayerName);
+
+	UFUNCTION(BlueprintCallable)
+	void TryCreateNewGame(FString PlayerName, FDACharacterAttributes Attributes);
+
+	void CreatePlayerSave(FString PlayerName, FDACharacterAttributes Attributes);
+	class UDAPlayerSave* LoadCurrentPlayerSave();
 	
 private:
 

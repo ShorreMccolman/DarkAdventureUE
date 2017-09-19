@@ -2,9 +2,7 @@
 
 #include "DAMasterSettings.h"
 
-
 UDAMasterSettings::UDAMasterSettings()
 {
-	
+	bHasCharacter = false;
 }
-

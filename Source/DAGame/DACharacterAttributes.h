@@ -100,7 +100,7 @@ struct FDACharacterInventory
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FDACharacterAttributes 
 {
 	GENERATED_BODY()
@@ -119,36 +119,42 @@ struct FDACharacterAttributes
 	int MaxHeals;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int Vitality;
+	int HealthStat;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int Endurance;
+	int StaminaStat;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int Strength;
+	int DamageStat;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int Dexterity;
+	int PracticalStat;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int Intellect;
+	int ScientificStat;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int SpiritualStat;
 
 	FDACharacterAttributes()
 	{
-		Vitality = 10;
-		Endurance = 10;
-		Strength = 10;
-		Dexterity = 10;
-		Intellect = 10;
+		HealthStat = 10;
+		StaminaStat = 10;
+		DamageStat = 10;
+		PracticalStat = 10;
+		ScientificStat = 10;
+		SpiritualStat = 10;
 
 		MaxHeals = 5;
 
-		MaxHealth = 10.f * Vitality;
+		MaxHealth = 10.f * HealthStat;
 		CurHealth = MaxHealth;
 
-		MaxStamina = 10.f * Endurance;
+		MaxStamina = 10.f * StaminaStat;
 		CurStamina = MaxStamina;
 	}
 
 	void Reset()
 	{
+		MaxHealth = 10.f * HealthStat;
 		CurHealth = MaxHealth;
+
+		MaxStamina = 10.f * StaminaStat;
 		CurStamina = MaxStamina;
 	}
 

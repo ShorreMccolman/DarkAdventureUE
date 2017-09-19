@@ -5,34 +5,29 @@
 
 void UDACharacterAttributePanel::InitWithWorldviewAndMotive(EDAWorldview WorldView, EDAMotive Motive)
 {
-	HealthStatValue = 10;
-	StaminaStatValue = 10;
-	DamageStatValue = 10;
-	PracticalStatValue = 10;
-	ScientificStatValue = 10;
-	SpiritualStatValue = 10;
+	Attributes = FDACharacterAttributes();
 
 	switch (WorldView)
 	{
 	case EDAWorldview::DAWorldView_None:
 		break;
 	case EDAWorldview::DAWorldView_Spritual:
-		SpiritualStatValue += 3;
-		ScientificStatValue -= 2;
-		PracticalStatValue -= 1;
+		Attributes.SpiritualStat += 3;
+		Attributes.ScientificStat -= 2;
+		Attributes.PracticalStat -= 1;
 		break;
 	case EDAWorldview::DAWorldView_Practical:
-		HealthStatValue += 1;
-		StaminaStatValue += 1;
-		DamageStatValue += 1;
-		PracticalStatValue += 3;
-		ScientificStatValue -= 3;
-		SpiritualStatValue -= 3;
+		Attributes.HealthStat += 1;
+		Attributes.StaminaStat += 1;
+		Attributes.DamageStat += 1;
+		Attributes.PracticalStat += 3;
+		Attributes.ScientificStat -= 3;
+		Attributes.SpiritualStat -= 3;
 		break;
 	case EDAWorldview::DAWorldView_Scientific:
-		HealthStatValue -= 1;
-		SpiritualStatValue -= 3;
-		ScientificStatValue += 4;
+		Attributes.HealthStat -= 1;
+		Attributes.SpiritualStat -= 3;
+		Attributes.ScientificStat += 4;
 		break;
 	default:
 		break;
@@ -43,40 +38,42 @@ void UDACharacterAttributePanel::InitWithWorldviewAndMotive(EDAWorldview WorldVi
 	case EDAMotive::DAMotive_None:
 		break;
 	case EDAMotive::DAMotive_Duty:
-		HealthStatValue += 2;
-		StaminaStatValue += 2;
-		DamageStatValue -= 0;
-		PracticalStatValue -= 1;
-		ScientificStatValue -= 3;
-		SpiritualStatValue += 0;
+		Attributes.HealthStat += 2;
+		Attributes.StaminaStat += 2;
+		Attributes.DamageStat -= 0;
+		Attributes.PracticalStat -= 1;
+		Attributes.ScientificStat -= 3;
+		Attributes.SpiritualStat += 0;
 		break;
 	case EDAMotive::DAMotive_Glory:
-		HealthStatValue -= 1;
-		StaminaStatValue += 1;
-		DamageStatValue += 3;
-		PracticalStatValue -= 2;
-		ScientificStatValue -= 2;
-		SpiritualStatValue += 1;
+		Attributes.HealthStat -= 1;
+		Attributes.StaminaStat += 1;
+		Attributes.DamageStat += 3;
+		Attributes.PracticalStat -= 2;
+		Attributes.ScientificStat -= 2;
+		Attributes.SpiritualStat += 1;
 		break;
 	case EDAMotive::DAMotive_Profit:
-		HealthStatValue += 2;
-		StaminaStatValue -= 2;
-		DamageStatValue -= 1;
-		PracticalStatValue += 3;
-		ScientificStatValue += 1;
-		SpiritualStatValue -= 3;
+		Attributes.HealthStat += 2;
+		Attributes.StaminaStat -= 2;
+		Attributes.DamageStat -= 1;
+		Attributes.PracticalStat += 3;
+		Attributes.ScientificStat += 1;
+		Attributes.SpiritualStat -= 3;
 		break;
 	case EDAMotive::DAMotive_Power:
-		HealthStatValue += 2;
-		StaminaStatValue -= 2;
-		DamageStatValue += 2;
-		PracticalStatValue += 1;
-		ScientificStatValue += 1;
-		SpiritualStatValue += 1;
+		Attributes.HealthStat += 2;
+		Attributes.StaminaStat -= 2;
+		Attributes.DamageStat += 2;
+		Attributes.PracticalStat += 1;
+		Attributes.ScientificStat += 1;
+		Attributes.SpiritualStat += 1;
 		break;
 	default:
 		break;
 	}
+
+	Attributes.Reset();
 }
 
 FString UDACharacterAttributePanel::GetClassTextFromWorldviewAndMotive(EDAWorldview WorldView, EDAMotive Motive)

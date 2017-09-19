@@ -32,6 +32,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ResetLevel();
 
+	UFUNCTION(BlueprintCallable)
+	void QuitToMainMenu();
+
 	UFUNCTION()
 	virtual void StartButton() override;
 

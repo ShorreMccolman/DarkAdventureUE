@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "DACharacterAttributes.h"
 #include "DACharacterAttributePanel.generated.h"
 
 UENUM(BlueprintType)
@@ -35,22 +36,7 @@ class DAGAME_API UDACharacterAttributePanel : public UUserWidget
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int HealthStatValue;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int StaminaStatValue;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int DamageStatValue;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int PracticalStatValue;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int ScientificStatValue;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int SpiritualStatValue;
+	FDACharacterAttributes Attributes;
 
 	UFUNCTION(BlueprintCallable)
 	void InitWithWorldviewAndMotive(EDAWorldview WorldView, EDAMotive Motive);
@@ -59,6 +45,6 @@ public:
 	FString GetClassTextFromWorldviewAndMotive(EDAWorldview WorldView, EDAMotive Motive);
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE int GetCharacterLevel() const { return HealthStatValue + StaminaStatValue + DamageStatValue + PracticalStatValue + ScientificStatValue + SpiritualStatValue - 59; }
+	FORCEINLINE int GetCharacterLevel() const { return Attributes.HealthStat + Attributes.StaminaStat + Attributes.DamageStat + Attributes.PracticalStat + Attributes.ScientificStat + Attributes.SpiritualStat - 59; }
 	
 };

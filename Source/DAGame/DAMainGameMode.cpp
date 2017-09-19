@@ -40,6 +40,15 @@ void ADAMainGameMode::ShowHUDWidget(bool ShouldShow)
 	}
 }
 
+void ADAMainGameMode::QuitToMainMenu()
+{
+	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (Player) {
+		Player->SavePlayer();
+	}
+	UGameplayStatics::OpenLevel(this,"Menu");
+}
+
 void ADAMainGameMode::StartButton()
 {
 	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));

@@ -51,7 +51,7 @@ float ADAWeaponBase::GetCurrentDamage(FDACharacterAttributes OwnerAttributes, FD
 {
 	float Damage = BaseDamage;
 
-	Damage +=  OwnerAttributes.Strength * StrengthModifier + OwnerAttributes.Dexterity * DexModifier;
+	Damage +=  OwnerAttributes.DamageStat * StrengthModifier + OwnerAttributes.PracticalStat * DexModifier;
 
 	return BaseDamage;
 }

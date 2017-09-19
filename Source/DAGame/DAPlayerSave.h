@@ -17,6 +17,9 @@ class DAGAME_API UDAPlayerSave : public USaveGame
 
 public:
 	UPROPERTY()
+	FString PlayerName;
+
+	UPROPERTY()
 	FDACharacterAttributes Attributes;
 
 	UPROPERTY()
@@ -26,7 +29,10 @@ public:
 	FVector Position;
 
 	UPROPERTY()
-	FVector Facing;
+	FRotator Facing;
+
+	UPROPERTY()
+	bool bIsNewPlayer;
 	
 	
 };

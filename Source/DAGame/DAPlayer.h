@@ -15,9 +15,10 @@ public:
 	// Sets default values for this character's properties
 	ADAPlayer();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void LoadPlayer();
-	UFUNCTION()
+
+	UFUNCTION(BlueprintCallable)
 	void SavePlayer();
 
 	UFUNCTION()

@@ -11,6 +11,7 @@
 #include "DAInteractable.h"
 #include "DAWeaponBase.h"
 #include "DAPlayerSave.h"
+#include "DAGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/BlueprintSupport.h"
 
@@ -41,33 +42,49 @@ ADAPlayer::ADAPlayer()
 
 void ADAPlayer::LoadPlayer()
 {
-	PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::LoadGameFromSlot("DA_Default", 0));
+	UDAGameInstance* Instance = Cast<UDAGameInstance>(GetGameInstance());
+	if (Instance) {
+		PlayerSave = Instance->LoadCurrentPlayerSave();
+	}
 
 	if (!PlayerSave) {
-		PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::CreateSaveGameObject(UDAPlayerSave::StaticClass()));
+		UE_LOG(LogTemp, Warning, TEXT("LoadPlayer - Failed To load character save"));
+		return;
+	}
+
+	if (PlayerSave->bIsNewPlayer && PlayerStart) {
 		if (PlayerStart) {
 			PlayerSave->Position = PlayerStart->GetActorLocation();
-			PlayerSave->Facing = PlayerStart->GetActorForwardVector();
+			PlayerSave->Facing = PlayerStart->GetActorRotation();
 		}
 	}
+
 	Attributes = PlayerSave->Attributes;
 	Inventory = PlayerSave->Inventory;
-	TargetDirection = PlayerSave->Facing;
+	SetActorRotation(PlayerSave->Facing);
 	SetActorLocation(PlayerSave->Position);
 }
 
 void ADAPlayer::SavePlayer()
 {
 	if(!PlayerSave) {
-		PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::CreateSaveGameObject(UDAPlayerSave::StaticClass()));
+		UDAGameInstance* Instance = Cast<UDAGameInstance>(GetGameInstance());
+		if (Instance) {
+			PlayerSave = Instance->LoadCurrentPlayerSave();
+			if (!PlayerSave) {
+				UE_LOG(LogTemp, Warning, TEXT("SavePlayer - Failed To load character save"));
+				return;
+			}
+		}
 	}
 
 	PlayerSave->Attributes = Attributes;
 	PlayerSave->Inventory = Inventory;
 	PlayerSave->Position = GetActorLocation();
-	PlayerSave->Facing = GetActorForwardVector();
+	PlayerSave->Facing = GetActorRotation();
+	PlayerSave->bIsNewPlayer = false;
 
-	UGameplayStatics::SaveGameToSlot(PlayerSave, "DA_Default", 0);
+	UGameplayStatics::SaveGameToSlot(PlayerSave, PlayerSave->PlayerName, 0);
 }
 
 // Called when the game starts or when spawned

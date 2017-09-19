@@ -14,7 +14,8 @@ UDACharacterSelectMenu::UDACharacterSelectMenu()
 
 void UDACharacterSelectMenu::LoadCharacterNames()
 {
-	UDAMasterSettings* Settings = Cast<UDAMasterSettings>(UGameplayStatics::LoadGameFromSlot("Master", 0));
+	UDAMasterSettings* Settings = Cast<UDAMasterSettings>(UGameplayStatics::CreateSaveGameObject(UDAMasterSettings::StaticClass()));
+	Settings = Cast<UDAMasterSettings>(UGameplayStatics::LoadGameFromSlot("Master", 0));
 	if (!Settings) {
 		Settings = Cast<UDAMasterSettings>(UGameplayStatics::CreateSaveGameObject(UDAMasterSettings::StaticClass()));
 		if (Settings) {

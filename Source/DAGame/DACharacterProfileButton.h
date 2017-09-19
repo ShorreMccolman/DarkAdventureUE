@@ -16,6 +16,9 @@ class DAGAME_API UDACharacterProfileButton : public UUserWidget, public IDASelec
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString CharacterName;
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Highlight();
 	virtual void Highlight_Implementation() override;
