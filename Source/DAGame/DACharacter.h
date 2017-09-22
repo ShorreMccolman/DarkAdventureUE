@@ -53,6 +53,8 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE class ADAWeaponBase* GetEquippedWeapon() const { return Weapon; };
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> ProjectileClass;
 
 	UFUNCTION(BlueprintCallable)
 	void SetCharacterRotationLock(bool Lock);
@@ -71,6 +73,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void TriggerIncomingDamage();	// Actually apply the incoming damage, called from animation blueprint
+
+	UFUNCTION(BlueprintCallable)
+	void FireProjectile();
 
 	UFUNCTION(BlueprintCallable)
 	void EquipWeapon(FName ID, FName SocketName);

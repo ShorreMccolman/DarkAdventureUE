@@ -150,6 +150,14 @@ void ADACharacter::UseHealItem()
 	}
 }
 
+void ADACharacter::FireProjectile()
+{
+	FVector Location = Weapon->GetActorLocation();
+	FRotator Rotation = GetActorRotation();
+	FActorSpawnParameters SpawnInfo;
+	AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, Location, Rotation, SpawnInfo);
+}
+
 float ADACharacter::GetCurrentSpeed() const
 {
 	return Speed;

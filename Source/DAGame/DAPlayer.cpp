@@ -99,7 +99,7 @@ void ADAPlayer::BeginPlay()
 	if (PlayerStart) {
 		Origin = PlayerStart->GetActorLocation();
 	}
-	EquipWeapon("Sword", "RightHandSocket");
+	EquipWeapon("Sword", "RightHand");
 	//EquipSecondaryWeapon("Shield", "LeftHandShield");
 }
 
@@ -131,6 +131,11 @@ void ADAPlayer::TryInteract()
 {
 	if(CurrentInteractable)
 		CurrentInteractable->Interact();
+}
+
+void ADAPlayer::TryUse()
+{
+
 }
 
 void ADAPlayer::SetCurrentInteractable(ADAInteractable* Interactable)

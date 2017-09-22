@@ -29,14 +29,16 @@ void UDAPlayerAnimInstance::KillCharacter()
 
 void UDAPlayerAnimInstance::SetupNextAnimationUnique(FString AnimationName)
 {
-	if (NextAnimation == "" && CurrentAnimation == "")
+	if (NextAnimation == "" && CurrentAnimation == "") {
 		NextAnimation = AnimationName;
+	}
 }
 
 void UDAPlayerAnimInstance::SetupNextAnimation(FString AnimationName, bool ShouldOverride)
 {
-	if(NextAnimation == "" || ShouldOverride)
+	if (NextAnimation == "" || ShouldOverride) {
 		NextAnimation = AnimationName;
+	}
 }
 
 void UDAPlayerAnimInstance::ActivateAction()
