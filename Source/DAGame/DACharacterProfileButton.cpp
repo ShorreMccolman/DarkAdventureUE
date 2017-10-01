@@ -7,7 +7,7 @@
 
 void UDACharacterProfileButton::Highlight_Implementation()
 {
-	Button->SetBackgroundColor(FLinearColor::Blue);
+	Button->SetBackgroundColor(FLinearColor(1.0f, 0.35f, 0.2f));
 }
 
 void UDACharacterProfileButton::UnHighlight_Implementation()

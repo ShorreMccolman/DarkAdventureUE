@@ -5,6 +5,11 @@
 #include "DAPlayerSave.h"
 #include "DAMasterSettings.h"
 
+void UDAGameInstance::LoadMostRecentGame()
+{
+	UGameplayStatics::OpenLevel(this, "Main");
+}
+
 void UDAGameInstance::TryLoadGame(FString PlayerName)
 {
 	UDAMasterSettings* Settings = Cast<UDAMasterSettings>(UGameplayStatics::LoadGameFromSlot("Master", 0));

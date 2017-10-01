@@ -17,6 +17,9 @@ class DAGAME_API UDAGameInstance : public UGameInstance
 	
 public:
 	UFUNCTION(BlueprintCallable)
+	void LoadMostRecentGame();
+
+	UFUNCTION(BlueprintCallable)
 	void TryLoadGame(FString PlayerName);
 
 	UFUNCTION(BlueprintCallable)

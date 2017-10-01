@@ -8,7 +8,7 @@
 void UDATextBox::Highlight_Implementation()
 {
 	if (Border) {
-		Border->SetBrushColor(FLinearColor::Blue);
+		Border->SetBrushColor(FLinearColor(1.0f, 0.35f, 0.2f));
 	}
 }
 

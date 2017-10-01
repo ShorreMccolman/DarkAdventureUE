@@ -16,8 +16,8 @@ class UDAButton : public UButton, public IDASelectable
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsDisabled;
+	UFUNCTION(BlueprintCallable)
+	void SetDisabled(bool IsDisabled);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Highlight();
@@ -30,5 +30,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnSelect();
 	virtual void OnSelect_Implementation() override;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsDisabled;
 	
 };

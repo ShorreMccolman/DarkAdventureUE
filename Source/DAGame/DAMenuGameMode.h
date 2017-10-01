@@ -20,6 +20,9 @@ public:
 	UFUNCTION()
 	virtual void StartButton() override;
 
+	UFUNCTION(BlueprintPure)
+	bool HasSaveGame();
+
 protected:
 	virtual void BeginPlay() override;
 

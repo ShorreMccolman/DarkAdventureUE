@@ -2,6 +2,12 @@
 
 #include "DAButton.h"
 
+void UDAButton::SetDisabled(bool IsDisabled)
+{
+	bIsDisabled = IsDisabled;
+	SetBackgroundColor(bIsDisabled ? FLinearColor(0.15f, 0.15f, 0.15f) : FLinearColor::White);
+}
+
 void UDAButton::Highlight_Implementation()
 {
 	if (bIsDisabled) 
@@ -10,7 +16,7 @@ void UDAButton::Highlight_Implementation()
 	} 
 	else 
 	{
-		SetBackgroundColor(FLinearColor::Blue);
+		SetBackgroundColor(FLinearColor(1.0f, 0.35f, 0.2f));
 	}
 }
 
