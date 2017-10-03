@@ -2,6 +2,7 @@
 
 #include "DAMenuGameMode.h"
 #include "DAMasterSettings.h"
+#include "DAGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -14,6 +15,14 @@ void ADAMenuGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UGameInstance* Inst = UGameplayStatics::GetGameInstance(GetWorld());
+	if (Inst) {
+		UDAGameInstance* GI = Cast<UDAGameInstance>(Inst);
+		if (GI) {
+			GI->InitSettings();
+		}
+	}
+
 	AddMenu(MainWidgetClass);
 }
 
@@ -24,14 +33,15 @@ void ADAMenuGameMode::StartButton()
 
 bool ADAMenuGameMode::HasSaveGame()
 {
-	UDAMasterSettings* Settings = Cast<UDAMasterSettings>(UGameplayStatics::LoadGameFromSlot("Master", 0));
-	if (!Settings) {
-		UE_LOG(LogTemp, Warning, TEXT("Tried to load game but settings was not found!"))
-		return false;
-	}
-
-	if (Settings) {
-		return Settings->bHasCharacter;
+	UGameInstance* Inst = UGameplayStatics::GetGameInstance(GetWorld());
+	if (Inst) {
+		UDAGameInstance* GI = Cast<UDAGameInstance>(Inst);
+		if (GI) {
+			const UDAMasterSettings* Settings = GI->GetSettings();
+			if (Settings) {
+				return Settings->bHasCharacter;
+			}
+		}
 	}
 
 	return false;

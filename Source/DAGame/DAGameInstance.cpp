@@ -5,6 +5,27 @@
 #include "DAPlayerSave.h"
 #include "DAMasterSettings.h"
 
+void UDAGameInstance::InitSettings()
+{
+	USaveGame* Master = UGameplayStatics::LoadGameFromSlot("Master", 0);
+	if (!Master) {
+		Settings = Cast<UDAMasterSettings>(UGameplayStatics::CreateSaveGameObject(UDAMasterSettings::StaticClass()));
+		UE_LOG(LogTemp, Warning, TEXT("Created new master save file!"))
+		UGameplayStatics::SaveGameToSlot(Settings, "Master", 0);
+	}
+	else {
+		Settings = Cast<UDAMasterSettings>(Master);
+	}
+}
+
+const UDAMasterSettings* UDAGameInstance::GetSettings()
+{
+	if (!Settings)
+		InitSettings();
+
+	return Settings;
+}
+
 void UDAGameInstance::LoadMostRecentGame()
 {
 	UGameplayStatics::OpenLevel(this, "Main");
@@ -12,10 +33,8 @@ void UDAGameInstance::LoadMostRecentGame()
 
 void UDAGameInstance::TryLoadGame(FString PlayerName)
 {
-	UDAMasterSettings* Settings = Cast<UDAMasterSettings>(UGameplayStatics::LoadGameFromSlot("Master", 0));
 	if (!Settings) {
-		UE_LOG(LogTemp, Warning, TEXT("Tried to load game but settings was not found!"))
-		return;
+		InitSettings();
 	}
 
 	if (Settings) {
@@ -33,16 +52,14 @@ void UDAGameInstance::TryCreateNewGame(FString PlayerName, FDACharacterAttribute
 
 void UDAGameInstance::CreatePlayerSave(FString PlayerName, FDACharacterAttributes Attributes)
 {
-	UDAPlayerSave* PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::CreateSaveGameObject(UDAPlayerSave::StaticClass()));
+	PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::CreateSaveGameObject(UDAPlayerSave::StaticClass()));
 	PlayerSave->PlayerName = PlayerName;
 	PlayerSave->Attributes = Attributes;
 	PlayerSave->bIsNewPlayer = true;
 	UGameplayStatics::SaveGameToSlot(PlayerSave, PlayerName, 0);
 
-	UDAMasterSettings* Settings = Cast<UDAMasterSettings>(UGameplayStatics::LoadGameFromSlot("Master", 0));
 	if (!Settings) {
-		Settings = Cast<UDAMasterSettings>(UGameplayStatics::CreateSaveGameObject(UDAMasterSettings::StaticClass()));
-		UE_LOG(LogTemp, Warning, TEXT("Created new master save file!"))
+		InitSettings();
 	}
 
 	if (Settings) {
@@ -56,9 +73,12 @@ void UDAGameInstance::CreatePlayerSave(FString PlayerName, FDACharacterAttribute
 UDAPlayerSave* UDAGameInstance::LoadCurrentPlayerSave()
 {
 	FString CurrentName;
-	UDAMasterSettings* Settings = Cast<UDAMasterSettings>(UGameplayStatics::LoadGameFromSlot("Master", 0));
+	if (!Settings) {
+		InitSettings();
+	}
+
 	if (Settings) {
-		UDAPlayerSave* PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::CreateSaveGameObject(UDAPlayerSave::StaticClass()));
+		PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::CreateSaveGameObject(UDAPlayerSave::StaticClass()));
 		PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::LoadGameFromSlot(Settings->CurrentCharacterName, 0));
 
 		if (!PlayerSave) {
@@ -71,4 +91,18 @@ UDAPlayerSave* UDAGameInstance::LoadCurrentPlayerSave()
 		UE_LOG(LogTemp, Warning, TEXT("Could not find master settings"))
 	}
 	return nullptr;
+}
+
+void UDAGameInstance::DeletePlayerSave(FString PlayerName)
+{
+	if (!Settings) {
+		InitSettings();
+	}
+
+	if (Settings) {
+		Settings->CharacterNames.Remove(PlayerName);
+		UGameplayStatics::SaveGameToSlot(Settings, "Master", 0);
+	}
+
+	UGameplayStatics::DeleteGameInSlot(PlayerName, 0);
 }

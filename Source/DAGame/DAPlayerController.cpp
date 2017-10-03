@@ -120,6 +120,7 @@ void ADAPlayerController::PressUse()
 		break;
 	case EDAControlMode::DAControlMode_FullMenu:
 	case EDAControlMode::DAControlMode_PlayMenu:
+		GameMode->DeleteCurrent();
 		break;
 	default:
 		break;

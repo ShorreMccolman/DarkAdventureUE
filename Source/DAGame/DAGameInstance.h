@@ -26,9 +26,20 @@ public:
 	void TryCreateNewGame(FString PlayerName, FDACharacterAttributes Attributes);
 
 	void CreatePlayerSave(FString PlayerName, FDACharacterAttributes Attributes);
+
 	class UDAPlayerSave* LoadCurrentPlayerSave();
+
+	UFUNCTION(BlueprintCallable)
+	void DeletePlayerSave(FString PlayerName);
+
+	const class UDAMasterSettings* GetSettings();
+
+	void InitSettings();
 	
 private:
-
+	UPROPERTY()
+	class UDAMasterSettings* Settings;
+	UPROPERTY()
+	class UDAPlayerSave* PlayerSave;
 	
 };

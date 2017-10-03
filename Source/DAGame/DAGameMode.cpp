@@ -13,6 +13,7 @@
 #include "DAWidget.h"
 #include "LevelSequencePlayer.h"
 #include "DAItemManager.h"
+#include "DAConfirmPopup.h"
 
 ADAGameMode::ADAGameMode()
 {
@@ -40,6 +41,13 @@ void ADAGameMode::AcceptCurrent()
 {
 	if (MenuStack.Size() > 0) {
 		MenuStack.Peek()->Accept();
+	}
+}
+
+void ADAGameMode::DeleteCurrent()
+{
+	if (MenuStack.Size() > 0) {
+		MenuStack.Peek()->Delete();
 	}
 }
 
@@ -121,14 +129,14 @@ void ADAGameMode::ChangeMenu(TSubclassOf<UUserWidget> NewWidgetClass)
 	}
 }
 
-void ADAGameMode::AddMenu(TSubclassOf<UUserWidget> NewWidgetClass)
+UUserWidget* ADAGameMode::AddMenu(TSubclassOf<UUserWidget> NewWidgetClass)
 {
 	if (MenuStack.Size() > 0) {
 		UDAWidget* DAW = MenuStack.Peek();
 		if (DAW) {
 			if (DAW->StaticClass() == NewWidgetClass->GetSuperClass()) {
 				UE_LOG(LogTemp, Warning, TEXT("Already open"));
-				return;
+				return nullptr;
 			}
 		}
 	}
@@ -148,7 +156,23 @@ void ADAGameMode::AddMenu(TSubclassOf<UUserWidget> NewWidgetClass)
 				}
 			}
 		}
+		return CurrentMenuWidget;
 	}
+	return nullptr;
+}
+
+UUserWidget* ADAGameMode::AddConfirmationPopup(TSubclassOf<UDAConfirmPopup> NewPopupClass, FText Message, UDAWidget* ParentWidget)
+{
+	UUserWidget* Popup = AddMenu(NewPopupClass);
+	if (Popup) {
+		UDAConfirmPopup* CP = Cast<UDAConfirmPopup>(Popup);
+		if (CP) {
+			CP->ConfirmAction.BindUObject(ParentWidget, &UDAWidget::OnPopupConfirm);
+			CP->MainText->SetText(Message);
+		}
+	}
+
+	return Popup;
 }
 
 void ADAGameMode::HideCurrentMenu()
@@ -183,6 +207,24 @@ void ADAGameMode::CloseCurrentMenu(bool OpenPrevious)
 		}
 	}
 }
+
+void ADAGameMode::ClosePopup()
+{
+	if (MenuStack.Size() > 0) {
+		UDAWidget* Old = MenuStack.Pop();
+		Old->OnClose();
+		Old->RemoveFromViewport();
+	}
+
+	if (MenuStack.Size() == 0) {
+		ADAPlayerController* Controller = Cast<ADAPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		if (Controller) {
+			Controller->SetDAControlMode(EDAControlMode::DAControlMode_Play);
+		}
+	}
+}
+
+
 
 void ADAGameMode::CloseAllMenus()
 {

@@ -67,6 +67,9 @@ public:
 	void AcceptCurrent();
 
 	UFUNCTION()
+	void DeleteCurrent();
+
+	UFUNCTION()
 	void CancelCurrent();
 
 	UFUNCTION()
@@ -78,7 +81,10 @@ public:
 	void ChangeMenu(TSubclassOf<class UUserWidget> NewWidgetClass);
 
 	UFUNCTION(BlueprintCallable, Category = "HUD")
-	void AddMenu(TSubclassOf<class UUserWidget> NewWidgetClass);
+	class UUserWidget* AddMenu(TSubclassOf<class UUserWidget> NewWidgetClass);
+
+	UFUNCTION(BlueprintCallable, Category = "HUD")
+	class UUserWidget* AddConfirmationPopup(TSubclassOf<class UDAConfirmPopup> NewPopupClass, FText Message, UDAWidget* ParentWidget);
 
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void HideCurrentMenu();
@@ -88,6 +94,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void CloseAllMenus();
+
+	UFUNCTION(BlueprintCallable, Category = "HUD")
+	void ClosePopup();
 
 	UFUNCTION(BlueprintCallable)
 	void FadeIn();

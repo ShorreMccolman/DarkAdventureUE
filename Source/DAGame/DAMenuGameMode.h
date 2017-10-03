@@ -29,5 +29,4 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HUD")
 	TSubclassOf<class UUserWidget> MainWidgetClass;
 	
-	
 };

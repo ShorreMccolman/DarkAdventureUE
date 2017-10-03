@@ -25,6 +25,12 @@ public:
 	virtual void Accept();
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void OnPopupConfirm();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void Delete();
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void Cancel();
 
 	UFUNCTION(BlueprintCallable)
@@ -45,12 +51,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void NavigateLeft();
 
-
 protected:
 	UFUNCTION()
 	void SetHighlight(class UWidget* Widget);
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UWidget* CurrentHighlight;
 	
 };
