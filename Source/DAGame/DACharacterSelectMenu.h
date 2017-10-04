@@ -15,8 +15,6 @@ class DAGAME_API UDACharacterSelectMenu : public UDAWidget
 	GENERATED_BODY()
 
 public:
-	UDACharacterSelectMenu();
-
 	UFUNCTION(BlueprintCallable)
 	virtual void NavigateUp() override;
 
@@ -30,11 +28,11 @@ public:
 	virtual void NavigateLeft() override;
 
 	UFUNCTION(BlueprintCallable)
-	void LoadCharacterNames();
+	void LoadCharacterProfiles();
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FString> CharacterNames;
+	TArray<class UDAPlayerProfile*> CharacterProfiles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<class UDACharacterProfileButton*> CharacterButtons;

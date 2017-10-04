@@ -20,7 +20,7 @@ public:
 	void LoadMostRecentGame();
 
 	UFUNCTION(BlueprintCallable)
-	void TryLoadGame(FString PlayerName);
+	void TryLoadGame(FString PlayerID);
 
 	UFUNCTION(BlueprintCallable)
 	void TryCreateNewGame(FString PlayerName, FDACharacterAttributes Attributes);
@@ -28,6 +28,8 @@ public:
 	void CreatePlayerSave(FString PlayerName, FDACharacterAttributes Attributes);
 
 	class UDAPlayerSave* LoadCurrentPlayerSave();
+
+	class UDAPlayerProfile* LoadPlayerProfile(FString ID);
 
 	UFUNCTION(BlueprintCallable)
 	void DeletePlayerSave(FString PlayerName);
@@ -41,5 +43,7 @@ private:
 	class UDAMasterSettings* Settings;
 	UPROPERTY()
 	class UDAPlayerSave* PlayerSave;
+	UPROPERTY()
+	class UDAPlayerProfile* Profile;
 	
 };

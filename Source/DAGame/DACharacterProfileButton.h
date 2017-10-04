@@ -17,7 +17,7 @@ class DAGAME_API UDACharacterProfileButton : public UUserWidget, public IDASelec
 	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString CharacterName;
+	class UDAPlayerProfile* CharacterProfile;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Highlight();

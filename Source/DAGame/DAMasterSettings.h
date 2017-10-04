@@ -21,10 +21,10 @@ public:
 	bool bHasCharacter;
 
 	UPROPERTY()
-	FString CurrentCharacterName;
+	FString CurrentCharacterID;
 
 	UPROPERTY()
-	TArray<FString> CharacterNames;
+	TArray<FString> CharacterIDs;
 	
 	
 };

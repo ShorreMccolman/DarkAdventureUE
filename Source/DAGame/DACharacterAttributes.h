@@ -311,6 +311,11 @@ struct FDACharacterAttributes
 		CurStamina = MaxStamina;
 	}
 
+	int GetLevel() const
+	{
+		return HealthStat + StaminaStat + DamageStat + PracticalStat + ScientificStat + SpiritualStat - 59;
+	}
+
 
 	bool HasSufficientStamina(float amount) const
 	{

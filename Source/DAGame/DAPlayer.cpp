@@ -84,7 +84,7 @@ void ADAPlayer::SavePlayer()
 	PlayerSave->Facing = GetActorRotation();
 	PlayerSave->bIsNewPlayer = false;
 
-	UGameplayStatics::SaveGameToSlot(PlayerSave, PlayerSave->PlayerName, 0);
+	UGameplayStatics::SaveGameToSlot(PlayerSave, PlayerSave->ID, 0);
 }
 
 // Called when the game starts or when spawned

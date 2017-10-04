@@ -4,6 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DAPlayerSave.h"
 #include "DAMasterSettings.h"
+#include "DAPlayerProfile.h"
 
 void UDAGameInstance::InitSettings()
 {
@@ -31,14 +32,14 @@ void UDAGameInstance::LoadMostRecentGame()
 	UGameplayStatics::OpenLevel(this, "Main");
 }
 
-void UDAGameInstance::TryLoadGame(FString PlayerName)
+void UDAGameInstance::TryLoadGame(FString PlayerID)
 {
 	if (!Settings) {
 		InitSettings();
 	}
 
 	if (Settings) {
-		Settings->CurrentCharacterName = PlayerName;
+		Settings->CurrentCharacterID = PlayerID;
 		UGameplayStatics::SaveGameToSlot(Settings, "Master", 0);
 	}
 	UGameplayStatics::OpenLevel(this, "Main");
@@ -52,19 +53,33 @@ void UDAGameInstance::TryCreateNewGame(FString PlayerName, FDACharacterAttribute
 
 void UDAGameInstance::CreatePlayerSave(FString PlayerName, FDACharacterAttributes Attributes)
 {
+	FGuid guid = FGuid::NewGuid();
+	FString PlayerID = guid.ToString();
+
 	PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::CreateSaveGameObject(UDAPlayerSave::StaticClass()));
+	PlayerSave->ID = PlayerID;
 	PlayerSave->PlayerName = PlayerName;
 	PlayerSave->Attributes = Attributes;
 	PlayerSave->bIsNewPlayer = true;
-	UGameplayStatics::SaveGameToSlot(PlayerSave, PlayerName, 0);
+	UGameplayStatics::SaveGameToSlot(PlayerSave, PlayerID, 0);
+
+	Profile = Cast<UDAPlayerProfile>(UGameplayStatics::CreateSaveGameObject(UDAPlayerProfile::StaticClass()));
+	Profile->ID = PlayerID;
+	Profile->PlayerName = PlayerName;
+	Profile->Level = Attributes.GetLevel();
+	Profile->Worldview = Attributes.WorldView;
+	Profile->Motive = Attributes.Motive;
+	FString ProfID = FString(PlayerID);
+	ProfID.Append("-Prof");
+	UGameplayStatics::SaveGameToSlot(Profile, ProfID, 0);
 
 	if (!Settings) {
 		InitSettings();
 	}
 
 	if (Settings) {
-		Settings->CharacterNames.AddUnique(PlayerName);
-		Settings->CurrentCharacterName = PlayerName;
+		Settings->CharacterIDs.AddUnique(PlayerID);
+		Settings->CurrentCharacterID = PlayerID;
 		Settings->bHasCharacter = true;
 		UGameplayStatics::SaveGameToSlot(Settings, "Master", 0);
 	}
@@ -72,14 +87,13 @@ void UDAGameInstance::CreatePlayerSave(FString PlayerName, FDACharacterAttribute
 
 UDAPlayerSave* UDAGameInstance::LoadCurrentPlayerSave()
 {
-	FString CurrentName;
 	if (!Settings) {
 		InitSettings();
 	}
 
 	if (Settings) {
 		PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::CreateSaveGameObject(UDAPlayerSave::StaticClass()));
-		PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::LoadGameFromSlot(Settings->CurrentCharacterName, 0));
+		PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::LoadGameFromSlot(Settings->CurrentCharacterID, 0));
 
 		if (!PlayerSave) {
 			UE_LOG(LogTemp, Warning, TEXT("Could not find player save"))
@@ -93,6 +107,16 @@ UDAPlayerSave* UDAGameInstance::LoadCurrentPlayerSave()
 	return nullptr;
 }
 
+UDAPlayerProfile* UDAGameInstance::LoadPlayerProfile(FString ID)
+{
+	FString ProfID = FString(ID);
+	ProfID.Append("-Prof");
+
+	UDAPlayerProfile* Prof = Cast<UDAPlayerProfile>(UGameplayStatics::CreateSaveGameObject(UDAPlayerProfile::StaticClass()));
+	Prof = Cast<UDAPlayerProfile>(UGameplayStatics::LoadGameFromSlot(ProfID, 0));
+	return Prof;
+}
+
 void UDAGameInstance::DeletePlayerSave(FString PlayerName)
 {
 	if (!Settings) {
@@ -100,9 +124,10 @@ void UDAGameInstance::DeletePlayerSave(FString PlayerName)
 	}
 
 	if (Settings) {
-		Settings->CharacterNames.Remove(PlayerName);
+		Settings->CharacterIDs.Remove(PlayerName);
 		UGameplayStatics::SaveGameToSlot(Settings, "Master", 0);
 	}
-
 	UGameplayStatics::DeleteGameInSlot(PlayerName, 0);
+	FString ProfID = FString(PlayerName);
+	UGameplayStatics::DeleteGameInSlot(ProfID.Append("-Prof"), 0);
 }

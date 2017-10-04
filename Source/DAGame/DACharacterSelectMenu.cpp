@@ -5,24 +5,26 @@
 #include "DACharacterProfileButton.h"
 #include "Kismet/GameplayStatics.h"
 #include "DAMasterSettings.h"
+#include "DAGameInstance.h"
 
-UDACharacterSelectMenu::UDACharacterSelectMenu()
+void UDACharacterSelectMenu::LoadCharacterProfiles()
 {
-	CharacterNames = { "John","Jack","Steve","Tom" };
-	CurrentIndex = 0;
-}
-
-void UDACharacterSelectMenu::LoadCharacterNames()
-{
-	UDAMasterSettings* Settings = Cast<UDAMasterSettings>(UGameplayStatics::CreateSaveGameObject(UDAMasterSettings::StaticClass()));
-	Settings = Cast<UDAMasterSettings>(UGameplayStatics::LoadGameFromSlot("Master", 0));
-	if (!Settings) {
-		Settings = Cast<UDAMasterSettings>(UGameplayStatics::CreateSaveGameObject(UDAMasterSettings::StaticClass()));
-		if (Settings) {
-			Settings->CharacterNames.Add("DA_Default");
+	UGameInstance* Inst = UGameplayStatics::GetGameInstance(GetWorld());
+	if (Inst) {
+		UDAGameInstance* GI = Cast<UDAGameInstance>(Inst);
+		if (GI) {
+			const UDAMasterSettings* Settings = GI->GetSettings();
+			if (Settings) {
+				CharacterProfiles.Empty();
+				for (int i = 0; i < Settings->CharacterIDs.Num(); i++) {
+					UDAPlayerProfile* Prof = GI->LoadPlayerProfile(Settings->CharacterIDs[i]);
+					if (Prof) {
+						CharacterProfiles.Add(Prof);
+					}
+				}
+			}
 		}
 	}
-	CharacterNames = Settings->CharacterNames;
 }
 
 
@@ -44,7 +46,7 @@ void UDACharacterSelectMenu::NavigateRight()
 
 void UDACharacterSelectMenu::NavigateDown()
 {
-	if (CurrentIndex < CharacterNames.Num() - 1) {
+	if (CurrentIndex < CharacterProfiles.Num() - 1) {
 		CurrentIndex++;
 		UWidget* Widget = CharacterButtons[CurrentIndex];
 		if (Widget) {

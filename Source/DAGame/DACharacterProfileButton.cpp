@@ -3,6 +3,7 @@
 #include "DACharacterProfileButton.h"
 #include "Components/Button.h"
 #include "DAGameInstance.h"
+#include "DAPlayerProfile.h"
 
 
 void UDACharacterProfileButton::Highlight_Implementation()
@@ -19,7 +20,7 @@ void UDACharacterProfileButton::OnSelect_Implementation()
 {
 	UDAGameInstance* Instance = Cast<UDAGameInstance>(GetWorld()->GetGameInstance());
 	if (Instance) {
-		Instance->TryLoadGame(CharacterName);
+		Instance->TryLoadGame(CharacterProfile->ID);
 	}
 }
 

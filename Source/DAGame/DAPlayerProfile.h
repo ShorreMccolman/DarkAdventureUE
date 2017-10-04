@@ -5,16 +5,16 @@
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
 #include "DACharacterAttributes.h"
-#include "DAPlayerSave.generated.h"
+#include "DAPlayerProfile.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DAGAME_API UDAPlayerSave : public USaveGame
+class UDAPlayerProfile : public USaveGame
 {
 	GENERATED_BODY()
-
+	
 public:
 	UPROPERTY()
 	FString ID;
@@ -23,19 +23,15 @@ public:
 	FString PlayerName;
 
 	UPROPERTY()
-	FDACharacterAttributes Attributes;
+	int Level;
 
 	UPROPERTY()
-	FDACharacterInventory Inventory;
+	EDAWorldview Worldview;
 
 	UPROPERTY()
-	FVector Position;
-
-	UPROPERTY()
-	FRotator Facing;
-
-	UPROPERTY()
-	bool bIsNewPlayer;
+	EDAMotive Motive;
 	
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE FString GetPlayerName() const { return PlayerName; }
 	
 };
