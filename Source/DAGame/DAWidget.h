@@ -52,7 +52,7 @@ public:
 	virtual void NavigateLeft();
 
 protected:
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetHighlight(class UWidget* Widget);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

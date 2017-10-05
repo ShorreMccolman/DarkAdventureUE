@@ -31,6 +31,22 @@ void ADAMenuGameMode::StartButton()
 	AcceptCurrent();
 }
 
+bool ADAMenuGameMode::HasCurrentCharacter()
+{
+	UGameInstance* Inst = UGameplayStatics::GetGameInstance(GetWorld());
+	if (Inst) {
+		UDAGameInstance* GI = Cast<UDAGameInstance>(Inst);
+		if (GI) {
+			const UDAMasterSettings* Settings = GI->GetSettings();
+			if (Settings) {
+				return Settings->bHasCurrentCharacter;
+			}
+		}
+	}
+
+	return false;
+}
+
 bool ADAMenuGameMode::HasSaveGame()
 {
 	UGameInstance* Inst = UGameplayStatics::GetGameInstance(GetWorld());

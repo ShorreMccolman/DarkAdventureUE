@@ -30,8 +30,14 @@ public:
 
 	UPROPERTY()
 	EDAMotive Motive;
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE FString GetPlayerID() const { return ID; }
 	
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE FString GetPlayerName() const { return PlayerName; }
+
+	UFUNCTION(BlueprintCallable)
+	class UTexture2D* GetIcon() const;
 	
 };

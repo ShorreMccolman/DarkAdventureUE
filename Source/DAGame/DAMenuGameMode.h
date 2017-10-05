@@ -21,6 +21,9 @@ public:
 	virtual void StartButton() override;
 
 	UFUNCTION(BlueprintPure)
+	bool HasCurrentCharacter();
+
+	UFUNCTION(BlueprintPure)
 	bool HasSaveGame();
 
 protected:

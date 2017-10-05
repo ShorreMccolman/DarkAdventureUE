@@ -39,7 +39,7 @@ void UDAGameInstance::TryLoadGame(FString PlayerID)
 	}
 
 	if (Settings) {
-		Settings->CurrentCharacterID = PlayerID;
+		Settings->SetCurrentCharacter(PlayerID);
 		UGameplayStatics::SaveGameToSlot(Settings, "Master", 0);
 	}
 	UGameplayStatics::OpenLevel(this, "Main");
@@ -79,7 +79,7 @@ void UDAGameInstance::CreatePlayerSave(FString PlayerName, FDACharacterAttribute
 
 	if (Settings) {
 		Settings->CharacterIDs.AddUnique(PlayerID);
-		Settings->CurrentCharacterID = PlayerID;
+		Settings->SetCurrentCharacter(PlayerID);
 		Settings->bHasCharacter = true;
 		UGameplayStatics::SaveGameToSlot(Settings, "Master", 0);
 	}
@@ -117,17 +117,23 @@ UDAPlayerProfile* UDAGameInstance::LoadPlayerProfile(FString ID)
 	return Prof;
 }
 
-void UDAGameInstance::DeletePlayerSave(FString PlayerName)
+void UDAGameInstance::DeletePlayerSave(FString ID)
 {
 	if (!Settings) {
 		InitSettings();
 	}
 
 	if (Settings) {
-		Settings->CharacterIDs.Remove(PlayerName);
+		Settings->CharacterIDs.Remove(ID);
+
+		if (Settings->CurrentCharacterID.Equals(ID)) {
+			Settings->ClearCurrentCharacter();
+		}
+
+
 		UGameplayStatics::SaveGameToSlot(Settings, "Master", 0);
 	}
-	UGameplayStatics::DeleteGameInSlot(PlayerName, 0);
-	FString ProfID = FString(PlayerName);
+	UGameplayStatics::DeleteGameInSlot(ID, 0);
+	FString ProfID = FString(ID);
 	UGameplayStatics::DeleteGameInSlot(ProfID.Append("-Prof"), 0);
 }

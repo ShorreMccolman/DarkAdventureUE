@@ -32,11 +32,14 @@ public:
 	class UDAPlayerProfile* LoadPlayerProfile(FString ID);
 
 	UFUNCTION(BlueprintCallable)
-	void DeletePlayerSave(FString PlayerName);
+	void DeletePlayerSave(FString ID);
 
 	const class UDAMasterSettings* GetSettings();
 
 	void InitSettings();
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE class UDAPlayerProfile* GetCurrentProfile() const { return Profile; }
 	
 private:
 	UPROPERTY()

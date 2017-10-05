@@ -21,10 +21,19 @@ public:
 	bool bHasCharacter;
 
 	UPROPERTY()
+	bool bHasCurrentCharacter;
+
+	UPROPERTY()
 	FString CurrentCharacterID;
 
 	UPROPERTY()
 	TArray<FString> CharacterIDs;
+
+	UFUNCTION()
+	void SetCurrentCharacter(FString ID);
+
+	UFUNCTION()
+	void ClearCurrentCharacter();
 	
 	
 };
