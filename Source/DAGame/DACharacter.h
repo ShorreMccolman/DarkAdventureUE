@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "DACharacterAttributes.h"
+#include "DAInventorySystem.h"
 #include "DACharacter.generated.h"
 
 UCLASS()
@@ -51,6 +52,12 @@ public:
 	FORCEINLINE FDACharacterAttributes GetAttributes() const { return Attributes; };
 
 	UFUNCTION(BlueprintPure)
+	FORCEINLINE FDACharacterInventory GetInventory() const { return Inventory; };
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE TArray<FDAInventoryItem> GetInventoryItems() const { return Inventory.Items; }
+
+	UFUNCTION(BlueprintPure)
 	FORCEINLINE class ADAWeaponBase* GetEquippedWeapon() const { return Weapon; };
 
 	UPROPERTY(EditAnywhere)
@@ -89,6 +96,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemovePotentialTarget(class ADACharacter* Target);
 
+	UFUNCTION(BlueprintCallable)
+	class UDAItem* GetEquippedItemInSlot(EDAEquipmentSlot Slot);
 
 	void SetInputDirection(FVector Input);
 

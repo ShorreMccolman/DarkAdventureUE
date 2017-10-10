@@ -17,7 +17,9 @@ void UDAWidget::Accept()
 
 void UDAWidget::OnOpen()
 {
-	SetHighlight(DefaultSelection);
+	if (DefaultSelection) {
+		SetHighlight(DefaultSelection);
+	}
 }
 
 void UDAWidget::OnClose()

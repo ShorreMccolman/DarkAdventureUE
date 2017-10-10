@@ -266,6 +266,18 @@ void ADACharacter::RemovePotentialTarget(ADACharacter* Target)
 	}
 }
 
+UDAItem* ADACharacter::GetEquippedItemInSlot(EDAEquipmentSlot Slot)
+{
+	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
+	UDAItemManager* IM = Mode->GetItemManager();
+	UDAItem* Item = nullptr;
+	if (IM) {
+		Item = Inventory.GetItemInSlot(IM, Slot);
+	}
+
+	return Item;
+}
+
 void ADACharacter::UpdateBestTarget()
 {
 	if (PotentialTargets.Num() == 0) {

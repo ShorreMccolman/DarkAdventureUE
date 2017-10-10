@@ -5,6 +5,7 @@
 #include "DAPlayerSave.h"
 #include "DAMasterSettings.h"
 #include "DAPlayerProfile.h"
+#include "DAGameMode.h"
 
 void UDAGameInstance::InitSettings()
 {
@@ -60,6 +61,15 @@ void UDAGameInstance::CreatePlayerSave(FString PlayerName, FDACharacterAttribute
 	PlayerSave->ID = PlayerID;
 	PlayerSave->PlayerName = PlayerName;
 	PlayerSave->Attributes = Attributes;
+
+	FDACharacterInventory Inventory = FDACharacterInventory();
+	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
+	UDAItemManager* IM = Mode->GetItemManager();
+	if (IM) {
+		Inventory.SetupAsNewPlayerInventory(Attributes, IM);
+	}
+	PlayerSave->Inventory = Inventory;
+
 	PlayerSave->bIsNewPlayer = true;
 	UGameplayStatics::SaveGameToSlot(PlayerSave, PlayerID, 0);
 
@@ -94,6 +104,11 @@ UDAPlayerSave* UDAGameInstance::LoadCurrentPlayerSave()
 	if (Settings) {
 		PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::CreateSaveGameObject(UDAPlayerSave::StaticClass()));
 		PlayerSave = Cast<UDAPlayerSave>(UGameplayStatics::LoadGameFromSlot(Settings->CurrentCharacterID, 0));
+
+		Profile = LoadPlayerProfile(Settings->CurrentCharacterID);
+		if (!Profile) {
+			UE_LOG(LogTemp, Warning, TEXT("Failed to load character profile"))
+		}
 
 		if (!PlayerSave) {
 			UE_LOG(LogTemp, Warning, TEXT("Could not find player save"))

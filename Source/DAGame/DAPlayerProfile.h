@@ -32,6 +32,9 @@ public:
 	EDAMotive Motive;
 
 	UFUNCTION(BlueprintPure)
+	FORCEINLINE int GetLevel() const { return Level; }
+
+	UFUNCTION(BlueprintPure)
 	FORCEINLINE FString GetPlayerID() const { return ID; }
 	
 	UFUNCTION(BlueprintPure)

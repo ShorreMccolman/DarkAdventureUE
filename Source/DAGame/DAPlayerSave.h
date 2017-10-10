@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
 #include "DACharacterAttributes.h"
+#include "DAInventorySystem.h"
 #include "DAPlayerSave.generated.h"
 
 /**

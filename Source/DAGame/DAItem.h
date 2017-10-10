@@ -35,5 +35,8 @@ public:
 	EDAItemType ItemType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UTexture2D* Icon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UClass* ObjClass;
 };

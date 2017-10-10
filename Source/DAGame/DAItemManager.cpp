@@ -7,19 +7,18 @@ UDAItemManager::UDAItemManager()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-}
-
-
-// Called when the game starts
-void UDAItemManager::BeginPlay()
-{
-	Super::BeginPlay();
-	
+	FString Path = FString("/Game/Items/ItemDB");
+	MasterItemList = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), NULL, *Path));
 }
 
 
 UDAItem* UDAItemManager::GetItemByID(FName ID) const
 {
+	if (!MasterItemList) {
+		UE_LOG(LogTemp, Warning, TEXT("Master item list has not been set!!!"))
+		return nullptr;
+	}
+
 	FDADBItem* DBItem = MasterItemList->FindRow<FDADBItem>(ID, TEXT("LookUp Operation"));
 	UDAItem* Item = nullptr;
 	if (DBItem) {
