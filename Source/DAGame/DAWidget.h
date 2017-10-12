@@ -28,6 +28,15 @@ public:
 	void OnPopupConfirm();
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void RightButton();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void LeftButton();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void Switch();
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void Delete();
 
 	UFUNCTION(BlueprintImplementableEvent)

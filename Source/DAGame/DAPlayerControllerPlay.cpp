@@ -11,10 +11,6 @@ void ADAPlayerControllerPlay::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	InputComponent->BindAction("Run", IE_Released, this, &ADAPlayerControllerPlay::ReleaseRun);
-	InputComponent->BindAction("Heal", IE_Pressed, this, &ADAPlayerControllerPlay::PressHeal);
-
-	InputComponent->BindAction("Attack", IE_Pressed, this, &ADAPlayerControllerPlay::PressAttack);
-	InputComponent->BindAction("StrongAttack", IE_Pressed, this, &ADAPlayerControllerPlay::PressStrongAttack);
 
 	InputComponent->BindAction("Lock", IE_Pressed, this, &ADAPlayerControllerPlay::PressLock);
 }
@@ -55,16 +51,6 @@ void ADAPlayerControllerPlay::Tick(float DeltaTime)
 		DACharacter->SetInputDirection(MoveDirection);
 		DACharacter->SetIsRunning(ShouldRun);
 	}
-}
-
-void ADAPlayerControllerPlay::PressAttack()
-{
-	DACharacter->TryAttack();
-}
-
-void ADAPlayerControllerPlay::PressStrongAttack()
-{
-	DACharacter->TryStrongAttack();
 }
 
 void ADAPlayerControllerPlay::PressLock()

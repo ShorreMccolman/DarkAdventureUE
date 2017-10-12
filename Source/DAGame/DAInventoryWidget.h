@@ -29,6 +29,9 @@ public:
 	virtual void NavigateLeft() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateDisplayWithType(EDAItemType ItemType);
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void HighlightItemButtonAtRowAndColumn(int Row, int Column);
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -37,6 +40,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitWithInventoryItems(TArray<FDAInventoryItem> Items);
 
+	UFUNCTION(BlueprintCallable)
+	void InitWithItemsAndFilterByType(TArray<FDAInventoryItem> Items, EDAItemType ItemType);
+
 protected:
 	UPROPERTY(BlueprintReadWrite)
 	int CurrentRow;
@@ -44,7 +50,18 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	int CurrentColumn;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsShowingDescription;
+
+	UPROPERTY(BlueprintReadWrite)
+	EDAItemType CurrentItemType;
+
+	UPROPERTY(BlueprintReadWrite)
+	EDAItemType CurrentCategory;
+
+	UPROPERTY(BlueprintReadWrite)
 	TArray<FDAInventoryItemDataPair> InventoryItems;
 	
+	UPROPERTY(BlueprintReadWrite)
+	class UDAItemInfoPanel* InfoPanel;
 };

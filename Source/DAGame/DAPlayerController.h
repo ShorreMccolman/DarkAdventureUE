@@ -65,6 +65,18 @@ protected:
 	virtual void PressStart();
 
 	UFUNCTION()
+	void PressRightButton();
+
+	UFUNCTION()
+	void PressLeftButton();
+
+	UFUNCTION()
+	void PressRightTrigger();
+
+	UFUNCTION()
+	void PressLeftTrigger();
+
+	UFUNCTION()
 	virtual void PressInteract();
 
 	UFUNCTION()

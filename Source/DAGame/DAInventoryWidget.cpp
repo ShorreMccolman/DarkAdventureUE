@@ -5,26 +5,44 @@
 #include "DAGameMode.h"
 #include "DAItem.h"
 
-void UDAInventoryWidget::InitWithInventoryItems(TArray<FDAInventoryItem> Items)
+void UDAInventoryWidget::InitWithItemsAndFilterByType(TArray<FDAInventoryItem> Items, EDAItemType ItemType)
 {
+	CurrentCategory = ItemType;
+	CurrentRow = 0;
+	CurrentColumn = 0;
+
 	InventoryItems.Empty();
 	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
 	UDAItemManager* IM = Mode->GetItemManager();
-	if(IM) {
+	if (IM) {
 		for (int i = 0; i < Items.Num(); i++) {
 			UDAItem* Item = IM->GetItemByID(Items[i].ID);
 			if (Item) {
-				FDAInventoryItemDataPair Pair = FDAInventoryItemDataPair(Items[i], Item);
-				InventoryItems.Add(Pair);
+				if (ItemType == EDAItemType::DAItemType_Any || Item->ItemType == ItemType) {
+					FDAInventoryItemDataPair Pair = FDAInventoryItemDataPair(Items[i], Item);
+					InventoryItems.Add(Pair);
+				}
 			}
 		}
 
 		InventoryItems.Sort([](const FDAInventoryItemDataPair& A, const FDAInventoryItemDataPair& B) {
-			return A.Data->DisplayName > B.Data->DisplayName;
+			return A.Data->DisplayName < B.Data->DisplayName;
 		});
 	}
 
 	RebuildInventoryScrollbox();
+	if (InventoryItems.Num() > 0) {
+		HighlightItemButtonAtRowAndColumn(0, 0);
+	}
+	else {
+		UpdateDisplayWithType(ItemType);
+	}
+}
+
+
+void UDAInventoryWidget::InitWithInventoryItems(TArray<FDAInventoryItem> Items)
+{
+	InitWithItemsAndFilterByType(Items, EDAItemType::DAItemType_Any);
 }
 
 void UDAInventoryWidget::NavigateUp()
@@ -37,7 +55,7 @@ void UDAInventoryWidget::NavigateUp()
 
 void UDAInventoryWidget::NavigateRight()
 {
-	if (CurrentColumn < 3) {
+	if (CurrentRow * 4 + CurrentColumn + 1 < InventoryItems.Num()) {
 		CurrentColumn++;
 		HighlightItemButtonAtRowAndColumn(CurrentRow, CurrentColumn);
 	}

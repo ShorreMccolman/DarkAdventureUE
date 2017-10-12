@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "DAInventorySystem.h"
 #include "DAItemInfoPanel.generated.h"
 
 /**
@@ -17,7 +18,15 @@ class DAGAME_API UDAItemInfoPanel : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)
-	void SetupWithItem(class UDAItem* Item);
+	void SetupWithItem(int Quantity, UDAItem* ItemData);
 	
+	UFUNCTION(BlueprintCallable)
+	void DoItemSetup(FDAInventoryItemDataPair InventoryItem);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetupWithDefault();
+
+	UFUNCTION(BlueprintCallable)
+	void DoDefaultSetup(EDAItemType ItemType);
 	
 };

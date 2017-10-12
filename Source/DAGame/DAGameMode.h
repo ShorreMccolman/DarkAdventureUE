@@ -73,6 +73,15 @@ public:
 	void CancelCurrent();
 
 	UFUNCTION()
+	void ToggleFace();
+
+	UFUNCTION()
+	void RightButton();
+
+	UFUNCTION()
+	void LeftButton();
+
+	UFUNCTION()
 	virtual void StartButton();
 
 	void NavigateCurrent(EDAInputDirection Direction);

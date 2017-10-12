@@ -18,16 +18,16 @@ enum class EDAEquipmentSlot : uint8
 	EDAEquipmentSlot_Consumable UMETA(DisplayName = "Consumable")
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FDAGenericItem
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FName ID;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FDAEquipmentItem : public FDAGenericItem
 {
 	GENERATED_BODY()
@@ -43,15 +43,15 @@ struct FDAEquipmentItem : public FDAGenericItem
 	}
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FDAInventoryItem : public FDAGenericItem
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Quantity;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TArray<FName> Modifications;
 
 	FDAInventoryItem()
@@ -72,28 +72,33 @@ struct FDAInventoryItemDataPair
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	FDAInventoryItem Item;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	UDAItem* Data;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsValidItem;
+
 
 	FDAInventoryItemDataPair()
 	{
 		Item = FDAInventoryItem();
 		Data = nullptr;
+		bIsValidItem = false;
 	}
 
 
 	FDAInventoryItemDataPair(FDAInventoryItem InventoryItem, UDAItem* ItemData)
 		: Item(InventoryItem), Data(ItemData)
 	{
-		
+		bIsValidItem = ItemData != nullptr;
 	}
 
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FDACharacterEquipment
 {
 	GENERATED_BODY()
@@ -164,6 +169,8 @@ struct FDACharacterInventory
 	void SetupAsNewPlayerInventory(FDACharacterAttributes Attributes, UDAItemManager* ItemManager)
 	{
 		Heals = FDAInventoryItem("Heal", 5);
+
+		AddItem("Token", ItemManager, 5);
 
 		switch (Attributes.WorldView)
 		{
@@ -284,6 +291,49 @@ struct FDACharacterInventory
 	{
 		AddItem(ID, ItemManager, 1);
 		EquipItem(ID, Slot);
+	}
+
+	FDAInventoryItemDataPair GetItemDataPairInSlot(const UDAItemManager& ItemManager, EDAEquipmentSlot Slot)
+	{
+		UDAItem* Item = nullptr;
+		FName ID = "";
+		switch (Slot)
+		{
+		case EDAEquipmentSlot::EDAEquipmentSlot_RightHand:
+			ID = Equipment.RightHand.ID;
+			Item = ItemManager.GetItemByID(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHand:
+			ID = Equipment.LeftHand.ID;
+			Item = ItemManager.GetItemByID(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_RightHandAlt:
+			ID = Equipment.RightHandAlt.ID;
+			Item = ItemManager.GetItemByID(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHandAlt:
+			ID = Equipment.LeftHandAlt.ID;
+			Item = ItemManager.GetItemByID(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_ArmourSet:
+			ID = Equipment.ArmorSet.ID;
+			Item = ItemManager.GetItemByID(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable:
+			ID = Equipment.Consumable.ID;
+			Item = ItemManager.GetItemByID(ID);
+			break;
+		default:
+			break;
+		}
+
+		FDAInventoryItem InventoryItem = FDAInventoryItem(ID, GetItemQuantity(ID));
+		if (Item) {
+			return FDAInventoryItemDataPair(InventoryItem, Item);
+		}
+		else {
+			return FDAInventoryItemDataPair();
+		}
 	}
 
 	UDAItem* GetItemInSlot(UDAItemManager* ItemManager, EDAEquipmentSlot Slot)

@@ -58,6 +58,28 @@ void ADAGameMode::CancelCurrent()
 	}
 }
 
+void ADAGameMode::ToggleFace()
+{
+	if (MenuStack.Size() > 0) {
+		MenuStack.Peek()->Switch();
+	}
+}
+
+void ADAGameMode::RightButton()
+{
+	if (MenuStack.Size() > 0) {
+		MenuStack.Peek()->RightButton();
+	}
+}
+
+void ADAGameMode::LeftButton()
+{
+	if (MenuStack.Size() > 0) {
+		MenuStack.Peek()->LeftButton();
+	}
+}
+
+// Didnt want a default behaviour for start button so I'm leaving this empty but virtual
 void ADAGameMode::StartButton()
 {
 

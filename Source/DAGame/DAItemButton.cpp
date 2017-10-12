@@ -2,6 +2,7 @@
 
 #include "DAItemButton.h"
 #include "DAItem.h"
+#include "Engine/Texture2D.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
 
@@ -19,15 +20,26 @@ void UDAItemButton::UnHighlight_Implementation()
 
 void UDAItemButton::OnSelect_Implementation()
 {
-//	UDAGameInstance* Instance = Cast<UDAGameInstance>(GetWorld()->GetGameInstance());
+	//	UDAGameInstance* Instance = Cast<UDAGameInstance>(GetWorld()->GetGameInstance());
 	//if (Instance) {
 	//	Instance->TryLoadGame(CharacterProfile->ID);
 	//}
 }
 
-void UDAItemButton::SetItem(UDAItem* Item)
+void UDAItemButton::SetItem(FDAInventoryItemDataPair Item)
 {
 	this->Item = Item;
 
-	IconImage->SetBrushFromTexture(Item->Icon);
+	if (Item.Data) {
+		IconImage->SetBrushFromTexture(Item.Data->Icon);
+	}
+}
+
+void UDAItemButton::SetItemTypeAndTexture(EDAItemType Type, UTexture2D* Texture)
+{
+	ItemType = Type;
+
+	if (Texture) {
+		IconImage->SetBrushFromTexture(Texture);
+	}
 }

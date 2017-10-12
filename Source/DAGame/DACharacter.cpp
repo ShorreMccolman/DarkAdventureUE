@@ -278,6 +278,18 @@ UDAItem* ADACharacter::GetEquippedItemInSlot(EDAEquipmentSlot Slot)
 	return Item;
 }
 
+FDAInventoryItemDataPair ADACharacter::GetEquippedPairInSlot(EDAEquipmentSlot Slot)
+{
+	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
+	UDAItemManager* IM = Mode->GetItemManager();
+	if (IM) {
+		return Inventory.GetItemDataPairInSlot(*IM, Slot);
+	}
+	else {
+		return FDAInventoryItemDataPair();
+	}
+}
+
 void ADACharacter::UpdateBestTarget()
 {
 	if (PotentialTargets.Num() == 0) {

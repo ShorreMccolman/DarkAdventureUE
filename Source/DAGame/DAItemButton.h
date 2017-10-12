@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "DAInventorySystem.h"
 #include "DASelectable.h"
 #include "DAItemButton.generated.h"
 
@@ -29,11 +30,20 @@ public:
 	virtual void OnSelect_Implementation() override;
 
 	UFUNCTION(BlueprintCallable)
-	void SetItem(class UDAItem* Item);
+	void SetItem(FDAInventoryItemDataPair Item);
+
+	UFUNCTION(BlueprintCallable)
+	void SetItemTypeAndTexture(EDAItemType Type, UTexture2D* Texture);
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE FDAInventoryItemDataPair GetItem() const { return Item; };
 
 protected:
+	UPROPERTY(BlueprintReadWrite)
+	EDAItemType ItemType;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UDAItem* Item;
+	FDAInventoryItemDataPair Item;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UImage* IconImage;

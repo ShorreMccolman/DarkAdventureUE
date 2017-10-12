@@ -15,9 +15,15 @@ void ADAPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("Start", IE_Pressed, this, &ADAPlayerController::PressStart);
 
+	InputComponent->BindAction("Attack", IE_Pressed, this, &ADAPlayerController::PressRightButton);
+	InputComponent->BindAction("StrongAttack", IE_Pressed, this, &ADAPlayerController::PressRightTrigger);
+	InputComponent->BindAction("LeftAttack", IE_Pressed, this, &ADAPlayerController::PressLeftButton);
+	InputComponent->BindAction("LeftStrongAttack", IE_Pressed, this, &ADAPlayerController::PressLeftTrigger);
+
 	InputComponent->BindAction("Interact", IE_Pressed, this, &ADAPlayerController::PressInteract);
 	InputComponent->BindAction("Run", IE_Pressed, this, &ADAPlayerController::PressRun);
 	InputComponent->BindAction("Use", IE_Pressed, this, &ADAPlayerController::PressUse);
+	InputComponent->BindAction("Heal", IE_Pressed, this, &ADAPlayerController::PressHeal);
 
 	InputComponent->BindAction("DUP", IE_Pressed, this, &ADAPlayerController::PressDUp);
 	InputComponent->BindAction("DRIGHT", IE_Pressed, this, &ADAPlayerController::PressDRight);
@@ -54,6 +60,68 @@ void ADAPlayerController::PressStart()
 	case EDAControlMode::DAControlMode_FullMenu:
 	case EDAControlMode::DAControlMode_PlayMenu:
 		GameMode->CancelCurrent();
+		break;
+	default:
+		break;
+	}
+}
+
+void ADAPlayerController::PressRightButton()
+{
+	switch (ControlMode)
+	{
+	case EDAControlMode::DAControlMode_Play:
+		DACharacter->TryAttack();
+		break;
+	case EDAControlMode::DAControlMode_FullMenu:
+	case EDAControlMode::DAControlMode_PlayMenu:
+		GameMode->RightButton();
+		break;
+	default:
+		break;
+	}
+}
+
+void ADAPlayerController::PressRightTrigger()
+{
+	switch (ControlMode)
+	{
+	case EDAControlMode::DAControlMode_Play:
+		DACharacter->TryStrongAttack();
+		break;
+	case EDAControlMode::DAControlMode_FullMenu:
+	case EDAControlMode::DAControlMode_PlayMenu:
+		break;
+	default:
+		break;
+	}
+}
+
+void ADAPlayerController::PressLeftButton()
+{
+	switch (ControlMode)
+	{
+	case EDAControlMode::DAControlMode_Play:
+		
+		break;
+	case EDAControlMode::DAControlMode_FullMenu:
+	case EDAControlMode::DAControlMode_PlayMenu:
+		GameMode->LeftButton();
+		break;
+	default:
+		break;
+	}
+}
+
+void ADAPlayerController::PressLeftTrigger()
+{
+	switch (ControlMode)
+	{
+	case EDAControlMode::DAControlMode_Play:
+		
+		break;
+	case EDAControlMode::DAControlMode_FullMenu:
+	case EDAControlMode::DAControlMode_PlayMenu:
 		break;
 	default:
 		break;
@@ -136,6 +204,7 @@ void ADAPlayerController::PressHeal()
 		break;
 	case EDAControlMode::DAControlMode_FullMenu:
 	case EDAControlMode::DAControlMode_PlayMenu:
+		GameMode->ToggleFace();
 		break;
 	default:
 		break;

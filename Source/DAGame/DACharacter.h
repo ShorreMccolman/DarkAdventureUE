@@ -99,6 +99,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	class UDAItem* GetEquippedItemInSlot(EDAEquipmentSlot Slot);
 
+	UFUNCTION(BlueprintCallable)
+	FDAInventoryItemDataPair GetEquippedPairInSlot(EDAEquipmentSlot Slot);
+
 	void SetInputDirection(FVector Input);
 
 	void SetIsRunning(bool ShouldRun);
