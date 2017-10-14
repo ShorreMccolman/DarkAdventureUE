@@ -17,6 +17,7 @@ void UDAWidget::Accept()
 
 void UDAWidget::OnOpen()
 {
+	bMenuIsOpen = true;
 	if (DefaultSelection) {
 		SetHighlight(DefaultSelection);
 	}
@@ -24,7 +25,7 @@ void UDAWidget::OnOpen()
 
 void UDAWidget::OnClose()
 {
-
+	bMenuIsOpen = false;
 }
 
 void UDAWidget::NavigateUp()

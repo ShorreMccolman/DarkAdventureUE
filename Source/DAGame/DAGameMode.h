@@ -96,6 +96,9 @@ public:
 	class UUserWidget* AddConfirmationPopup(TSubclassOf<class UDAConfirmPopup> NewPopupClass, FText Message, UDAWidget* ParentWidget);
 
 	UFUNCTION(BlueprintCallable, Category = "HUD")
+	class UUserWidget* AddPopupMenu(TSubclassOf<class UDAWidget> NewPopupClass);
+
+	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void HideCurrentMenu();
 
 	UFUNCTION(BlueprintCallable, Category = "HUD")

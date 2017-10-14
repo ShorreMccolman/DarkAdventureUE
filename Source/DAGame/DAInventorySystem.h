@@ -6,6 +6,8 @@
 #include "DACharacterAttributes.h"
 #include "DAInventorySystem.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemButtonConfirmAction, UDAItemButton*, Button);
+
 UENUM(BlueprintType)
 enum class EDAEquipmentSlot : uint8
 {
@@ -237,14 +239,16 @@ struct FDACharacterInventory
 		return 0;
 	}
 
-	void AddItem(FName ID, UDAItemManager* ItemManager, int quantity) {
+	void AddItem(FName ID, UDAItemManager* ItemManager, int quantity) 
+	{
 		UDAItem* Item = ItemManager->GetItemByID(ID);
 		if (Item) {
 			AddItem(ID, *Item, quantity);
 		}
 	}
 
-	void AddItem(FName ID, UDAItem& ItemData, int quantity) {
+	void AddItem(FName ID, UDAItem& ItemData, int quantity) 
+	{
 		if (ItemData.MaxQuantity == 0) {
 			Items.Add(FDAInventoryItem(ID, quantity));
 		}
@@ -254,10 +258,29 @@ struct FDACharacterInventory
 			});
 			if (Item) {
 				Item->Quantity = FMath::Min(Item->Quantity + quantity, ItemData.MaxQuantity);
-				return;
+			} else {
+				Items.Add(FDAInventoryItem(ID, FMath::Min(quantity, ItemData.MaxQuantity)));
 			}
-			Items.Add(FDAInventoryItem(ID, FMath::Min(quantity, ItemData.MaxQuantity)));
 		}
+	}
+
+	// Returns remaining quantity
+	int RemoveItem(FName ID, int quantity = 1)
+	{
+		int32 ItemIndex = INDEX_NONE;
+		ItemIndex = Items.IndexOfByPredicate([ID](const FDAInventoryItem& Item) {
+			return Item.ID == ID;
+		});
+
+		if (ItemIndex != INDEX_NONE) {
+			if (Items[ItemIndex].Quantity > quantity) {
+				Items[ItemIndex].Quantity -= quantity;
+				return Items[ItemIndex].Quantity;
+			} else {
+				Items.RemoveAt(ItemIndex);
+			}
+		}
+		return 0;
 	}
 
 	void EquipItem(FName ID, EDAEquipmentSlot Slot)

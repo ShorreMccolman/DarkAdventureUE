@@ -29,6 +29,9 @@ public:
 	void OnSelect();
 	virtual void OnSelect_Implementation() override;
 
+	UPROPERTY(BlueprintAssignable)
+	FItemButtonConfirmAction ConfirmAction;
+
 	UFUNCTION(BlueprintCallable)
 	void SetItem(FDAInventoryItemDataPair Item);
 
@@ -44,6 +47,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDAInventoryItemDataPair Item;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UTextBlock* QuantityText;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UImage* IconImage;

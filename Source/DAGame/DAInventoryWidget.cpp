@@ -5,11 +5,9 @@
 #include "DAGameMode.h"
 #include "DAItem.h"
 
-void UDAInventoryWidget::InitWithItemsAndFilterByType(TArray<FDAInventoryItem> Items, EDAItemType ItemType)
+void UDAInventoryWidget::InitWithItemsAndFilterByType(TArray<FDAInventoryItem> Items, EDAItemType ItemType, bool ShouldResetPosition)
 {
 	CurrentCategory = ItemType;
-	CurrentRow = 0;
-	CurrentColumn = 0;
 
 	InventoryItems.Empty();
 	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
@@ -30,9 +28,17 @@ void UDAInventoryWidget::InitWithItemsAndFilterByType(TArray<FDAInventoryItem> I
 		});
 	}
 
+	if (ShouldResetPosition) {
+		CurrentRow = 0;
+		CurrentColumn = 0;
+	} else if (CurrentRow * 4 + CurrentColumn + 1 > InventoryItems.Num()) {
+		CurrentRow = FMath::CeilToInt(InventoryItems.Num() / 4.f) - 1;
+		CurrentColumn = (InventoryItems.Num() - 1) % 4;
+	}
+
 	RebuildInventoryScrollbox();
 	if (InventoryItems.Num() > 0) {
-		HighlightItemButtonAtRowAndColumn(0, 0);
+		HighlightItemButtonAtRowAndColumn(CurrentRow, CurrentColumn);
 	}
 	else {
 		UpdateDisplayWithType(ItemType);
@@ -42,7 +48,7 @@ void UDAInventoryWidget::InitWithItemsAndFilterByType(TArray<FDAInventoryItem> I
 
 void UDAInventoryWidget::InitWithInventoryItems(TArray<FDAInventoryItem> Items)
 {
-	InitWithItemsAndFilterByType(Items, EDAItemType::DAItemType_Any);
+	InitWithItemsAndFilterByType(Items, EDAItemType::DAItemType_Any, true);
 }
 
 void UDAInventoryWidget::NavigateUp()
@@ -56,7 +62,13 @@ void UDAInventoryWidget::NavigateUp()
 void UDAInventoryWidget::NavigateRight()
 {
 	if (CurrentRow * 4 + CurrentColumn + 1 < InventoryItems.Num()) {
-		CurrentColumn++;
+		if (CurrentColumn == 3) {
+			CurrentColumn = 0;
+			CurrentRow++;
+		} else {
+			CurrentColumn++;
+		}
+
 		HighlightItemButtonAtRowAndColumn(CurrentRow, CurrentColumn);
 	}
 }
@@ -71,8 +83,14 @@ void UDAInventoryWidget::NavigateDown()
 
 void UDAInventoryWidget::NavigateLeft()
 {
-	if (CurrentColumn > 0) {
-		CurrentColumn--;
+	if (CurrentRow * 4 + CurrentColumn > 0) {
+		if (CurrentColumn == 0) {
+			CurrentColumn = 3;
+			CurrentRow--;
+		} else {
+			CurrentColumn--;
+		}
+
 		HighlightItemButtonAtRowAndColumn(CurrentRow, CurrentColumn);
 	}
 }

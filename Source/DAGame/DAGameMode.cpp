@@ -197,6 +197,12 @@ UUserWidget* ADAGameMode::AddConfirmationPopup(TSubclassOf<UDAConfirmPopup> NewP
 	return Popup;
 }
 
+UUserWidget* ADAGameMode::AddPopupMenu(TSubclassOf<UDAWidget> NewPopupClass)
+{
+	UUserWidget* Popup = AddMenu(NewPopupClass);
+	return Popup;
+}
+
 void ADAGameMode::HideCurrentMenu()
 {
 	if (MenuStack.Size() > 0) {
@@ -210,8 +216,10 @@ void ADAGameMode::CloseCurrentMenu(bool OpenPrevious)
 {
 	if (MenuStack.Size() > 0) {
 		UDAWidget* Old = MenuStack.Pop();
-		Old->OnClose();
-		Old->RemoveFromViewport();
+		if (Old->IsMenuOpen()) {
+			Old->OnClose();
+			Old->RemoveFromViewport();
+		}
 	}
 
 	if (OpenPrevious && MenuStack.Size() > 0) {
@@ -246,12 +254,11 @@ void ADAGameMode::ClosePopup()
 	}
 }
 
-
-
 void ADAGameMode::CloseAllMenus()
 {
-	CloseCurrentMenu(false);
-	MenuStack.Clear();
+	while(MenuStack.Size() > 0) {
+		CloseCurrentMenu(false);
+	}
 }
 
 

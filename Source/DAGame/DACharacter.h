@@ -51,23 +51,11 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE FDACharacterAttributes GetAttributes() const { return Attributes; };
 
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE FDACharacterInventory GetInventory() const { return Inventory; };
-
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE TArray<FDAInventoryItem> GetInventoryItems() const { return Inventory.Items; }
-
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE class ADAWeaponBase* GetEquippedWeapon() const { return Weapon; };
-
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> ProjectileClass;
 
 	UFUNCTION(BlueprintCallable)
 	void SetCharacterRotationLock(bool Lock);
-
-	UFUNCTION(BlueprintCallable)
-	void UseHealItem();
 
 	UFUNCTION(BlueprintCallable)
 	void HealCharacter(float Amount);
@@ -82,6 +70,21 @@ public:
 	virtual void TriggerIncomingDamage();	// Actually apply the incoming damage, called from animation blueprint
 
 	UFUNCTION(BlueprintCallable)
+	void AddPotentialTarget(class ADACharacter *Target);
+
+	UFUNCTION(BlueprintCallable)
+	void RemovePotentialTarget(class ADACharacter* Target);
+
+	/**********************
+	
+	INVENTORY AND EQUIPMENT
+
+	**********************/
+
+	UFUNCTION(BlueprintCallable)
+	void UseHealItem();
+
+	UFUNCTION(BlueprintCallable)
 	void FireProjectile();
 
 	UFUNCTION(BlueprintCallable)
@@ -91,16 +94,28 @@ public:
 	void EquipSecondaryWeapon(FName ID, FName SocketName);
 
 	UFUNCTION(BlueprintCallable)
-	void AddPotentialTarget(class ADACharacter *Target);
-
-	UFUNCTION(BlueprintCallable)
-	void RemovePotentialTarget(class ADACharacter* Target);
+	void DiscardItemsWithID(FName ID, int Quantity);
 
 	UFUNCTION(BlueprintCallable)
 	class UDAItem* GetEquippedItemInSlot(EDAEquipmentSlot Slot);
 
 	UFUNCTION(BlueprintCallable)
 	FDAInventoryItemDataPair GetEquippedPairInSlot(EDAEquipmentSlot Slot);
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE FDACharacterInventory GetInventory() const { return Inventory; };
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE TArray<FDAInventoryItem> GetInventoryItems() const { return Inventory.Items; }
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE class ADAWeaponBase* GetEquippedWeapon() const { return Weapon; };
+
+	/*******************
+	
+	CHARACTER MOVEMENT
+	
+	*******************/
 
 	void SetInputDirection(FVector Input);
 

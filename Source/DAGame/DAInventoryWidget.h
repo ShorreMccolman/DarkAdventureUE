@@ -41,7 +41,7 @@ public:
 	void InitWithInventoryItems(TArray<FDAInventoryItem> Items);
 
 	UFUNCTION(BlueprintCallable)
-	void InitWithItemsAndFilterByType(TArray<FDAInventoryItem> Items, EDAItemType ItemType);
+	void InitWithItemsAndFilterByType(TArray<FDAInventoryItem> Items, EDAItemType ItemType, bool ShouldResetPosition);
 
 protected:
 	UPROPERTY(BlueprintReadWrite)

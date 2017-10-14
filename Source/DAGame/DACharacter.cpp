@@ -266,6 +266,13 @@ void ADACharacter::RemovePotentialTarget(ADACharacter* Target)
 	}
 }
 
+void ADACharacter::DiscardItemsWithID(FName ID, int Quantity)
+{
+	if (Quantity > 0) {
+		Inventory.RemoveItem(ID, Quantity);
+	}
+}
+
 UDAItem* ADACharacter::GetEquippedItemInSlot(EDAEquipmentSlot Slot)
 {
 	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());

@@ -21,6 +21,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UWidget* DefaultSelection;
 
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool IsMenuOpen() const { return bMenuIsOpen; }
+
 	UFUNCTION(BlueprintCallable)
 	virtual void Accept();
 
@@ -66,5 +69,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UWidget* CurrentHighlight;
+
+	UPROPERTY()
+	bool bMenuIsOpen;
 	
 };

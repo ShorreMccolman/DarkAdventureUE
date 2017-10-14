@@ -2,9 +2,12 @@
 
 #include "DAItemButton.h"
 #include "DAItem.h"
+#include "DAWidget.h"
 #include "Engine/Texture2D.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
+#include "Text.h"
 
 
 
@@ -20,10 +23,9 @@ void UDAItemButton::UnHighlight_Implementation()
 
 void UDAItemButton::OnSelect_Implementation()
 {
-	//	UDAGameInstance* Instance = Cast<UDAGameInstance>(GetWorld()->GetGameInstance());
-	//if (Instance) {
-	//	Instance->TryLoadGame(CharacterProfile->ID);
-	//}
+	if (ConfirmAction.IsBound()) {
+		ConfirmAction.Broadcast(this);
+	}
 }
 
 void UDAItemButton::SetItem(FDAInventoryItemDataPair Item)
@@ -31,6 +33,12 @@ void UDAItemButton::SetItem(FDAInventoryItemDataPair Item)
 	this->Item = Item;
 
 	if (Item.Data) {
+		if (Item.Data->MaxQuantity > 0) {
+			QuantityText->SetText(FText::AsNumber(Item.Item.Quantity));
+		} else {
+			QuantityText->SetText(FText::FromString(""));
+		}
+
 		IconImage->SetBrushFromTexture(Item.Data->Icon);
 	}
 }
@@ -38,6 +46,8 @@ void UDAItemButton::SetItem(FDAInventoryItemDataPair Item)
 void UDAItemButton::SetItemTypeAndTexture(EDAItemType Type, UTexture2D* Texture)
 {
 	ItemType = Type;
+
+	QuantityText->SetText(FText::FromString(""));
 
 	if (Texture) {
 		IconImage->SetBrushFromTexture(Texture);
