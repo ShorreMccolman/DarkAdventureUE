@@ -7,6 +7,8 @@
 #include "Components/TextBlock.h"
 #include "DAConfirmPopup.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPopupConfirmAction);
+
 /**
  * 
  */
@@ -19,8 +21,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTextBlock* MainText;
 
-	DECLARE_DELEGATE( FConfirmAction )
-	FConfirmAction ConfirmAction;
+	UPROPERTY(BlueprintAssignable)
+	FPopupConfirmAction ConfirmAction;
 
 	UFUNCTION(BlueprintCallable)
 	void DoConfirmation();

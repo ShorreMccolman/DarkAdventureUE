@@ -5,9 +5,9 @@
 
 void UDAConfirmPopup::DoConfirmation()
 {
-	bool isBound = ConfirmAction.ExecuteIfBound();
-	if(isBound)
-		ConfirmAction.Unbind();
+	if (ConfirmAction.IsBound()) {
+		ConfirmAction.Broadcast();
+	}
 	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
 	if (Mode) {
 		Mode->ClosePopup();

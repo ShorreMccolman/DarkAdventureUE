@@ -20,7 +20,9 @@ UENUM(BlueprintType)
 enum class EDAConsumableType : uint8
 {
 	DAConsumableType_SingleUse UMETA(DisplayName = "Single Use Item"),
-	DAConsumableType_UnlimitedUse UMETA(DisplayName = "Unlimited Use Item")
+	DAConsumableType_MultiUse UMETA(DisplayName = "Multi Use Item"),
+	DAConsumableType_UnlimitedUse UMETA(DisplayName = "Unlimited Use Item"),
+	DAConsumableType_NoUse UMETA(DisplayName = "Non Usable Consumable?")
 };
 
 UENUM(BlueprintType)

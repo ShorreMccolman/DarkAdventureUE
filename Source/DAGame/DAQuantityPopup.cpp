@@ -12,12 +12,12 @@ void UDAQuantityPopup::SetMaxQuantity(int Quantity)
 
 void UDAQuantityPopup::Accept()
 {
-	if (ConfirmAction.IsBound()) {
-		ConfirmAction.Broadcast(CurrentQuantity);
-	}
 	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
 	if (Mode) {
 		Mode->ClosePopup();
+	}
+	if (ConfirmAction.IsBound()) {
+		ConfirmAction.Broadcast(CurrentQuantity);
 	}
 }
 

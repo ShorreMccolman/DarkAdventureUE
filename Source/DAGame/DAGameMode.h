@@ -93,7 +93,7 @@ public:
 	class UUserWidget* AddMenu(TSubclassOf<class UUserWidget> NewWidgetClass);
 
 	UFUNCTION(BlueprintCallable, Category = "HUD")
-	class UUserWidget* AddConfirmationPopup(TSubclassOf<class UDAConfirmPopup> NewPopupClass, FText Message, UDAWidget* ParentWidget);
+	class UUserWidget* AddConfirmationPopup(TSubclassOf<class UDAConfirmPopup> NewPopupClass, FText Message);
 
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	class UUserWidget* AddPopupMenu(TSubclassOf<class UDAWidget> NewPopupClass);

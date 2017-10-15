@@ -24,6 +24,12 @@ public:
 	FText EffectDescription;
 
 	UFUNCTION(BlueprintPure)
+	bool ShouldConsume();
+
+	UFUNCTION(BlueprintPure)
+	bool IsMultiUse();
+
+	UFUNCTION(BlueprintPure)
 	FORCEINLINE FString GetConsumableTypeDescription() const {
 		switch (ConsumableType)
 		{

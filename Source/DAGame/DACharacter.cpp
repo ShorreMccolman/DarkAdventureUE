@@ -15,6 +15,7 @@
 #include "GameFramework/PlayerStart.h"
 #include "DAItemManager.h"
 #include "DAItem.h"
+#include "DAConsumableItem.h"
 #include "DAConsumableBase.h"
 
 
@@ -146,6 +147,30 @@ void ADACharacter::UseHealItem()
 			ADAConsumableBase* Consumable = GetWorld()->SpawnActor<ADAConsumableBase>(Item->ObjClass, Location, Rotation, SpawnInfo);
 			Consumable->SetDAOwner(this);
 			Inventory.ConsumeHeal();
+		}
+	}
+}
+
+void ADACharacter::UseConsumableItem(FName ID)
+{
+	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
+	UDAItemManager* IM = Mode->GetItemManager();
+	if (IM) {
+		UDAConsumableItem* Item = Cast<UDAConsumableItem>(IM->GetItemByID(ID));
+		if (Item) {
+
+			FVector Location(0.f, 0.f, 0.f);
+			FRotator Rotation(0.f, 0.f, 0.f);
+			FActorSpawnParameters SpawnInfo;
+			if (Item->ObjClass) {
+				ADAConsumableBase* Consumable = GetWorld()->SpawnActor<ADAConsumableBase>(Item->ObjClass, Location, Rotation, SpawnInfo);
+				if (Consumable) {
+					Consumable->SetDAOwner(this);
+				}
+			}
+			if (Item->ShouldConsume()) {
+				Inventory.RemoveItem(ID);
+			}
 		}
 	}
 }

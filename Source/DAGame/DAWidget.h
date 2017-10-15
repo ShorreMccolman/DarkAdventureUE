@@ -28,9 +28,6 @@ public:
 	virtual void Accept();
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnPopupConfirm();
-
-	UFUNCTION(BlueprintImplementableEvent)
 	void RightButton();
 
 	UFUNCTION(BlueprintImplementableEvent)

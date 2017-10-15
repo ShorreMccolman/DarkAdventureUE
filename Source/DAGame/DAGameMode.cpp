@@ -183,13 +183,12 @@ UUserWidget* ADAGameMode::AddMenu(TSubclassOf<UUserWidget> NewWidgetClass)
 	return nullptr;
 }
 
-UUserWidget* ADAGameMode::AddConfirmationPopup(TSubclassOf<UDAConfirmPopup> NewPopupClass, FText Message, UDAWidget* ParentWidget)
+UUserWidget* ADAGameMode::AddConfirmationPopup(TSubclassOf<UDAConfirmPopup> NewPopupClass, FText Message)
 {
 	UUserWidget* Popup = AddMenu(NewPopupClass);
 	if (Popup) {
 		UDAConfirmPopup* CP = Cast<UDAConfirmPopup>(Popup);
 		if (CP) {
-			CP->ConfirmAction.BindUObject(ParentWidget, &UDAWidget::OnPopupConfirm);
 			CP->MainText->SetText(Message);
 		}
 	}

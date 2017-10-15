@@ -85,6 +85,9 @@ public:
 	void UseHealItem();
 
 	UFUNCTION(BlueprintCallable)
+	void UseConsumableItem(FName ID);
+
+	UFUNCTION(BlueprintCallable)
 	void FireProjectile();
 
 	UFUNCTION(BlueprintCallable)
