@@ -221,11 +221,16 @@ void ADAGameMode::CloseCurrentMenu(bool OpenPrevious)
 		}
 	}
 
-	if (OpenPrevious && MenuStack.Size() > 0) {
+	if (MenuStack.Size() > 0) {
 		UDAWidget* DAW = MenuStack.Peek();
 		if (DAW) {
-			DAW->AddToViewport();
-			DAW->OnOpen();
+			if (OpenPrevious) {
+				DAW->AddToViewport();
+				DAW->OnOpen();
+			}
+			else {
+				DAW->Refocus();
+			}
 		}
 	}
 

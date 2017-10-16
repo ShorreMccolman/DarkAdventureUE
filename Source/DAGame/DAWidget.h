@@ -28,6 +28,9 @@ public:
 	virtual void Accept();
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void Refocus();
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void RightButton();
 
 	UFUNCTION(BlueprintImplementableEvent)

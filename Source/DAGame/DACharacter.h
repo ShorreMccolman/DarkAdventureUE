@@ -97,6 +97,12 @@ public:
 	void EquipSecondaryWeapon(FName ID, FName SocketName);
 
 	UFUNCTION(BlueprintCallable)
+	void EquipItemToSlot(FName ID, EDAEquipmentSlot Slot);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveItemFromSlot(EDAEquipmentSlot Slot);
+
+	UFUNCTION(BlueprintCallable)
 	void DiscardItemsWithID(FName ID, int Quantity);
 
 	UFUNCTION(BlueprintCallable)

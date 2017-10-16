@@ -79,6 +79,11 @@ void UDAInventoryWidget::NavigateDown()
 		CurrentRow++;
 		HighlightItemButtonAtRowAndColumn(CurrentRow, CurrentColumn);
 	}
+	else {
+		CurrentRow = FMath::CeilToInt(InventoryItems.Num() / 4.f) - 1;
+		CurrentColumn = (InventoryItems.Num() - 1) % 4;
+		HighlightItemButtonAtRowAndColumn(CurrentRow, CurrentColumn);
+	}
 }
 
 void UDAInventoryWidget::NavigateLeft()

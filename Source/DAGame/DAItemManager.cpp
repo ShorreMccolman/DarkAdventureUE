@@ -14,6 +14,10 @@ UDAItemManager::UDAItemManager()
 
 UDAItem* UDAItemManager::GetItemByID(FName ID) const
 {
+	if (ID.IsNone()) {
+		return nullptr;
+	}
+
 	if (!MasterItemList) {
 		UE_LOG(LogTemp, Warning, TEXT("Master item list has not been set!!!"))
 		return nullptr;

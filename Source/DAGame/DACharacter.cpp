@@ -298,6 +298,16 @@ void ADACharacter::DiscardItemsWithID(FName ID, int Quantity)
 	}
 }
 
+void ADACharacter::EquipItemToSlot(FName ID, EDAEquipmentSlot Slot)
+{
+	Inventory.EquipItem(ID, Slot);
+}
+
+void ADACharacter::RemoveItemFromSlot(EDAEquipmentSlot Slot)
+{
+	Inventory.UnequipItem(Slot);
+}
+
 UDAItem* ADACharacter::GetEquippedItemInSlot(EDAEquipmentSlot Slot)
 {
 	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());

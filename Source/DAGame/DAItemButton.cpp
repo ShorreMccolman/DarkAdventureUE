@@ -45,6 +45,7 @@ void UDAItemButton::SetItem(FDAInventoryItemDataPair Item)
 
 void UDAItemButton::SetItemTypeAndTexture(EDAItemType Type, UTexture2D* Texture)
 {
+	Item = FDAInventoryItemDataPair();
 	ItemType = Type;
 
 	QuantityText->SetText(FText::FromString(""));

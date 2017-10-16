@@ -206,6 +206,28 @@ struct FDACharacterInventory
 		default:
 			break;
 		}
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
+		AddItem("Sword", ItemManager, 1);
 	}
 
 	void Reset()
@@ -285,6 +307,34 @@ struct FDACharacterInventory
 
 	void EquipItem(FName ID, EDAEquipmentSlot Slot)
 	{
+		switch (Slot)
+		{
+		case EDAEquipmentSlot::EDAEquipmentSlot_RightHand:
+			Equipment.EquipToRightHand(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHand:
+			Equipment.EquipToLeftHand(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_RightHandAlt:
+			Equipment.EquipToRightHandAlt(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHandAlt:
+			Equipment.EquipToLeftHandAlt(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_ArmourSet:
+			Equipment.EquipToArmourSet(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable:
+			Equipment.EquipToConsumable(ID);
+			break;
+		default:
+			break;
+		}
+	}
+
+	void UnequipItem(EDAEquipmentSlot Slot)
+	{
+		FName ID = "";
 		switch (Slot)
 		{
 		case EDAEquipmentSlot::EDAEquipmentSlot_RightHand:

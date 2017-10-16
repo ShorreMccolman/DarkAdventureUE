@@ -35,6 +35,7 @@ void UDACharacterSelectMenu::NavigateUp()
 		UWidget* Widget = CharacterButtons[CurrentIndex];
 		if (Widget) {
 			SetHighlight(Widget);
+			UpdateDisplay();
 		}
 	}
 }
@@ -51,6 +52,7 @@ void UDACharacterSelectMenu::NavigateDown()
 		UWidget* Widget = CharacterButtons[CurrentIndex];
 		if (Widget) {
 			SetHighlight(Widget);
+			UpdateDisplay();
 		}
 	}
 }

@@ -15,6 +15,9 @@ class DAGAME_API UDACharacterSelectMenu : public UDAWidget
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateDisplay();
+
 	UFUNCTION(BlueprintCallable)
 	virtual void NavigateUp() override;
 
