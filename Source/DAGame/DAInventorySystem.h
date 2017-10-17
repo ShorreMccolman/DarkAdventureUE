@@ -27,6 +27,9 @@ struct FDAGenericItem
 
 	UPROPERTY(BlueprintReadWrite)
 	FName ID;
+
+	UPROPERTY(BlueprintReadWrite)
+	FString InstanceID;
 };
 
 USTRUCT(BlueprintType)
@@ -39,9 +42,10 @@ struct FDAEquipmentItem : public FDAGenericItem
 		ID = "";
 	}
 
-	FDAEquipmentItem(FName ItemID)
+	FDAEquipmentItem(FName ItemID, FString ItemInstanceID)
 	{
 		ID = ItemID;
+		InstanceID = ItemInstanceID;
 	}
 };
 
@@ -59,6 +63,7 @@ struct FDAInventoryItem : public FDAGenericItem
 	FDAInventoryItem()
 	{
 		ID = "";
+		InstanceID = "";
 		Quantity = 0;
 	}
 
@@ -66,6 +71,16 @@ struct FDAInventoryItem : public FDAGenericItem
 		: Quantity(Quantity)
 	{
 		ID = ItemID;
+
+		FGuid guid = FGuid::NewGuid();
+		InstanceID = guid.ToString();
+	}
+
+	FDAInventoryItem(FName ItemID, FString ItemInstanceID, int Quantity)
+		: Quantity(Quantity)
+	{
+		ID = ItemID;
+		InstanceID = ItemInstanceID;
 	}
 };
 
@@ -83,12 +98,16 @@ struct FDAInventoryItemDataPair
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsValidItem;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsEquipped;
+
 
 	FDAInventoryItemDataPair()
 	{
 		Item = FDAInventoryItem();
 		Data = nullptr;
 		bIsValidItem = false;
+		bIsEquipped = false;
 	}
 
 
@@ -96,6 +115,7 @@ struct FDAInventoryItemDataPair
 		: Item(InventoryItem), Data(ItemData)
 	{
 		bIsValidItem = ItemData != nullptr;
+		bIsEquipped = false;
 	}
 
 };
@@ -123,34 +143,53 @@ struct FDACharacterEquipment
 	UPROPERTY()
 	FDAEquipmentItem Consumable;
 
-	void EquipToRightHand(FName ID)
+	void EquipToRightHand(FName ID, FString InstanceID)
 	{
-		RightHand = FDAEquipmentItem(ID);
+		RightHand = FDAEquipmentItem(ID, InstanceID);
 	}
 
-	void EquipToLeftHand(FName ID)
+	void EquipToLeftHand(FName ID, FString InstanceID)
 	{
-		LeftHand = FDAEquipmentItem(ID);
+		LeftHand = FDAEquipmentItem(ID, InstanceID);
 	}
 
-	void EquipToRightHandAlt(FName ID)
+	void EquipToRightHandAlt(FName ID, FString InstanceID)
 	{
-		RightHandAlt = FDAEquipmentItem(ID);
+		RightHandAlt = FDAEquipmentItem(ID, InstanceID);
 	}
 
-	void EquipToLeftHandAlt(FName ID)
+	void EquipToLeftHandAlt(FName ID, FString InstanceID)
 	{
-		LeftHandAlt = FDAEquipmentItem(ID);
+		LeftHandAlt = FDAEquipmentItem(ID, InstanceID);
 	}
 
-	void EquipToArmourSet(FName ID)
+	void EquipToArmourSet(FName ID, FString InstanceID)
 	{
-		ArmorSet = FDAEquipmentItem(ID);
+		ArmorSet = FDAEquipmentItem(ID, InstanceID);
 	}
 
-	void EquipToConsumable(FName ID)
+	void EquipToConsumable(FName ID, FString InstanceID)
 	{
-		Consumable = FDAEquipmentItem(ID);
+		Consumable = FDAEquipmentItem(ID, InstanceID);
+	}
+
+	bool InstanceIDIsEquipped(FString ID)
+	{
+		bool IsEquipped = false;
+		if (RightHand.InstanceID.Equals(ID))
+			IsEquipped = true;
+		if (RightHandAlt.InstanceID.Equals(ID))
+			IsEquipped = true;
+		if (LeftHand.InstanceID.Equals(ID))
+			IsEquipped = true;
+		if (LeftHandAlt.InstanceID.Equals(ID))
+			IsEquipped = true;
+		if (ArmorSet.InstanceID.Equals(ID))
+			IsEquipped = true;
+		if (Consumable.InstanceID.Equals(ID))
+			IsEquipped = true;
+
+		return IsEquipped;
 	}
 };
 
@@ -198,7 +237,7 @@ struct FDACharacterInventory
 			AddItemAndEquip("Hammer", ItemManager, EDAEquipmentSlot::EDAEquipmentSlot_RightHand);
 			break;
 		case EDAMotive::DAMotive_Profit:
-			AddItemAndEquip("Sword", ItemManager, EDAEquipmentSlot::EDAEquipmentSlot_RightHand);
+			AddItemAndEquip("Crossbow", ItemManager, EDAEquipmentSlot::EDAEquipmentSlot_RightHand);
 			break;
 		case EDAMotive::DAMotive_Power:
 			AddItemAndEquip("Sword", ItemManager, EDAEquipmentSlot::EDAEquipmentSlot_RightHand);
@@ -207,27 +246,8 @@ struct FDACharacterInventory
 			break;
 		}
 		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Sword", ItemManager, 1);
+		AddItem("Hammer", ItemManager, 1);
+		AddItem("Crossbow", ItemManager, 1);
 	}
 
 	void Reset()
@@ -261,18 +281,21 @@ struct FDACharacterInventory
 		return 0;
 	}
 
-	void AddItem(FName ID, UDAItemManager* ItemManager, int quantity) 
+	FString AddItem(FName ID, UDAItemManager* ItemManager, int quantity) 
 	{
 		UDAItem* Item = ItemManager->GetItemByID(ID);
 		if (Item) {
-			AddItem(ID, *Item, quantity);
+			return AddItem(ID, *Item, quantity);
 		}
+		return "";
 	}
 
-	void AddItem(FName ID, UDAItem& ItemData, int quantity) 
+	FString AddItem(FName ID, UDAItem& ItemData, int quantity) 
 	{
 		if (ItemData.MaxQuantity == 0) {
-			Items.Add(FDAInventoryItem(ID, quantity));
+			FDAInventoryItem New = FDAInventoryItem(ID, 1);
+			Items.Add(New);
+			return New.InstanceID;
 		}
 		else {
 			FDAInventoryItem *Item = Items.FindByPredicate([ID](const FDAInventoryItem& Item) {
@@ -280,80 +303,84 @@ struct FDACharacterInventory
 			});
 			if (Item) {
 				Item->Quantity = FMath::Min(Item->Quantity + quantity, ItemData.MaxQuantity);
+				return Item->InstanceID;
 			} else {
-				Items.Add(FDAInventoryItem(ID, FMath::Min(quantity, ItemData.MaxQuantity)));
+				FDAInventoryItem New = FDAInventoryItem(ID, FMath::Min(quantity, ItemData.MaxQuantity));
+				Items.Add(New);
+				return New.InstanceID;
 			}
 		}
+		return "";
 	}
 
-	// Returns remaining quantity
-	int RemoveItem(FName ID, int quantity = 1)
+	int RemoveQuantityOfInstanceItem(FString InstanceID, int Quantity = 1)
 	{
 		int32 ItemIndex = INDEX_NONE;
-		ItemIndex = Items.IndexOfByPredicate([ID](const FDAInventoryItem& Item) {
-			return Item.ID == ID;
+		ItemIndex = Items.IndexOfByPredicate([InstanceID](const FDAInventoryItem& Item) {
+			return Item.InstanceID.Equals(InstanceID);
 		});
 
 		if (ItemIndex != INDEX_NONE) {
-			if (Items[ItemIndex].Quantity > quantity) {
-				Items[ItemIndex].Quantity -= quantity;
+			if (Items[ItemIndex].Quantity > Quantity) {
+				Items[ItemIndex].Quantity -= Quantity;
 				return Items[ItemIndex].Quantity;
-			} else {
+			}
+			else {
 				Items.RemoveAt(ItemIndex);
 			}
 		}
 		return 0;
 	}
 
-	void EquipItem(FName ID, EDAEquipmentSlot Slot)
+	void EquipItem(FName ID, FString InstanceID, EDAEquipmentSlot Slot)
 	{
 		switch (Slot)
 		{
 		case EDAEquipmentSlot::EDAEquipmentSlot_RightHand:
-			Equipment.EquipToRightHand(ID);
+			Equipment.EquipToRightHand(ID, InstanceID);
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHand:
-			Equipment.EquipToLeftHand(ID);
+			Equipment.EquipToLeftHand(ID, InstanceID);
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_RightHandAlt:
-			Equipment.EquipToRightHandAlt(ID);
+			Equipment.EquipToRightHandAlt(ID, InstanceID);
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHandAlt:
-			Equipment.EquipToLeftHandAlt(ID);
+			Equipment.EquipToLeftHandAlt(ID, InstanceID);
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_ArmourSet:
-			Equipment.EquipToArmourSet(ID);
+			Equipment.EquipToArmourSet(ID, InstanceID);
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable:
-			Equipment.EquipToConsumable(ID);
+			Equipment.EquipToConsumable(ID, InstanceID);
 			break;
 		default:
 			break;
 		}
 	}
 
-	void UnequipItem(EDAEquipmentSlot Slot)
+	void UnequipItem(FString InstanceID, EDAEquipmentSlot Slot)
 	{
 		FName ID = "";
 		switch (Slot)
 		{
 		case EDAEquipmentSlot::EDAEquipmentSlot_RightHand:
-			Equipment.EquipToRightHand(ID);
+			Equipment.EquipToRightHand(ID,"");
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHand:
-			Equipment.EquipToLeftHand(ID);
+			Equipment.EquipToLeftHand(ID, "");
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_RightHandAlt:
-			Equipment.EquipToRightHandAlt(ID);
+			Equipment.EquipToRightHandAlt(ID, "");
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHandAlt:
-			Equipment.EquipToLeftHandAlt(ID);
+			Equipment.EquipToLeftHandAlt(ID, "");
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_ArmourSet:
-			Equipment.EquipToArmourSet(ID);
+			Equipment.EquipToArmourSet(ID, "");
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable:
-			Equipment.EquipToConsumable(ID);
+			Equipment.EquipToConsumable(ID, "");
 			break;
 		default:
 			break;
@@ -362,45 +389,52 @@ struct FDACharacterInventory
 
 	void AddItemAndEquip(FName ID, UDAItemManager* ItemManager, EDAEquipmentSlot Slot)
 	{
-		AddItem(ID, ItemManager, 1);
-		EquipItem(ID, Slot);
+		FString InstanceID = AddItem(ID, ItemManager, 1);
+		EquipItem(ID, InstanceID, Slot);
 	}
 
 	FDAInventoryItemDataPair GetItemDataPairInSlot(const UDAItemManager& ItemManager, EDAEquipmentSlot Slot)
 	{
 		UDAItem* Item = nullptr;
 		FName ID = "";
+		FString InstanceID = "";
 		switch (Slot)
 		{
 		case EDAEquipmentSlot::EDAEquipmentSlot_RightHand:
 			ID = Equipment.RightHand.ID;
+			InstanceID = Equipment.RightHand.InstanceID;
 			Item = ItemManager.GetItemByID(ID);
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHand:
 			ID = Equipment.LeftHand.ID;
+			InstanceID = Equipment.LeftHand.InstanceID;
 			Item = ItemManager.GetItemByID(ID);
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_RightHandAlt:
 			ID = Equipment.RightHandAlt.ID;
+			InstanceID = Equipment.RightHandAlt.InstanceID;
 			Item = ItemManager.GetItemByID(ID);
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHandAlt:
 			ID = Equipment.LeftHandAlt.ID;
+			InstanceID = Equipment.LeftHandAlt.InstanceID;
 			Item = ItemManager.GetItemByID(ID);
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_ArmourSet:
 			ID = Equipment.ArmorSet.ID;
+			InstanceID = Equipment.ArmorSet.InstanceID;
 			Item = ItemManager.GetItemByID(ID);
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable:
 			ID = Equipment.Consumable.ID;
+			InstanceID = Equipment.Consumable.InstanceID;
 			Item = ItemManager.GetItemByID(ID);
 			break;
 		default:
 			break;
 		}
 
-		FDAInventoryItem InventoryItem = FDAInventoryItem(ID, GetItemQuantity(ID));
+		FDAInventoryItem InventoryItem = FDAInventoryItem(ID, InstanceID, GetItemQuantity(ID));
 		if (Item) {
 			return FDAInventoryItemDataPair(InventoryItem, Item);
 		}

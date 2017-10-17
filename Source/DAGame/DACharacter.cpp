@@ -151,12 +151,12 @@ void ADACharacter::UseHealItem()
 	}
 }
 
-void ADACharacter::UseConsumableItem(FName ID)
+void ADACharacter::UseConsumableItem(FDAInventoryItem InventoryItem)
 {
 	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
 	UDAItemManager* IM = Mode->GetItemManager();
 	if (IM) {
-		UDAConsumableItem* Item = Cast<UDAConsumableItem>(IM->GetItemByID(ID));
+		UDAConsumableItem* Item = Cast<UDAConsumableItem>(IM->GetItemByID(InventoryItem.ID));
 		if (Item) {
 
 			FVector Location(0.f, 0.f, 0.f);
@@ -169,7 +169,7 @@ void ADACharacter::UseConsumableItem(FName ID)
 				}
 			}
 			if (Item->ShouldConsume()) {
-				Inventory.RemoveItem(ID);
+				Inventory.RemoveQuantityOfInstanceItem(InventoryItem.InstanceID);
 			}
 		}
 	}
@@ -291,21 +291,21 @@ void ADACharacter::RemovePotentialTarget(ADACharacter* Target)
 	}
 }
 
-void ADACharacter::DiscardItemsWithID(FName ID, int Quantity)
+void ADACharacter::DiscardQuantityOfItem(FDAInventoryItem Item, int Quantity)
 {
 	if (Quantity > 0) {
-		Inventory.RemoveItem(ID, Quantity);
+		Inventory.RemoveQuantityOfInstanceItem(Item.InstanceID, Quantity);
 	}
 }
 
-void ADACharacter::EquipItemToSlot(FName ID, EDAEquipmentSlot Slot)
+void ADACharacter::EquipItemToSlot(FDAInventoryItem Item, EDAEquipmentSlot Slot)
 {
-	Inventory.EquipItem(ID, Slot);
+	Inventory.EquipItem(Item.ID, Item.InstanceID, Slot);
 }
 
-void ADACharacter::RemoveItemFromSlot(EDAEquipmentSlot Slot)
+void ADACharacter::RemoveItemFromSlot(FDAInventoryItem Item, EDAEquipmentSlot Slot)
 {
-	Inventory.UnequipItem(Slot);
+	Inventory.UnequipItem(Item.InstanceID, Slot);
 }
 
 UDAItem* ADACharacter::GetEquippedItemInSlot(EDAEquipmentSlot Slot)

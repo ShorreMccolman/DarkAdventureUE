@@ -5,7 +5,8 @@
 #include "DAGameMode.h"
 #include "DAItem.h"
 
-void UDAInventoryWidget::InitWithItemsAndFilterByType(TArray<FDAInventoryItem> Items, EDAItemType ItemType, bool ShouldResetPosition)
+
+void UDAInventoryWidget::InitWithInventoryAndFilterByType(FDACharacterInventory Inventory, EDAItemType ItemType, bool ShouldResetPosition)
 {
 	CurrentCategory = ItemType;
 
@@ -13,17 +14,29 @@ void UDAInventoryWidget::InitWithItemsAndFilterByType(TArray<FDAInventoryItem> I
 	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
 	UDAItemManager* IM = Mode->GetItemManager();
 	if (IM) {
-		for (int i = 0; i < Items.Num(); i++) {
-			UDAItem* Item = IM->GetItemByID(Items[i].ID);
+		for (int i = 0; i < Inventory.Items.Num(); i++) {
+			UDAItem* Item = IM->GetItemByID(Inventory.Items[i].ID);
 			if (Item) {
 				if (ItemType == EDAItemType::DAItemType_Any || Item->ItemType == ItemType) {
-					FDAInventoryItemDataPair Pair = FDAInventoryItemDataPair(Items[i], Item);
+					FDAInventoryItemDataPair Pair = FDAInventoryItemDataPair(Inventory.Items[i], Item);
+					Pair.bIsEquipped = Inventory.Equipment.InstanceIDIsEquipped(Inventory.Items[i].InstanceID);
 					InventoryItems.Add(Pair);
 				}
 			}
 		}
 
 		InventoryItems.Sort([](const FDAInventoryItemDataPair& A, const FDAInventoryItemDataPair& B) {
+
+			if (A.Item.ID.IsEqual(B.Item.ID)) {
+
+				if (A.bIsEquipped && !B.bIsEquipped)
+					return true;
+				else if (B.bIsEquipped && !A.bIsEquipped)
+					return false;
+
+				return A.Item.InstanceID < B.Item.InstanceID;
+			}
+
 			return A.Data->DisplayName < B.Data->DisplayName;
 		});
 	}
@@ -31,7 +44,8 @@ void UDAInventoryWidget::InitWithItemsAndFilterByType(TArray<FDAInventoryItem> I
 	if (ShouldResetPosition) {
 		CurrentRow = 0;
 		CurrentColumn = 0;
-	} else if (CurrentRow * 4 + CurrentColumn + 1 > InventoryItems.Num()) {
+	}
+	else if (CurrentRow * 4 + CurrentColumn + 1 > InventoryItems.Num()) {
 		CurrentRow = FMath::CeilToInt(InventoryItems.Num() / 4.f) - 1;
 		CurrentColumn = (InventoryItems.Num() - 1) % 4;
 	}
@@ -43,12 +57,6 @@ void UDAInventoryWidget::InitWithItemsAndFilterByType(TArray<FDAInventoryItem> I
 	else {
 		UpdateDisplayWithType(ItemType);
 	}
-}
-
-
-void UDAInventoryWidget::InitWithInventoryItems(TArray<FDAInventoryItem> Items)
-{
-	InitWithItemsAndFilterByType(Items, EDAItemType::DAItemType_Any, true);
 }
 
 void UDAInventoryWidget::NavigateUp()

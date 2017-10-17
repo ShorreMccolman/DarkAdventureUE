@@ -85,7 +85,7 @@ public:
 	void UseHealItem();
 
 	UFUNCTION(BlueprintCallable)
-	void UseConsumableItem(FName ID);
+	void UseConsumableItem(FDAInventoryItem InventoryItem);
 
 	UFUNCTION(BlueprintCallable)
 	void FireProjectile();
@@ -97,13 +97,13 @@ public:
 	void EquipSecondaryWeapon(FName ID, FName SocketName);
 
 	UFUNCTION(BlueprintCallable)
-	void EquipItemToSlot(FName ID, EDAEquipmentSlot Slot);
+	void EquipItemToSlot(FDAInventoryItem Item, EDAEquipmentSlot Slot);
 
 	UFUNCTION(BlueprintCallable)
-	void RemoveItemFromSlot(EDAEquipmentSlot Slot);
+	void RemoveItemFromSlot(FDAInventoryItem Item, EDAEquipmentSlot Slot);
 
 	UFUNCTION(BlueprintCallable)
-	void DiscardItemsWithID(FName ID, int Quantity);
+	void DiscardQuantityOfItem(FDAInventoryItem Item, int Quantity);
 
 	UFUNCTION(BlueprintCallable)
 	class UDAItem* GetEquippedItemInSlot(EDAEquipmentSlot Slot);

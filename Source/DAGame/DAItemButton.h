@@ -45,16 +45,19 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	EDAItemType ItemType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	FDAInventoryItemDataPair Item;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	class UTextBlock* QuantityText;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	class UImage* IconImage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
+	class UImage* EquippedIconImage;
+
+	UPROPERTY(BlueprintReadWrite)
 	class UButton* Button;
 	
 	

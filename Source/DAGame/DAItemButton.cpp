@@ -32,6 +32,8 @@ void UDAItemButton::SetItem(FDAInventoryItemDataPair Item)
 {
 	this->Item = Item;
 
+	EquippedIconImage->SetVisibility(Item.bIsEquipped ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+
 	if (Item.Data) {
 		if (Item.Data->MaxQuantity > 0) {
 			QuantityText->SetText(FText::AsNumber(Item.Item.Quantity));
@@ -49,6 +51,7 @@ void UDAItemButton::SetItemTypeAndTexture(EDAItemType Type, UTexture2D* Texture)
 	ItemType = Type;
 
 	QuantityText->SetText(FText::FromString(""));
+	EquippedIconImage->SetVisibility(ESlateVisibility::Hidden);
 
 	if (Texture) {
 		IconImage->SetBrushFromTexture(Texture);

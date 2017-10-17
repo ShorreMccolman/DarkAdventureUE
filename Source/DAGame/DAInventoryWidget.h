@@ -38,10 +38,7 @@ public:
 	void RebuildInventoryScrollbox();
 
 	UFUNCTION(BlueprintCallable)
-	void InitWithInventoryItems(TArray<FDAInventoryItem> Items);
-
-	UFUNCTION(BlueprintCallable)
-	void InitWithItemsAndFilterByType(TArray<FDAInventoryItem> Items, EDAItemType ItemType, bool ShouldResetPosition);
+	void InitWithInventoryAndFilterByType(FDACharacterInventory Inventory, EDAItemType ItemType, bool ShouldResetPosition);
 
 protected:
 	UPROPERTY(BlueprintReadWrite)
