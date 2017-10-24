@@ -49,13 +49,19 @@ public:
 	FORCEINLINE int GetCurrentHeals() const { return Inventory.Heals.Quantity; }
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE FDACharacterAttributes GetAttributes() const { return Attributes; };
+	FORCEINLINE FDACharacterAttributes GetAttributes() const { return Attributes; }
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE int GetCurrentSouls() const { return Attributes.CurrentSouls; }
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> ProjectileClass;
 
 	UFUNCTION(BlueprintCallable)
 	void SetCharacterRotationLock(bool Lock);
+
+	UFUNCTION(BlueprintCallable)
+	void GainSouls(int Amount);
 
 	UFUNCTION(BlueprintCallable)
 	void HealCharacter(float Amount);
@@ -75,6 +81,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemovePotentialTarget(class ADACharacter* Target);
 
+	UFUNCTION(BlueprintCallable)
+	void UpdateAttributes(FDACharacterAttributes NewAttributes);
+
 	/**********************
 	
 	INVENTORY AND EQUIPMENT
@@ -85,6 +94,9 @@ public:
 	void UseHealItem();
 
 	UFUNCTION(BlueprintCallable)
+	void UseQueuedItem();
+
+	UFUNCTION(BlueprintCallable)
 	void UseConsumableItem(FDAInventoryItem InventoryItem);
 
 	UFUNCTION(BlueprintCallable)
@@ -92,6 +104,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void EquipWeapon(FName ID, FName SocketName);
+
+	UFUNCTION(BlueprintCallable)
+	void EquipWeaponItem(FDAInventoryItemDataPair Pair, FName SocketName);
 
 	UFUNCTION(BlueprintCallable)
 	void EquipSecondaryWeapon(FName ID, FName SocketName);
@@ -106,7 +121,7 @@ public:
 	void DiscardQuantityOfItem(FDAInventoryItem Item, int Quantity);
 
 	UFUNCTION(BlueprintCallable)
-	class UDAItem* GetEquippedItemInSlot(EDAEquipmentSlot Slot);
+	class UDAItem* GetEquippedItemInSlot(EDAEquipmentSlot Slot) const;
 
 	UFUNCTION(BlueprintCallable)
 	FDAInventoryItemDataPair GetEquippedPairInSlot(EDAEquipmentSlot Slot);
@@ -139,6 +154,8 @@ public:
 	void TryStrongAttack();
 
 	void TryHeal();
+
+	void TryUse();
 
 	virtual void Reset();
 
@@ -216,5 +233,8 @@ private:
 	float ApproachValue;
 
 	float StaminaBuffer;
+
+	UPROPERTY()
+	FDAInventoryItemDataPair QueuedItem;
 	
 };

@@ -3,6 +3,11 @@
 #include "CoreMinimal.h"
 #include "DAItemManager.h"
 #include "DAItem.h"
+#include "DAConsumableItem.h"
+#include "DAWeaponItem.h"
+#include "DAArmourItem.h"
+#include "DARingItem.h"
+#include "DAKeyItem.h"
 #include "DACharacterAttributes.h"
 #include "DAInventorySystem.generated.h"
 
@@ -443,7 +448,7 @@ struct FDACharacterInventory
 		}
 	}
 
-	UDAItem* GetItemInSlot(UDAItemManager* ItemManager, EDAEquipmentSlot Slot)
+	UDAItem* GetItemInSlot(UDAItemManager* ItemManager, EDAEquipmentSlot Slot) const
 	{
 		UDAItem* Item = nullptr;
 		switch (Slot)

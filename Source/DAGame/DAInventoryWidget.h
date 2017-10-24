@@ -40,6 +40,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitWithInventoryAndFilterByType(FDACharacterInventory Inventory, EDAItemType ItemType, bool ShouldResetPosition);
 
+	UFUNCTION(BlueprintCallable)
+	void JumpToItem(FDAInventoryItemDataPair ItemPair);
+
 protected:
 	UPROPERTY(BlueprintReadWrite)
 	int CurrentRow;

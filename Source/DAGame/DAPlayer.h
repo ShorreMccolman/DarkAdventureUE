@@ -28,9 +28,6 @@ public:
 	void TryInteract();
 
 	UFUNCTION()
-	void TryUse();
-
-	UFUNCTION()
 	void SetCurrentInteractable(class ADAInteractable* Interactable);
 
 	FORCEINLINE class ADAInteractable* GetCurrentInteractable() const { return CurrentInteractable; }

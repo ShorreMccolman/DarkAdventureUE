@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "DAItem.h"
+#include "DACharacterAttributes.h"
 #include "DAWeaponItem.generated.h"
 
 /**
@@ -16,6 +17,8 @@ class DAGAME_API UDAWeaponItem : public UDAItem
 	
 public:
 	UDAWeaponItem();
+
+	void ModifyDamageWithAttributes(float& Damage, FDACharacterAttributes Attributes);
 
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE FString GetWeaponTypeDescription() const {

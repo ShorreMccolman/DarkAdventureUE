@@ -25,11 +25,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void TryCreateNewGame(FString PlayerName, FDACharacterAttributes Attributes);
 
+	void UpdateCurrentPlayerLevel(int Level);
+
 	void CreatePlayerSave(FString PlayerName, FDACharacterAttributes Attributes);
 
 	class UDAPlayerSave* LoadCurrentPlayerSave();
 
 	class UDAPlayerProfile* LoadPlayerProfile(FString ID);
+
+	UFUNCTION(BlueprintCallable)
+	void OpenLevel(FName LevelName);
 
 	UFUNCTION(BlueprintCallable)
 	void DeletePlayerSave(FString ID);

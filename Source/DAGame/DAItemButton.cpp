@@ -28,6 +28,15 @@ void UDAItemButton::OnSelect_Implementation()
 	}
 }
 
+void UDAItemButton::SetItemWithDefaults(FDAInventoryItemDataPair Item, EDAItemType DefaultType, UTexture2D* DefaultTexture)
+{
+	if (Item.bIsValidItem) {
+		SetItem(Item);
+	} else {
+		SetItemTypeAndTexture(DefaultType, DefaultTexture);
+	}
+}
+
 void UDAItemButton::SetItem(FDAInventoryItemDataPair Item)
 {
 	this->Item = Item;

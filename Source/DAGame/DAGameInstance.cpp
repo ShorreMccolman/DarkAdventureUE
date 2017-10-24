@@ -30,7 +30,16 @@ const UDAMasterSettings* UDAGameInstance::GetSettings()
 
 void UDAGameInstance::LoadMostRecentGame()
 {
-	UGameplayStatics::OpenLevel(this, "Main");
+	OpenLevel("Main");
+}
+
+void UDAGameInstance::OpenLevel(FName LevelName)
+{
+	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
+	if (Mode) {
+		Mode->ShowLoadingScreen();
+		UGameplayStatics::OpenLevel(this, LevelName);
+	}
 }
 
 void UDAGameInstance::TryLoadGame(FString PlayerID)
@@ -43,13 +52,20 @@ void UDAGameInstance::TryLoadGame(FString PlayerID)
 		Settings->SetCurrentCharacter(PlayerID);
 		UGameplayStatics::SaveGameToSlot(Settings, "Master", 0);
 	}
-	UGameplayStatics::OpenLevel(this, "Main");
+	OpenLevel("Main");
 }
 
 void UDAGameInstance::TryCreateNewGame(FString PlayerName, FDACharacterAttributes Attributes)
 {
 	CreatePlayerSave(PlayerName, Attributes);
-	UGameplayStatics::OpenLevel(this, "Main");
+	OpenLevel("Main");
+}
+
+void UDAGameInstance::UpdateCurrentPlayerLevel(int Level)
+{
+	Profile->Level = Level;
+	FString ProfID = FString(*Profile->ID).Append("-Prof");
+	UGameplayStatics::SaveGameToSlot(Profile, ProfID, 0);
 }
 
 void UDAGameInstance::CreatePlayerSave(FString PlayerName, FDACharacterAttributes Attributes)

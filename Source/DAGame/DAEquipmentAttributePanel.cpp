@@ -1,12 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DAEquipmentAttributePanel.h"
+#include "DACharacter.h"
 
 
-void UDAEquipmentAttributePanel::InitAttributesAndInventory(FDACharacterAttributes PlayerAttributes, FDACharacterInventory PlayerInventory)
+void UDAEquipmentAttributePanel::InitWithCharacter(ADACharacter* PlayerCharacter)
 {
-	Attributes = PlayerAttributes;
-	Inventory = PlayerInventory;
-
+	Character = PlayerCharacter;
+	Attributes = FDAGeneratedAttributes(*PlayerCharacter);
+	
+	UpdateDisplay();
 }
 

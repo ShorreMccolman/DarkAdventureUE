@@ -11,6 +11,7 @@
 #include "DAInteractable.h"
 #include "DAWeaponBase.h"
 #include "DAPlayerSave.h"
+#include "DAMainGameMode.h"
 #include "DAGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/BlueprintSupport.h"
@@ -53,35 +54,45 @@ void ADAPlayer::LoadPlayer()
 	}
 
 	if (PlayerSave->bIsNewPlayer && PlayerStart) {
-		if (PlayerStart) {
-			PlayerSave->Position = PlayerStart->GetActorLocation();
-			PlayerSave->Facing = PlayerStart->GetActorRotation();
-		}
+		PlayerSave->Position = PlayerStart->GetActorLocation();
+		PlayerSave->Facing = PlayerStart->GetActorRotation();
+		PlayerSave->HomePosition = PlayerStart->GetActorLocation();
 	}
 
 	Attributes = PlayerSave->Attributes;
 	Inventory = PlayerSave->Inventory;
 	SetActorRotation(PlayerSave->Facing);
+	TargetDirection = GetActorForwardVector();
 	SetActorLocation(PlayerSave->Position);
+	Origin = PlayerSave->HomePosition;
+
+	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
+	if (Mode) {
+		EquipWeaponItem(Inventory.GetItemDataPairInSlot(*Mode->GetItemManager(), EDAEquipmentSlot::EDAEquipmentSlot_RightHand), "RightHand");
+		Mode->SetupHUD(this);
+	}
 }
 
 void ADAPlayer::SavePlayer()
 {
-	if(!PlayerSave) {
-		UDAGameInstance* Instance = Cast<UDAGameInstance>(GetGameInstance());
-		if (Instance) {
+	UDAGameInstance* Instance = Cast<UDAGameInstance>(GetGameInstance());
+	if (Instance) {
+		if (!PlayerSave) {
 			PlayerSave = Instance->LoadCurrentPlayerSave();
 			if (!PlayerSave) {
 				UE_LOG(LogTemp, Warning, TEXT("SavePlayer - Failed To load character save"));
 				return;
 			}
 		}
+
+		Instance->UpdateCurrentPlayerLevel(Attributes.GetLevel());
 	}
 
 	PlayerSave->Attributes = Attributes;
 	PlayerSave->Inventory = Inventory;
 	PlayerSave->Position = GetActorLocation();
 	PlayerSave->Facing = GetActorRotation();
+	PlayerSave->HomePosition = Origin;
 	PlayerSave->bIsNewPlayer = false;
 
 	UGameplayStatics::SaveGameToSlot(PlayerSave, PlayerSave->ID, 0);
@@ -93,14 +104,6 @@ void ADAPlayer::BeginPlay()
 	Super::BeginPlay();
 
 	LoadPlayer();
-
-	TargetDirection = GetActorForwardVector();
-
-	if (PlayerStart) {
-		Origin = PlayerStart->GetActorLocation();
-	}
-	EquipWeapon("Sword", "RightHand");
-	//EquipSecondaryWeapon("Shield", "LeftHandShield");
 }
 
 // Called every frame
@@ -131,11 +134,6 @@ void ADAPlayer::TryInteract()
 {
 	if(CurrentInteractable)
 		CurrentInteractable->Interact();
-}
-
-void ADAPlayer::TryUse()
-{
-
 }
 
 void ADAPlayer::SetCurrentInteractable(ADAInteractable* Interactable)

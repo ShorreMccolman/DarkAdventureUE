@@ -22,41 +22,61 @@ enum class EDAMotive : uint8
 	DAMotive_Power UMETA(DisplayName = "Power")
 };
 
+UENUM(BlueprintType)
+enum class EDACharacterStat : uint8
+{
+	DACharacterStat_Health UMETA(DisplayName = "Health"),
+	DACharacterStat_Stamina UMETA(DisplayName = "Stamina"),
+	DACharacterStat_Damage UMETA(DisplayName = "Damage"),
+	DACharacterStat_Scientific UMETA(DisplayName = "Scientific"),
+	DACharacterStat_Practical UMETA(DisplayName = "Practical"),
+	DACharacterStat_Spiritual UMETA(DisplayName = "Spiritual")
+};
+
 
 USTRUCT(BlueprintType)
 struct FDACharacterAttributes 
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	float MaxHealth;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	float CurHealth;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	float MaxStamina;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	float CurStamina;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
+	int CurrentSouls;
+	UPROPERTY(BlueprintReadWrite)
+	bool bHasLostSouls;
+	UPROPERTY(BlueprintReadWrite)
+	FVector LostSoulsLocation;
+	UPROPERTY(BlueprintReadWrite)
+	int LostSouls;
+
+	UPROPERTY(BlueprintReadWrite)
 	int MaxHeals;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	int HealthStat;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	int StaminaStat;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	int DamageStat;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	int PracticalStat;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	int ScientificStat;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	int SpiritualStat;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	EDAWorldview WorldView;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	EDAMotive Motive;
 
 	FDACharacterAttributes()
@@ -75,6 +95,11 @@ struct FDACharacterAttributes
 
 		MaxStamina = 10.f * StaminaStat;
 		CurStamina = MaxStamina;
+
+		CurrentSouls = 0;
+		bHasLostSouls = false;
+		LostSoulsLocation = FVector::ZeroVector;
+		LostSouls = 0;
 
 		WorldView = EDAWorldview::DAWorldView_None;
 		Motive = EDAMotive::DAMotive_None;
@@ -96,6 +121,11 @@ struct FDACharacterAttributes
 
 		MaxStamina = 10.f * StaminaStat;
 		CurStamina = MaxStamina;
+
+		CurrentSouls = 1000;
+		bHasLostSouls = false;
+		LostSoulsLocation = FVector::ZeroVector;
+		LostSouls = 0;
 
 		switch (WorldView)
 		{
@@ -263,5 +293,11 @@ struct FDACharacterAttributes
 		}
 
 		return "???";
+	}
+
+	static int GetCostForLevel(int Level)
+	{
+		// TODO: Come up with a balanced formula for this
+		return Level * 100;
 	}
 };

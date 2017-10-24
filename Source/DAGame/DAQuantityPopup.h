@@ -47,5 +47,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FQuantityConfirmAction ConfirmAction;
+
+protected:
+	UPROPERTY(BlueprintReadWrite)
+	class UDAIncrementButton* Button;
 	
 };

@@ -112,6 +112,14 @@ void ADAGameMode::NavigateCurrent(EDAInputDirection Direction)
 	}
 }
 
+void ADAGameMode::ShowLoadingScreen()
+{
+	LoadingWidget = CreateWidget<UUserWidget>(GetWorld(), LoadingWidgetClass);
+	if (LoadingWidget) {
+		LoadingWidget->AddToViewport();
+	}
+}
+
 void ADAGameMode::FadeIn()
 {
 	if (SequencePlayer) {

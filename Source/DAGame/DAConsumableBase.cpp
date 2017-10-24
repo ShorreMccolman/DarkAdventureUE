@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DAConsumableBase.h"
+#include "DACharacter.h"
 #include "TimerManager.h"
 
 // Sets default values
@@ -32,7 +33,7 @@ void ADAConsumableBase::Activate()
 	}
 }
 
-void ADAConsumableBase::SetDAOwner(class ADACharacter* Character)
+void ADAConsumableBase::SetDAOwner(ADACharacter* Character)
 {
 	DAOwner = Character;
 }

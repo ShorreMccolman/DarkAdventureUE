@@ -2,6 +2,7 @@
 
 #include "DAQuantityPopup.h"
 #include "DAGameMode.h"
+#include "DAIncrementButton.h"
 
 void UDAQuantityPopup::SetMaxQuantity(int Quantity)
 {
@@ -35,10 +36,14 @@ void UDAQuantityPopup::DecreaseQuantity()
 
 void UDAQuantityPopup::NavigateRight()
 {
-	IncreaseQuantity();
+	if (Button) {
+		Button->IncrementAction.Broadcast(true);
+	}
 }
 
 void UDAQuantityPopup::NavigateLeft()
 {
-	DecreaseQuantity();
+	if (Button) {
+		Button->IncrementAction.Broadcast(false);
+	}
 }

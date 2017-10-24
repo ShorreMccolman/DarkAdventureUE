@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "DACharacterAttributes.h"
 #include "DAItem.generated.h"
 
 UENUM(BlueprintType)
@@ -93,4 +94,7 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE class UTexture2D* GetItemIcon() const { return Icon; }
+
+	UFUNCTION(BlueprintCallable)
+	static float ScalingFactorModifier(EDAScalingFactor Factor);
 };

@@ -119,13 +119,22 @@ public:
 	UFUNCTION()
 	FORCEINLINE class UDAItemManager* GetItemManager() const { return ItemManager; }
 
+	UFUNCTION(BlueprintCallable)
+	void ShowLoadingScreen();
+
 protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UDAItemManager* ItemManager;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HUD")
+	TSubclassOf<class UUserWidget> LoadingWidgetClass;
+
+	UPROPERTY(BlueprintReadWrite)
+	class UUserWidget* LoadingWidget;
+
+	UPROPERTY(BlueprintReadWrite, Category = "HUD")
 	FDAStack MenuStack;
 
 	UPROPERTY()

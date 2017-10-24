@@ -4,30 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "DAGeneratedAttributes.h"
-#include "DAInventorySystem.h"
-#include "DAEquipmentAttributePanel.generated.h"
+#include "DAHUDWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DAGAME_API UDAEquipmentAttributePanel : public UUserWidget
+class DAGAME_API UDAHUDWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+	
 public:
 	UFUNCTION(BlueprintCallable)
-	void InitWithCharacter(class ADACharacter* PlayerCharacter);
+	void UpdateCharacterAndDisplay(class ADACharacter* PlayerCharacter);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateDisplay();
-
+	void DoDisplayUpdate();
+	
+	
 protected:
 	UPROPERTY(BlueprintReadWrite)
 	class ADACharacter* Character;
-
-	UPROPERTY(BlueprintReadWrite)
-	FDAGeneratedAttributes Attributes;
-	
 };

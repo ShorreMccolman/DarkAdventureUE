@@ -13,14 +13,11 @@ class ADARestPoint : public ADAInteractable
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
-	ADARestPoint();
+	virtual void Activate() override;
+
+	virtual void Deactivate() override;
 
 	UFUNCTION()
 	virtual void Interact() override;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 	
 };

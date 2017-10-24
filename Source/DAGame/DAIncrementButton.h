@@ -3,22 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/Button.h"
+#include "Blueprint/UserWidget.h"
 #include "DASelectable.h"
-#include "DAButton.generated.h"
+#include "DAIncrementButton.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FIncrementAction, bool, Forward);
 
 /**
  * 
  */
 UCLASS()
-class UDAButton : public UButton, public IDASelectable
+class DAGAME_API UDAIncrementButton : public UUserWidget, public IDASelectable
 {
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable)
-	void SetDisabled(bool IsDisabled);
-
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Highlight();
 	virtual void Highlight_Implementation() override;
@@ -31,8 +30,14 @@ public:
 	void OnSelect();
 	virtual void OnSelect_Implementation() override;
 
+	UPROPERTY(BlueprintAssignable)
+	FIncrementAction IncrementAction;
+
 protected:
 	UPROPERTY(BlueprintReadWrite)
-	bool bIsDisabled;
-	
+	class UDAButton* Button;
+
+	UPROPERTY(BlueprintReadWrite)
+	class UTextBlock* Text;
+
 };

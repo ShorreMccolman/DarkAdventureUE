@@ -61,15 +61,32 @@ void UDAInventoryWidget::InitWithInventoryAndFilterByType(FDACharacterInventory 
 
 void UDAInventoryWidget::NavigateUp()
 {
+	if (InventoryItems.Num() == 0)
+		return;
+
 	if (CurrentRow > 0) {
 		CurrentRow--;
+		HighlightItemButtonAtRowAndColumn(CurrentRow, CurrentColumn);
+	}
+	else if (CurrentRow == 0) {
+		CurrentRow = FMath::CeilToInt(InventoryItems.Num() / 4.f) - 1;
+		if (CurrentRow * 4 + CurrentColumn + 1 > InventoryItems.Num()) {
+			CurrentColumn = (InventoryItems.Num() - 1) % 4;
+		}
 		HighlightItemButtonAtRowAndColumn(CurrentRow, CurrentColumn);
 	}
 }
 
 void UDAInventoryWidget::NavigateRight()
 {
-	if (CurrentRow * 4 + CurrentColumn + 1 < InventoryItems.Num()) {
+	if (InventoryItems.Num() == 0)
+		return;
+
+	if (CurrentRow * 4 + CurrentColumn + 1 == InventoryItems.Num()) {
+		CurrentRow = 0;
+		CurrentColumn = 0;
+		HighlightItemButtonAtRowAndColumn(CurrentRow, CurrentColumn);
+	} else if (CurrentRow * 4 + CurrentColumn + 1 < InventoryItems.Num()) {
 		if (CurrentColumn == 3) {
 			CurrentColumn = 0;
 			CurrentRow++;
@@ -83,7 +100,13 @@ void UDAInventoryWidget::NavigateRight()
 
 void UDAInventoryWidget::NavigateDown()
 {
-	if((CurrentRow + 1) * 4 + CurrentColumn < InventoryItems.Num()) {
+	if (InventoryItems.Num() == 0)
+		return;
+
+	if (CurrentRow == FMath::CeilToInt(InventoryItems.Num() / 4.f) - 1) {
+		CurrentRow = 0;
+		HighlightItemButtonAtRowAndColumn(CurrentRow, CurrentColumn);
+	} else if((CurrentRow + 1) * 4 + CurrentColumn < InventoryItems.Num()) {
 		CurrentRow++;
 		HighlightItemButtonAtRowAndColumn(CurrentRow, CurrentColumn);
 	}
@@ -96,7 +119,14 @@ void UDAInventoryWidget::NavigateDown()
 
 void UDAInventoryWidget::NavigateLeft()
 {
-	if (CurrentRow * 4 + CurrentColumn > 0) {
+	if (InventoryItems.Num() == 0)
+		return;
+
+	if (CurrentRow * 4 + CurrentColumn == 0) {
+		CurrentRow = FMath::CeilToInt(InventoryItems.Num() / 4.f) - 1;
+		CurrentColumn = (InventoryItems.Num() - 1) % 4;
+		HighlightItemButtonAtRowAndColumn(CurrentRow, CurrentColumn);
+	} else if (CurrentRow * 4 + CurrentColumn > 0) {
 		if (CurrentColumn == 0) {
 			CurrentColumn = 3;
 			CurrentRow--;
@@ -106,4 +136,18 @@ void UDAInventoryWidget::NavigateLeft()
 
 		HighlightItemButtonAtRowAndColumn(CurrentRow, CurrentColumn);
 	}
+}
+
+void UDAInventoryWidget::JumpToItem(FDAInventoryItemDataPair ItemPair)
+{
+	if (!ItemPair.bIsValidItem)
+		return;
+
+	int index = InventoryItems.IndexOfByPredicate([ItemPair](const FDAInventoryItemDataPair& Pair) {
+		return Pair.Item.InstanceID == ItemPair.Item.InstanceID;
+	});
+
+	CurrentRow = FMath::FloorToInt(index / 4.f);
+	CurrentColumn = index % 4;
+	HighlightItemButtonAtRowAndColumn(CurrentRow, CurrentColumn);
 }

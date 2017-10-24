@@ -11,6 +11,7 @@
 #include "DAEnemy.h"
 #include "EngineUtils.h" 
 #include "DAWidget.h"
+#include "DAHUDWidget.h"
 #include "LevelSequencePlayer.h"
 
 
@@ -22,8 +23,17 @@ ADAMainGameMode::ADAMainGameMode()
 void ADAMainGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
+void ADAMainGameMode::SetupHUD(ADACharacter* PlayerCharacter)
+{
 	ShowHUDWidget(true);
+	if (CurrentHUDWidget != nullptr) {
+		UDAHUDWidget* HUD = Cast<UDAHUDWidget>(CurrentHUDWidget);
+		if (HUD) {
+			HUD->UpdateCharacterAndDisplay(PlayerCharacter);
+		}
+	}
 }
 
 void ADAMainGameMode::ShowHUDWidget(bool ShouldShow)
@@ -40,12 +50,23 @@ void ADAMainGameMode::ShowHUDWidget(bool ShouldShow)
 	}
 }
 
+void ADAMainGameMode::RefreshHUD()
+{
+	if (CurrentHUDWidget != nullptr) {
+		UDAHUDWidget* HUD = Cast<UDAHUDWidget>(CurrentHUDWidget);
+		if (HUD) {
+			HUD->DoDisplayUpdate();
+		}
+	}
+}
+
 void ADAMainGameMode::QuitToMainMenu()
 {
 	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (Player) {
 		Player->SavePlayer();
 	}
+	ShowLoadingScreen();
 	UGameplayStatics::OpenLevel(this,"Menu");
 }
 

@@ -7,17 +7,18 @@
 #include "DAPlayer.h"
 
 
-// Sets default values
-ADARestPoint::ADARestPoint()
+void ADARestPoint::Activate()
 {
+	Super::Activate();
 
+	Mesh->SetRenderCustomDepth(true);
 }
 
-// Called when the game starts or when spawned
-void ADARestPoint::BeginPlay()
+void ADARestPoint::Deactivate()
 {
-	Super::BeginPlay();
-	
+	Super::Deactivate();
+
+	Mesh->SetRenderCustomDepth(false);
 }
 
 void ADARestPoint::Interact()

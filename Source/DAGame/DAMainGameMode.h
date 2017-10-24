@@ -20,6 +20,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void ShowHUDWidget(bool ShouldShow);
 
+	UFUNCTION(BlueprintCallable)
+	void SetupHUD(class ADACharacter* PlayerCharacter);
+
+	UFUNCTION(BlueprintCallable)
+	void RefreshHUD();
+
 	UFUNCTION()
 	void OpenRestMenu();
 

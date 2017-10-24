@@ -11,7 +11,7 @@
 #include "DAWeaponBase.h"
 #include "AI/Navigation/NavigationSystem.h"
 #include "AI/Navigation/NavigationPath.h"
-#include "DAGameMode.h"
+#include "DAMainGameMode.h"
 #include "GameFramework/PlayerStart.h"
 #include "DAItemManager.h"
 #include "DAItem.h"
@@ -82,6 +82,11 @@ void ADACharacter::OnCharacterDeath()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+void ADACharacter::UpdateAttributes(FDACharacterAttributes NewAttributes)
+{
+	Attributes = NewAttributes;
+}
+
 void ADACharacter::EquipSecondaryWeapon(FName ID, FName SocketName)
 {
 	if (Weapon2) {
@@ -103,6 +108,29 @@ void ADACharacter::EquipSecondaryWeapon(FName ID, FName SocketName)
 				Weapon2->DisableCollision();
 				Weapon2->SetDAOwner(this);
 			}
+		}
+	}
+}
+
+void ADACharacter::EquipWeaponItem(FDAInventoryItemDataPair Pair, FName SocketName)
+{
+	if (Weapon) {
+		Weapon->Destroy();
+		Weapon = nullptr;
+	}
+
+	UDAItem* ItemData = Pair.Data;
+	if (ItemData) {
+		FVector Location(0.f, 0.f, 0.f);
+		FRotator Rotation(0.f, 0.f, 0.f);
+		FActorSpawnParameters SpawnInfo;
+		Weapon = GetWorld()->SpawnActor<ADAWeaponBase>(ItemData->ObjClass, Location, Rotation, SpawnInfo);
+		if (Weapon) {
+			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, SocketName);
+			Weapon->DisableCollision();
+			Weapon->SetDAOwner(this);
+			GetMesh()->SetAnimInstanceClass(Weapon->GetAnimBP());
+			Animation = Cast<UDAPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 		}
 	}
 }
@@ -131,6 +159,21 @@ void ADACharacter::EquipWeapon(FName ID, FName SocketName)
 				Animation = Cast<UDAPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 			}
 		}
+	}
+}
+
+void ADACharacter::UseQueuedItem()
+{
+	UDAItem* Item = QueuedItem.Data;
+	if (Item) {
+		FVector Location(0.f, 0.f, 0.f);
+		FRotator Rotation(0.f, 0.f, 0.f);
+		FActorSpawnParameters SpawnInfo;
+		ADAConsumableBase* Consumable = GetWorld()->SpawnActor<ADAConsumableBase>(Item->ObjClass, Location, Rotation, SpawnInfo);
+		Consumable->SetDAOwner(this);
+		Inventory.RemoveQuantityOfInstanceItem(QueuedItem.Item.InstanceID);
+		ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
+		Mode->RefreshHUD();
 	}
 }
 
@@ -256,6 +299,20 @@ void ADACharacter::TryHeal()
 	}
 }
 
+void ADACharacter::TryUse()
+{
+	if (Animation && Attributes.CurStamina > 1.f) {
+		ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
+		UDAItemManager* IM = Mode->GetItemManager();
+		if (IM) {
+			QueuedItem = Inventory.GetItemDataPairInSlot(*IM, EDAEquipmentSlot::EDAEquipmentSlot_Consumable);
+			if (QueuedItem.bIsValidItem && QueuedItem.Item.Quantity > 0) {
+				Animation->SetupNextAnimation("Use", false);
+			}
+		}
+	}
+}
+
 void ADACharacter::TryRoll()
 {
 	if (Animation && Attributes.CurStamina > 1.f) {
@@ -301,6 +358,11 @@ void ADACharacter::DiscardQuantityOfItem(FDAInventoryItem Item, int Quantity)
 void ADACharacter::EquipItemToSlot(FDAInventoryItem Item, EDAEquipmentSlot Slot)
 {
 	Inventory.EquipItem(Item.ID, Item.InstanceID, Slot);
+
+	if (Slot == EDAEquipmentSlot::EDAEquipmentSlot_RightHand) {
+		EquipWeapon(Item.ID, "RightHand");
+	}
+
 }
 
 void ADACharacter::RemoveItemFromSlot(FDAInventoryItem Item, EDAEquipmentSlot Slot)
@@ -308,7 +370,7 @@ void ADACharacter::RemoveItemFromSlot(FDAInventoryItem Item, EDAEquipmentSlot Sl
 	Inventory.UnequipItem(Item.InstanceID, Slot);
 }
 
-UDAItem* ADACharacter::GetEquippedItemInSlot(EDAEquipmentSlot Slot)
+UDAItem* ADACharacter::GetEquippedItemInSlot(EDAEquipmentSlot Slot) const
 {
 	ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
 	UDAItemManager* IM = Mode->GetItemManager();
@@ -355,6 +417,11 @@ float ADACharacter::GetCurrentHealthPercent() const
 float ADACharacter::GetCurrentStaminaPercent() const
 {
 	return Attributes.CurStamina / Attributes.MaxStamina;
+}
+
+void ADACharacter::GainSouls(int Amount)
+{
+	Attributes.CurrentSouls += Amount;
 }
 
 void ADACharacter::HealCharacter(float Amount)

@@ -33,6 +33,9 @@ public:
 	FItemButtonConfirmAction ConfirmAction;
 
 	UFUNCTION(BlueprintCallable)
+	void SetItemWithDefaults(FDAInventoryItemDataPair Item, EDAItemType DefaultType, UTexture2D* DefaultTexture);
+
+	UFUNCTION(BlueprintCallable)
 	void SetItem(FDAInventoryItemDataPair Item);
 
 	UFUNCTION(BlueprintCallable)
