@@ -19,9 +19,12 @@ class DAGAME_API UDAItemInfoPanel : public UUserWidget
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetupWithItem(int Quantity, UDAItem* ItemData);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetupWithItemPairAndCompare(FDAInventoryItemDataPair Target, FDAInventoryItemDataPair Current);
 	
 	UFUNCTION(BlueprintCallable)
-	void DoItemSetup(FDAInventoryItemDataPair InventoryItem);
+	void DoItemSetup(FDAInventoryItemDataPair InventoryItem, FDAInventoryItemDataPair CurrentlyEquippedItem);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetupWithDefault();

@@ -89,6 +89,7 @@ void UDAWidget::SetHighlight(UWidget* Widget)
 		}
 	}
 
+	DefaultSelection = Widget;
 	CurrentHighlight = Widget;
 	IDASelectable* TheInterface = Cast<IDASelectable>(CurrentHighlight);
 	if (TheInterface) {

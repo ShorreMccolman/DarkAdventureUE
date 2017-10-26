@@ -26,5 +26,8 @@ protected:
 
 	UFUNCTION()
 	void PressLock();
+
+	UPROPERTY()
+	class USpringArmComponent* CameraBoom;
 	
 };

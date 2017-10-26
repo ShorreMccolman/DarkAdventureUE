@@ -250,9 +250,11 @@ struct FDACharacterInventory
 		default:
 			break;
 		}
-		AddItem("Sword", ItemManager, 1);
-		AddItem("Hammer", ItemManager, 1);
-		AddItem("Crossbow", ItemManager, 1);
+
+		TArray<FName> Names = ItemManager->GetAllIDs();
+		for (auto Name : Names) {
+			AddItem(Name, ItemManager, 1);
+		}
 	}
 
 	void Reset()

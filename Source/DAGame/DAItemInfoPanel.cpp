@@ -2,9 +2,10 @@
 
 #include "DAItemInfoPanel.h"
 
-void UDAItemInfoPanel::DoItemSetup(FDAInventoryItemDataPair InventoryItem)
+void UDAItemInfoPanel::DoItemSetup(FDAInventoryItemDataPair InventoryItem, FDAInventoryItemDataPair CurrentlyEquippedItem)
 {
-	SetupWithItem(InventoryItem.Item.Quantity,InventoryItem.Data);
+	//SetupWithItem(InventoryItem.Item.Quantity,InventoryItem.Data);
+	SetupWithItemPairAndCompare(InventoryItem, CurrentlyEquippedItem);
 }
 
 void UDAItemInfoPanel::DoDefaultSetup(EDAItemType ItemType)

@@ -31,6 +31,8 @@ public:
 
 	class UDAItem* GetItemByID(FName ID) const;
 
+	TArray<FName> GetAllIDs() const;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UDataTable* MasterItemList;

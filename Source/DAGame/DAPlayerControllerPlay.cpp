@@ -3,6 +3,7 @@
 #include "DAPlayerControllerPlay.h"
 #include "Components/InputComponent.h"
 #include "DAPlayer.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "DAMainGameMode.h"
 
 void ADAPlayerControllerPlay::SetupInputComponent()
@@ -20,6 +21,8 @@ void ADAPlayerControllerPlay::BeginPlay()
 	Super::BeginPlay();
 
 	DACharacter = Cast<ADAPlayer>(GetPawn());
+	CameraBoom = DACharacter->GetCameraBoom();
+
 	SetDAControlMode(EDAControlMode::DAControlMode_Play);
 }
 
@@ -31,7 +34,9 @@ void ADAPlayerControllerPlay::Tick(float DeltaTime)
 	const float ForwardValue = GetInputAxisValue("MoveY");
 	const float RightValue = GetInputAxisValue("MoveX");
 
-	const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f); // Clamped to length 1
+	FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f); // Clamped to length 1
+	FRotator Rot = FRotator(0.f, CameraBoom->RelativeRotation.Yaw, 0.f);
+	MoveDirection = Rot.RotateVector(MoveDirection);
 
 	// Running Business
 	bool ShouldRun = false;

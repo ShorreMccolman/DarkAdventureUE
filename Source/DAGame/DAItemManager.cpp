@@ -11,6 +11,11 @@ UDAItemManager::UDAItemManager()
 	MasterItemList = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), NULL, *Path));
 }
 
+TArray<FName> UDAItemManager::GetAllIDs() const
+{
+	return MasterItemList->GetRowNames();
+}
+
 
 UDAItem* UDAItemManager::GetItemByID(FName ID) const
 {
