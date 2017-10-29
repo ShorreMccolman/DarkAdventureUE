@@ -112,6 +112,11 @@ void ADAGameMode::NavigateCurrent(EDAInputDirection Direction)
 	}
 }
 
+UDAItem* ADAGameMode::GetItemDataForID(FName ID) const
+{
+	return ItemManager->GetItemByID(ID);
+}
+
 void ADAGameMode::ShowLoadingScreen()
 {
 	LoadingWidget = CreateWidget<UUserWidget>(GetWorld(), LoadingWidgetClass);

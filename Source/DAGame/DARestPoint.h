@@ -13,10 +13,6 @@ class ADARestPoint : public ADAInteractable
 	GENERATED_BODY()
 	
 public:	
-	virtual void Activate() override;
-
-	virtual void Deactivate() override;
-
 	UFUNCTION()
 	virtual void Interact() override;
 	

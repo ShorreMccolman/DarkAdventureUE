@@ -68,7 +68,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName DisplayName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 	EDAItemType ItemType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

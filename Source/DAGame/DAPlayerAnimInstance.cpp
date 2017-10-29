@@ -62,8 +62,8 @@ void UDAPlayerAnimInstance::CompleteAction()
 
 void UDAPlayerAnimInstance::SetIsLockedOn(bool Locked)
 {
-	if(Locked != IsLocked)
-		Character->SetCharacterRotationLock(false);
+//	if(Locked != IsLocked)
+//		Character->SetCharacterRotationLock(false);
 
 	IsLocked = Locked;
 }

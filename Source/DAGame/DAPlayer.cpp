@@ -130,6 +130,21 @@ void ADAPlayer::Reset()
 	SavePlayer();
 }
 
+void ADAPlayer::AddItemsToInventory(FName ItemID, int Quantity)
+{
+	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
+	UDAItemManager* IM = Mode->GetItemManager();
+	if (IM) {
+		FDAInventoryItemDataPair Pair = Inventory.GetItemDataPairInSlot(*IM, EDAEquipmentSlot::EDAEquipmentSlot_Consumable);
+		FString InstID = Inventory.AddItem(ItemID, IM, Quantity);
+		if (Pair.Item.Quantity == 0 && Pair.Item.ID == ItemID) {
+			Inventory.EquipItem(ItemID, InstID,EDAEquipmentSlot::EDAEquipmentSlot_Consumable);
+		}
+
+		Mode->RefreshHUD();
+	}
+}
+
 void ADAPlayer::TryInteract()
 {
 	if(CurrentInteractable)
@@ -139,4 +154,24 @@ void ADAPlayer::TryInteract()
 void ADAPlayer::SetCurrentInteractable(ADAInteractable* Interactable)
 {
 	CurrentInteractable = Interactable;
+
+	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
+	if (Mode) {
+		Mode->RefreshHUD();
+	}
+}
+
+void ADAPlayer::RotateCameraBoom(const float Magnitude)
+{
+	FRotator Rotation = CameraBoom->GetComponentRotation();
+	Rotation.Yaw = Rotation.Yaw + Magnitude;
+
+	CameraBoom->SetWorldRotation(Rotation);
+}
+
+void ADAPlayer::ZoomCameraBoom(const float Magnitude)
+{
+	float Zoom = CameraBoom->TargetArmLength + Magnitude;
+
+	CameraBoom->TargetArmLength = FMath::Clamp(Zoom, 600.f, 1200.f);
 }

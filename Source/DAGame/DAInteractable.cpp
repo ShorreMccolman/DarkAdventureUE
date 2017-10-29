@@ -10,8 +10,10 @@ ADAInteractable::ADAInteractable()
 	PrimaryActorTick.bCanEverTick = false;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	SetRootComponent(Mesh);
 
 	Trigger = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
+	Trigger->SetupAttachment(Mesh);
 	Trigger->SetSphereRadius(200.f);
 	Trigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	Trigger->OnComponentBeginOverlap.AddDynamic(this, &ADAInteractable::BeginOverlap);
@@ -22,7 +24,6 @@ ADAInteractable::ADAInteractable()
 void ADAInteractable::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ADAInteractable::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
@@ -46,12 +47,12 @@ void ADAInteractable::EndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 
 void ADAInteractable::Activate()
 {
-
+	Mesh->SetRenderCustomDepth(true);
 }
 
 void ADAInteractable::Deactivate()
 {
-
+	Mesh->SetRenderCustomDepth(false);
 }
 
 void ADAInteractable::Interact()

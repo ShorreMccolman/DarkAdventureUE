@@ -7,20 +7,6 @@
 #include "DAPlayer.h"
 
 
-void ADARestPoint::Activate()
-{
-	Super::Activate();
-
-	Mesh->SetRenderCustomDepth(true);
-}
-
-void ADARestPoint::Deactivate()
-{
-	Super::Deactivate();
-
-	Mesh->SetRenderCustomDepth(false);
-}
-
 void ADARestPoint::Interact()
 {
 	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());

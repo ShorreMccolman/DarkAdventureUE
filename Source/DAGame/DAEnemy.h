@@ -27,6 +27,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void TriggerIncomingDamage() override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDeathEvent();
+
 protected:
 	virtual void BeginPlay() override;
 

@@ -18,6 +18,9 @@ public:
 	UFUNCTION()
 	virtual void Interact();
 
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE FString GetInteractText() { return InteractText; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -33,6 +36,9 @@ protected:
 	void EndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString InteractText;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 	class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

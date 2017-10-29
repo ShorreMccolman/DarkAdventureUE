@@ -11,8 +11,10 @@ void ADAPlayerControllerPlay::SetupInputComponent()
 	// set up gameplay key bindings
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("Run", IE_Released, this, &ADAPlayerControllerPlay::ReleaseRun);
+	InputComponent->BindAxis("TargetX");
+	InputComponent->BindAxis("TargetY");
 
+	InputComponent->BindAction("Run", IE_Released, this, &ADAPlayerControllerPlay::ReleaseRun);
 	InputComponent->BindAction("Lock", IE_Pressed, this, &ADAPlayerControllerPlay::PressLock);
 }
 
@@ -26,10 +28,12 @@ void ADAPlayerControllerPlay::BeginPlay()
 	SetDAControlMode(EDAControlMode::DAControlMode_Play);
 }
 
-
 void ADAPlayerControllerPlay::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	DACharacter->RotateCameraBoom(GetInputAxisValue("TargetX") * DeltaTime * 100.f);
+	DACharacter->ZoomCameraBoom(GetInputAxisValue("TargetY") * DeltaTime * 1000.f);
 
 	const float ForwardValue = GetInputAxisValue("MoveY");
 	const float RightValue = GetInputAxisValue("MoveX");

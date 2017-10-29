@@ -87,7 +87,7 @@ void ADAEnemy::OnCharacterDeath()
 {
 	Super::OnCharacterDeath();
 
-	APlayerController* Controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	OnDeathEvent();
 }
 
 void ADAEnemy::ShowDetails(bool ShouldShow)

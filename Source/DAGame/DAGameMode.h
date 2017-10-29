@@ -122,6 +122,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ShowLoadingScreen();
 
+	UFUNCTION(BlueprintPure)
+	class UDAItem* GetItemDataForID(FName ID) const;
+
 protected:
 	virtual void BeginPlay() override;
 

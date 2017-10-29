@@ -21,6 +21,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SavePlayer();
 
+	UFUNCTION(BlueprintCallable)
+	void AddItemsToInventory(FName ItemID, int Quantity);
+
 	UFUNCTION()
 	virtual void Reset() override;
 
@@ -36,6 +39,12 @@ public:
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
+	UFUNCTION()
+	void RotateCameraBoom(const float Magnitude);
+
+	UFUNCTION()
+	void ZoomCameraBoom(const float Magnitude);
 
 protected:
 	// Called when the game starts or when spawned
