@@ -6,6 +6,55 @@
 #include "DAInteractable.h"
 #include "DAPickup.generated.h"
 
+USTRUCT(BlueprintType)
+struct FDALootDrop
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	FName ItemID;
+
+	UPROPERTY(EditAnywhere)
+	int Quantity;
+
+	UPROPERTY(EditAnywhere)
+	int Weight;
+
+	FDALootDrop()
+	{
+		ItemID = "";
+		Quantity = 0;
+		Weight = 1;
+	}
+
+	FDALootDrop(FName ItemID, int Quantity, int Weight) : ItemID(ItemID), Quantity(Quantity), Weight(Weight)
+	{
+
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FDALootRolls
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ChanceToDrop;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FDALootDrop> Drops;
+
+	FDALootRolls()
+	{
+		
+	}
+
+	FDALootRolls(float ChanceToDrop, TArray<FDALootDrop> Drops) : ChanceToDrop(ChanceToDrop), Drops(Drops)
+	{
+
+	}
+};
+
 /**
  * 
  */
@@ -26,5 +75,8 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OpenPickupPopupEvent();
+
+	UFUNCTION(BlueprintCallable)
+	void SetupWithLootDrop(FDALootDrop Drop);
 	
 };

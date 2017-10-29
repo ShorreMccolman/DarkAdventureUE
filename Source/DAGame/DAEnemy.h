@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "DACharacter.h"
+#include "DAPickup.h"
 #include "DAEnemy.generated.h"
 
 UCLASS()
@@ -28,7 +29,7 @@ public:
 	virtual void TriggerIncomingDamage() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnDeathEvent();
+	void SpawnPickup(FDALootDrop Drop);
 
 protected:
 	virtual void BeginPlay() override;
@@ -60,5 +61,9 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateDetailsWidget();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FDALootRolls> LootRolls;
 	
+	TArray<FDALootDrop> RollForLootDrops(const TArray<FDALootRolls>& Rolls) const;
 };

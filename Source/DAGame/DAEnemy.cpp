@@ -39,7 +39,8 @@ void ADAEnemy::Tick(float DeltaTime)
 	if (bIsDead)
 		return;
 
-	if (TargetEnemy) {
+	if (TargetEnemy) 
+	{
 		float distance = FVector::Distance(GetActorLocation(), TargetEnemy->GetActorLocation());
 		Pursue(distance, DeltaTime);
 
@@ -87,7 +88,10 @@ void ADAEnemy::OnCharacterDeath()
 {
 	Super::OnCharacterDeath();
 
-	OnDeathEvent();
+	TArray<FDALootDrop> Drops = RollForLootDrops(LootRolls);
+	for (auto Drop : Drops) {
+		SpawnPickup(Drop);
+	}
 }
 
 void ADAEnemy::ShowDetails(bool ShouldShow)
@@ -102,7 +106,8 @@ void ADAEnemy::NoticePlayer(ADAPlayer* Player)
 {
 	TargetEnemy = Player;
 
-	if (Animation) {
+	if (Animation) 
+	{
 		Animation->SetupNextAnimation("Taunt", false);
 	}
 }
@@ -111,7 +116,40 @@ void ADAEnemy::LosePlayer(ADAPlayer* Player)
 {
 	TargetEnemy = nullptr;
 
-	if (Animation) {
+	if (Animation) 
+	{
 		Animation->SetupNextAnimation("Confuse", false);
 	}
+}
+
+TArray<FDALootDrop> ADAEnemy::RollForLootDrops(const TArray<FDALootRolls>& Rolls) const
+{
+	TArray<FDALootDrop> Drops;
+	for (auto Roll : Rolls) 
+	{
+		if (FMath::FRand() <= Roll.ChanceToDrop) 
+		{
+			int Total = 0;
+			for (auto Drop : Roll.Drops) 
+			{
+				Total += Drop.Weight;
+			}
+
+			int Rand = FMath::RandHelper(Total);
+
+			int Current = 0;
+			for (auto Drop : Roll.Drops) 
+			{
+				if (Rand <= Current)
+				{
+					Drops.Add(Drop);
+					break;
+				}
+				else {
+					Current += Drop.Weight;
+				}
+			}
+		}
+	}
+	return Drops;
 }

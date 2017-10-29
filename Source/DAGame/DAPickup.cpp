@@ -14,3 +14,9 @@ void ADAPickup::Interact()
 	OpenPickupPopupEvent();
 	Destroy();
 }
+
+void ADAPickup::SetupWithLootDrop(FDALootDrop Drop)
+{
+	ItemDropID = Drop.ItemID;
+	DropQuantity = Drop.Quantity;
+}
