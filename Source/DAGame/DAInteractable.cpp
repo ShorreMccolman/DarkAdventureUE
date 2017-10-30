@@ -31,7 +31,7 @@ void ADAInteractable::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 {
 	ADAPlayer* Player = Cast<ADAPlayer>(OtherActor);
 	if (Player && OtherComp->ComponentHasTag("Character")) {
-		Player->SetCurrentInteractable(this);
+		Player->AddPotentialInteractable(this);
 		Activate();
 	}
 }
@@ -40,7 +40,7 @@ void ADAInteractable::EndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 {
 	ADAPlayer* Player = Cast<ADAPlayer>(OtherActor);
 	if (Player && OtherComp->ComponentHasTag("Character")) {
-		Player->SetCurrentInteractable(nullptr);
+		Player->RemovePotentialInteractable(this);
 		Deactivate();
 	}
 }

@@ -151,6 +151,29 @@ void ADAPlayer::TryInteract()
 		CurrentInteractable->Interact();
 }
 
+void ADAPlayer::AddPotentialInteractable(ADAInteractable* Interactable)
+{
+	PotentialInteractables.AddUnique(Interactable);
+	if (PotentialInteractables.Num() == 1) {
+		SetCurrentInteractable(Interactable);
+	}
+}
+
+void ADAPlayer::RemovePotentialInteractable(ADAInteractable* Interactable)
+{
+	PotentialInteractables.Remove(Interactable);
+	if (CurrentInteractable == Interactable) 
+	{
+		if (PotentialInteractables.Num() > 0) 
+		{
+			SetCurrentInteractable(PotentialInteractables[0]);
+		}
+		else {
+			SetCurrentInteractable(nullptr);
+		}
+	}
+}
+
 void ADAPlayer::SetCurrentInteractable(ADAInteractable* Interactable)
 {
 	CurrentInteractable = Interactable;

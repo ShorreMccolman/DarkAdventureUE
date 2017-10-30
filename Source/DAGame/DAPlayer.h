@@ -31,6 +31,12 @@ public:
 	void TryInteract();
 
 	UFUNCTION()
+	void AddPotentialInteractable(class ADAInteractable* Interactable);
+
+	UFUNCTION()
+	void RemovePotentialInteractable(class ADAInteractable* Interactable);
+
+	UFUNCTION()
 	void SetCurrentInteractable(class ADAInteractable* Interactable);
 
 	FORCEINLINE class ADAInteractable* GetCurrentInteractable() const { return CurrentInteractable; }
@@ -60,6 +66,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ADAInteractable* CurrentInteractable;
+
+	UPROPERTY()
+	TArray<class ADAInteractable*> PotentialInteractables;
 
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
