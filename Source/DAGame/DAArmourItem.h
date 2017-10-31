@@ -17,7 +17,7 @@ class UDAArmourItem : public UDAItem
 public:
 	UDAArmourItem();
 
-	void ModifyDefensesWithAttributes(float& Defense, float& FireResist, float& ColdResist, float& ElectricResist, const FDACharacterAttributes Attributes) const;
+	virtual void ModifyGeneratedAttributes(class UDAGeneratedAttributes& Attributes) const override;
 
 	UFUNCTION(BlueprintPure)
 		FORCEINLINE FString GetArmourTypeDescription() const {

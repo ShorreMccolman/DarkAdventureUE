@@ -35,6 +35,13 @@ enum class EDAWeaponType : uint8
 };
 
 UENUM(BlueprintType)
+enum class EDAOffhandType : uint8
+{
+	DAOffhandType_Shield UMETA(DisplayName = "Shield"),
+	DAOffhandType_Dual UMETA(DisplayName = "Dual Wielded")
+};
+
+UENUM(BlueprintType)
 enum class EDAArmourType : uint8
 {
 	DAArmourType_Light UMETA(DisplayName = "Light Weight"),
@@ -46,7 +53,9 @@ UENUM(BlueprintType)
 enum class EDAItemType : uint8
 {
 	DAItemType_Consumable UMETA(DisplayName = "Consumable"),
+	DAItemType_Material UMETA(DisplayName = "Material"),
 	DAItemType_Weapon UMETA(DisplayName = "Weapon"),
+	DAItemType_Offhand UMETA(DisplayName = "Offhand"),
 	DAItemType_Armour UMETA(DisplayName = "Armour"),
 	DAItemType_Ring UMETA(DisplayName = "Ring"),
 	DAItemType_Key UMETA(DisplayName = "Key Item"),
@@ -97,4 +106,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static float ScalingFactorModifier(EDAScalingFactor Factor);
+
+	virtual void ModifyGeneratedAttributes(class UDAGeneratedAttributes& Attributes) const;
 };

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "DAGeneratedAttributes.h"
 #include "DAInventorySystem.h"
 #include "DAEquipmentAttributePanel.generated.h"
 
@@ -25,9 +24,6 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadWrite)
-	class ADACharacter* Character;
-
-	UPROPERTY(BlueprintReadWrite)
-	FDAGeneratedAttributes Attributes;
+	class UDAGeneratedAttributes* Attributes;
 	
 };

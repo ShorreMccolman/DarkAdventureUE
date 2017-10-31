@@ -18,7 +18,7 @@ class DAGAME_API UDAWeaponItem : public UDAItem
 public:
 	UDAWeaponItem();
 
-	void ModifyDamageWithAttributes(float& Damage, FDACharacterAttributes Attributes);
+	virtual void ModifyGeneratedAttributes(class UDAGeneratedAttributes& Attributes) const override;
 
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE FString GetWeaponTypeDescription() const {

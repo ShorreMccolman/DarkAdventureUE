@@ -17,10 +17,10 @@ class DAGAME_API UDALevelWidget : public UDAWidget
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	FDACharacterAttributes CommitLevelUp();
+	void CommitLevelUp();
 
 	UFUNCTION(BlueprintCallable)
-	void SetupWithAttributes(FDACharacterAttributes Attributes);
+	void SetupWithAttributesAndSouls(FDACharacterAttributes Attributes, int Souls);
 
 	UFUNCTION(BlueprintCallable)
 	void IncrementStat(EDACharacterStat Stat);
@@ -40,6 +40,10 @@ public:
 protected:
 	UPROPERTY(BlueprintReadWrite)
 	FDACharacterAttributes CurrentAttributes;
+
+	UPROPERTY(BlueprintReadWrite)
+	int CurrentSouls;
+
 
 	UPROPERTY(BlueprintReadWrite)
 	int HealthStat;

@@ -17,6 +17,7 @@
 #include "DAItem.h"
 #include "DAConsumableItem.h"
 #include "DAConsumableBase.h"
+#include "DAGeneratedAttributes.h"
 
 
 // Sets default values
@@ -49,7 +50,7 @@ void ADACharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	if (StaminaBuffer <= 0.f) {
-		Attributes.RegainStamina(16.f * DeltaTime);
+		Vitals.RegainStamina(16.f * DeltaTime);
 	}
 	else {
 		StaminaBuffer -= DeltaTime;
@@ -61,7 +62,7 @@ void ADACharacter::Reset()
 {
 	bIsDead = false;
 	Inventory.Reset();
-	Attributes.Reset();
+	Vitals.RefreshVitals();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	SetActorLocation(Origin);
 
@@ -218,6 +219,11 @@ void ADACharacter::UseConsumableItem(FDAInventoryItem InventoryItem)
 	}
 }
 
+UDAGeneratedAttributes* ADACharacter::GetGeneratedAttributes() const
+{
+	return GeneratedAttributes;
+}
+
 void ADACharacter::FireProjectile()
 {
 	FVector Location = Weapon->GetActorLocation();
@@ -269,25 +275,25 @@ void ADACharacter::GetHit(float Damage)
 
 void ADACharacter::TriggerIncomingDamage()
 {
-	Attributes.CurHealth -= IncomingDamage;
+	Vitals.CurHealth -= IncomingDamage;
 	IncomingDamage = 0;
 	bIsTakingDamage = false;
 
-	if (Attributes.CurHealth <= 0.f && Animation) {
+	if (Vitals.CurHealth <= 0.f && Animation) {
 		OnCharacterDeath();
 	}
 }
 
 void ADACharacter::TryAttack()
 {
-	if (Animation && Attributes.CurStamina > 1.f) {
+	if (Animation && Vitals.CurStamina > 1.f) {
 		Animation->SetupNextAnimation("Attack", false);
 	}
 }
 
 void ADACharacter::TryStrongAttack()
 {
-	if (Animation && Attributes.CurStamina > 1.f) {
+	if (Animation && Vitals.CurStamina > 1.f) {
 		Animation->SetupNextAnimation("StrongAttack", false);
 	}
 }
@@ -301,21 +307,33 @@ void ADACharacter::TryHeal()
 
 void ADACharacter::TryUse()
 {
-	if (Animation && Attributes.CurStamina > 1.f) {
-		ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
-		UDAItemManager* IM = Mode->GetItemManager();
-		if (IM) {
-			QueuedItem = Inventory.GetItemDataPairInSlot(*IM, EDAEquipmentSlot::EDAEquipmentSlot_Consumable);
-			if (QueuedItem.bIsValidItem && QueuedItem.Item.Quantity > 0) {
-				Animation->SetupNextAnimation("Use", false);
+	
+}
+
+void ADACharacter::TryConsumable(EDAEquipmentSlot Slot)
+{
+	if (Slot == EDAEquipmentSlot::EDAEquipmentSlot_Consumable1 ||
+		Slot == EDAEquipmentSlot::EDAEquipmentSlot_Consumable2 ||
+		Slot == EDAEquipmentSlot::EDAEquipmentSlot_Consumable3 ||
+		Slot == EDAEquipmentSlot::EDAEquipmentSlot_Consumable4) {
+
+		if (Animation && Vitals.CurStamina > 1.f) {
+			ADAGameMode* Mode = Cast<ADAGameMode>(GetWorld()->GetAuthGameMode());
+			UDAItemManager* IM = Mode->GetItemManager();
+			if (IM) {
+				QueuedItem = Inventory.GetItemDataPairInSlot(*IM, Slot);
+				if (QueuedItem.bIsValidItem && QueuedItem.Item.Quantity > 0) {
+					Animation->SetupNextAnimation("Use", false);
+				}
 			}
 		}
 	}
 }
 
+
 void ADACharacter::TryRoll()
 {
-	if (Animation && Attributes.CurStamina > 1.f) {
+	if (Animation && Vitals.CurStamina > 1.f) {
 		Animation->SetupNextAnimation("Roll", false);
 	}
 }
@@ -363,11 +381,23 @@ void ADACharacter::EquipItemToSlot(FDAInventoryItem Item, EDAEquipmentSlot Slot)
 		EquipWeapon(Item.ID, "RightHand");
 	}
 
+	if (Slot != EDAEquipmentSlot::EDAEquipmentSlot_Consumable1 &&
+		Slot != EDAEquipmentSlot::EDAEquipmentSlot_Consumable2 &&
+		Slot != EDAEquipmentSlot::EDAEquipmentSlot_Consumable3 &&
+		Slot != EDAEquipmentSlot::EDAEquipmentSlot_Consumable4) {
+		RegenerateAttributes();
+	}
 }
 
 void ADACharacter::RemoveItemFromSlot(FDAInventoryItem Item, EDAEquipmentSlot Slot)
 {
 	Inventory.UnequipItem(Item.InstanceID, Slot);
+	if (Slot != EDAEquipmentSlot::EDAEquipmentSlot_Consumable1 &&
+		Slot != EDAEquipmentSlot::EDAEquipmentSlot_Consumable2 &&
+		Slot != EDAEquipmentSlot::EDAEquipmentSlot_Consumable3 &&
+		Slot != EDAEquipmentSlot::EDAEquipmentSlot_Consumable4) {
+		RegenerateAttributes();
+	}
 }
 
 UDAItem* ADACharacter::GetEquippedItemInSlot(EDAEquipmentSlot Slot) const
@@ -409,19 +439,35 @@ void ADACharacter::UpdateBestTarget()
 	TargetEnemy = PotentialTargets[0];
 }
 
+void ADACharacter::RegenerateAttributes()
+{
+	GeneratedAttributes->UpdateWithCharacter(*this);
+	Vitals.MaxHealth = GeneratedAttributes->MaxHealth;
+	if (Vitals.CurHealth > Vitals.MaxHealth)
+		Vitals.CurHealth = Vitals.MaxHealth;
+	Vitals.MaxStamina = GeneratedAttributes->MaxStamina;
+	if (Vitals.CurStamina > Vitals.MaxStamina)
+		Vitals.CurStamina = Vitals.MaxStamina;
+}
+
 float ADACharacter::GetCurrentHealthPercent() const
 {
-	return Attributes.CurHealth / Attributes.MaxHealth;
+	return Vitals.CurHealth / Vitals.MaxHealth;
 }
 
 float ADACharacter::GetCurrentStaminaPercent() const
 {
-	return Attributes.CurStamina / Attributes.MaxStamina;
+	return Vitals.CurStamina / Vitals.MaxStamina;
 }
 
 void ADACharacter::GainSouls(int Amount)
 {
-	Attributes.CurrentSouls += Amount;
+	Vitals.CurrentSouls += Amount;
+}
+
+void ADACharacter::ConsumeSouls(int Amount)
+{
+	Vitals.CurrentSouls -= Amount;
 }
 
 void ADACharacter::HealCharacter(float Amount)
@@ -429,12 +475,12 @@ void ADACharacter::HealCharacter(float Amount)
 	if (bIsDead)
 		return;
 
-	Attributes.AdjustCurrentHealth(Amount);
+	Vitals.AdjustCurrentHealth(Amount);
 }
 
 void ADACharacter::ConsumeStamina(float Amount)
 {
-	Attributes.ConsumeStamina(Amount);
+	Vitals.ConsumeStamina(Amount);
 	StaminaBuffer = 2.f;
 }
 

@@ -1,19 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DAArmourItem.h"
-
+#include "DAGeneratedAttributes.h"
 
 UDAArmourItem::UDAArmourItem()
 {
 	ItemType = EDAItemType::DAItemType_Armour;
 }
 
-void UDAArmourItem::ModifyDefensesWithAttributes(float& Defense, float& FireResist, float& ColdResist, float& ElectricResist, const FDACharacterAttributes Attributes) const
+void UDAArmourItem::ModifyGeneratedAttributes(UDAGeneratedAttributes& Attributes) const
 {
-	Defense += PhysicalDefense + Attributes.HealthStat / 5.f;
-	FireResist += FireResistance + Attributes.SpiritualStat / 10.f;
-	ColdResist += ColdResistance + Attributes.PracticalStat / 10.f;
-	ElectricResist += ElectricResistance + Attributes.ScientificStat / 10.f;
+	Attributes.Defense += PhysicalDefense + Attributes.BaseAttributes.HealthStat / 5.f;
+	Attributes.FireResist += FireResistance + Attributes.BaseAttributes.SpiritualStat / 10.f;
+	Attributes.ColdResist += ColdResistance + Attributes.BaseAttributes.PracticalStat / 10.f;
+	Attributes.ElectricResist += ElectricResistance + Attributes.BaseAttributes.ScientificStat / 10.f;
 }
 
 

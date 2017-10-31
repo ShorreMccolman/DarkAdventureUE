@@ -3,8 +3,10 @@
 #include "DALevelWidget.h"
 #include "DAIncrementButton.h"
 #include "DAGameMode.h"
+#include "Kismet/GameplayStatics.h"
+#include "DAPlayer.h"
 
-void UDALevelWidget::SetupWithAttributes(FDACharacterAttributes Attributes)
+void UDALevelWidget::SetupWithAttributesAndSouls(FDACharacterAttributes Attributes, int Souls)
 {
 	CurrentAttributes = Attributes;
 	HealthStat = Attributes.HealthStat;
@@ -13,11 +15,12 @@ void UDALevelWidget::SetupWithAttributes(FDACharacterAttributes Attributes)
 	PracticalStat = Attributes.PracticalStat;
 	ScientificStat = Attributes.ScientificStat;
 	SpiritualStat = Attributes.SpiritualStat;
+	CurrentSouls = Souls;
 	CurrentCost = 0;
 	NextCost = FDACharacterAttributes::GetCostForLevel(GetCurrentLevel() + 1);
 }
 
-FDACharacterAttributes UDALevelWidget::CommitLevelUp()
+void UDALevelWidget::CommitLevelUp()
 {
 	CurrentAttributes.HealthStat = HealthStat;
 	CurrentAttributes.StaminaStat = StaminaStat;
@@ -25,16 +28,20 @@ FDACharacterAttributes UDALevelWidget::CommitLevelUp()
 	CurrentAttributes.PracticalStat = PracticalStat;
 	CurrentAttributes.ScientificStat = ScientificStat;
 	CurrentAttributes.SpiritualStat = SpiritualStat;
-	CurrentAttributes.CurrentSouls -= CurrentCost;
+	CurrentSouls -= CurrentCost;
+
+	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	Player->UpdateAttributes(CurrentAttributes);
+	Player->ConsumeSouls(CurrentCost);
+
 	CurrentCost = 0;
-	return CurrentAttributes;
 }
 
 void UDALevelWidget::IncrementStat(EDACharacterStat Stat)
 {
 	int cost = FDACharacterAttributes::GetCostForLevel(GetCurrentLevel() + 1);
 
-	if (cost + CurrentCost > CurrentAttributes.CurrentSouls) {
+	if (cost + CurrentCost > CurrentSouls) {
 		return;
 	}
 

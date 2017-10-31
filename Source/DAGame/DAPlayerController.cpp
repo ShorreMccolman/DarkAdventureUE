@@ -216,6 +216,7 @@ void ADAPlayerController::PressDUp()
 	switch (ControlMode)
 	{
 	case EDAControlMode::DAControlMode_Play:
+		DACharacter->TryConsumable(EDAEquipmentSlot::EDAEquipmentSlot_Consumable1);
 		break;
 	case EDAControlMode::DAControlMode_FullMenu:
 	case EDAControlMode::DAControlMode_PlayMenu:
@@ -231,6 +232,7 @@ void ADAPlayerController::PressDRight()
 	switch (ControlMode)
 	{
 	case EDAControlMode::DAControlMode_Play:
+		DACharacter->TryConsumable(EDAEquipmentSlot::EDAEquipmentSlot_Consumable4);
 		break;
 	case EDAControlMode::DAControlMode_FullMenu:
 	case EDAControlMode::DAControlMode_PlayMenu:
@@ -246,6 +248,7 @@ void ADAPlayerController::PressDDown()
 	switch (ControlMode)
 	{
 	case EDAControlMode::DAControlMode_Play:
+		DACharacter->TryConsumable(EDAEquipmentSlot::EDAEquipmentSlot_Consumable2);
 		break;
 	case EDAControlMode::DAControlMode_FullMenu:
 	case EDAControlMode::DAControlMode_PlayMenu:
@@ -261,6 +264,7 @@ void ADAPlayerController::PressDLeft()
 	switch (ControlMode)
 	{
 	case EDAControlMode::DAControlMode_Play:
+		DACharacter->TryConsumable(EDAEquipmentSlot::EDAEquipmentSlot_Consumable3);
 		break;
 	case EDAControlMode::DAControlMode_FullMenu:
 	case EDAControlMode::DAControlMode_PlayMenu:

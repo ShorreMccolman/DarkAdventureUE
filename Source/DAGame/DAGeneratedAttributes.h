@@ -1,39 +1,36 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DACharacterAttributes.h"
+#include "GameFramework/Actor.h"
 #include "DAInventorySystem.h"
-#include "DACharacter.h"
 #include "DAGeneratedAttributes.generated.h"
 
 
-USTRUCT(BlueprintType)
-struct FDAGeneratedAttributes 
+UCLASS(Blueprintable)
+class UDAGeneratedAttributes : public UObject
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	FDACharacterAttributes BaseAttributes;
 
 	UPROPERTY(BlueprintReadWrite)
 	float MaxHealth;
 	UPROPERTY(BlueprintReadWrite)
-	float CurHealth;
-
-	UPROPERTY(BlueprintReadWrite)
 	float MaxStamina;
-	UPROPERTY(BlueprintReadWrite)
-	float CurStamina;
 
 	UPROPERTY(BlueprintReadWrite)
-	int MaxHeals;
-
+	float MainWeaponLightDamage;
 	UPROPERTY(BlueprintReadWrite)
-	float WeaponDamage;
-	UPROPERTY(BlueprintReadWrite)
-	float AlternateWeaponDamage;
+	float MainWeaponStrongDamage;
 
 	UPROPERTY(BlueprintReadWrite)
 	float OffhandDamage;
 	UPROPERTY(BlueprintReadWrite)
-	float AlternateOffhandDamage;
+	float OffhandDefense;
 
 	UPROPERTY(BlueprintReadWrite)
 	float Defense;
@@ -44,68 +41,8 @@ struct FDAGeneratedAttributes
 	UPROPERTY(BlueprintReadWrite)
 	float ElectricResist;
 
-	FDAGeneratedAttributes()
-	{
+	void UpdateWithCharacter(const class ADACharacter& PlayerCharacter);
 
-	}
-
-	FDAGeneratedAttributes(const ADACharacter& Character)
-	{
-		FDACharacterAttributes Attributes = Character.GetAttributes();
-
-		CurHealth = Attributes.CurHealth;
-		MaxHealth = Attributes.MaxHealth;
-		CurStamina = Attributes.CurStamina;
-		MaxStamina = Attributes.MaxStamina;
-
-		MaxHeals = Attributes.MaxHeals;
-
-		WeaponDamage = 0.f;
-		UDAItem* Main = Character.GetEquippedItemInSlot(EDAEquipmentSlot::EDAEquipmentSlot_RightHand);
-		if (Main) {
-			UDAWeaponItem* Weapon = Cast<UDAWeaponItem>(Main);
-			if (Weapon) {
-				Weapon->ModifyDamageWithAttributes(WeaponDamage, Attributes);
-			}
-		}
-
-		AlternateWeaponDamage = 0.f;
-		UDAItem* Alt = Character.GetEquippedItemInSlot(EDAEquipmentSlot::EDAEquipmentSlot_RightHandAlt);
-		if (Alt) {
-			UDAWeaponItem* Weapon = Cast<UDAWeaponItem>(Alt);
-			if (Weapon) {
-				Weapon->ModifyDamageWithAttributes(AlternateWeaponDamage, Attributes);
-			}
-		}
-
-		OffhandDamage = 0.f;
-		UDAItem* Off = Character.GetEquippedItemInSlot(EDAEquipmentSlot::EDAEquipmentSlot_LeftHand);
-		if (Off) {
-			UDAWeaponItem* Weapon = Cast<UDAWeaponItem>(Off);
-			if (Weapon) {
-				Weapon->ModifyDamageWithAttributes(OffhandDamage, Attributes);
-			}
-		}
-
-		AlternateOffhandDamage = 0.f;
-		UDAItem* OffAlt = Character.GetEquippedItemInSlot(EDAEquipmentSlot::EDAEquipmentSlot_LeftHandAlt);
-		if (OffAlt) {
-			UDAWeaponItem* Weapon = Cast<UDAWeaponItem>(OffAlt);
-			if (Weapon) {
-				Weapon->ModifyDamageWithAttributes(AlternateOffhandDamage, Attributes);
-			}
-		}
-
-		Defense = 0.f;
-		FireResist = 0.f;
-		ColdResist = 0.f;
-		ElectricResist = 0.f;
-		UDAItem* ArmourItem = Character.GetEquippedItemInSlot(EDAEquipmentSlot::EDAEquipmentSlot_ArmourSet);
-		if (ArmourItem) {
-			UDAArmourItem* Armour = Cast<UDAArmourItem>(ArmourItem);
-			if (Armour) {
-				Armour->ModifyDefensesWithAttributes(Defense, FireResist, ColdResist, ElectricResist, Attributes);
-			}
-		}
-	}
+private:
+	void UpdateAttributesForCharacterSlot(const ADACharacter& PlayerCharacter, EDAEquipmentSlot Slot);
 };

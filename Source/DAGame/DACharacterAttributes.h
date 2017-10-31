@@ -33,30 +33,10 @@ enum class EDACharacterStat : uint8
 	DACharacterStat_Spiritual UMETA(DisplayName = "Spiritual")
 };
 
-
 USTRUCT(BlueprintType)
 struct FDACharacterAttributes 
 {
 	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite)
-	float MaxHealth;
-	UPROPERTY(BlueprintReadWrite)
-	float CurHealth;
-
-	UPROPERTY(BlueprintReadWrite)
-	float MaxStamina;
-	UPROPERTY(BlueprintReadWrite)
-	float CurStamina;
-
-	UPROPERTY(BlueprintReadWrite)
-	int CurrentSouls;
-	UPROPERTY(BlueprintReadWrite)
-	bool bHasLostSouls;
-	UPROPERTY(BlueprintReadWrite)
-	FVector LostSoulsLocation;
-	UPROPERTY(BlueprintReadWrite)
-	int LostSouls;
 
 	UPROPERTY(BlueprintReadWrite)
 	int MaxHeals;
@@ -90,17 +70,6 @@ struct FDACharacterAttributes
 
 		MaxHeals = 5;
 
-		MaxHealth = 10.f * HealthStat;
-		CurHealth = MaxHealth;
-
-		MaxStamina = 10.f * StaminaStat;
-		CurStamina = MaxStamina;
-
-		CurrentSouls = 0;
-		bHasLostSouls = false;
-		LostSoulsLocation = FVector::ZeroVector;
-		LostSouls = 0;
-
 		WorldView = EDAWorldview::DAWorldView_None;
 		Motive = EDAMotive::DAMotive_None;
 	}
@@ -115,17 +84,6 @@ struct FDACharacterAttributes
 		SpiritualStat = 10;
 
 		MaxHeals = 5;
-
-		MaxHealth = 10.f * HealthStat;
-		CurHealth = MaxHealth;
-
-		MaxStamina = 10.f * StaminaStat;
-		CurStamina = MaxStamina;
-
-		CurrentSouls = 1000;
-		bHasLostSouls = false;
-		LostSoulsLocation = FVector::ZeroVector;
-		LostSouls = 0;
 
 		switch (WorldView)
 		{
@@ -192,17 +150,6 @@ struct FDACharacterAttributes
 		default:
 			break;
 		}
-
-		Reset();
-	}
-
-	void Reset()
-	{
-		MaxHealth = 10.f * HealthStat;
-		CurHealth = MaxHealth;
-
-		MaxStamina = 10.f * StaminaStat;
-		CurStamina = MaxStamina;
 	}
 
 	int GetLevel() const
@@ -210,25 +157,14 @@ struct FDACharacterAttributes
 		return HealthStat + StaminaStat + DamageStat + PracticalStat + ScientificStat + SpiritualStat - 59;
 	}
 
-
-	bool HasSufficientStamina(float amount) const
+	int GetBaseHealth() const
 	{
-		return CurStamina >= amount;
+		return 10.f * HealthStat;
 	}
 
-	void ConsumeStamina(float amount)
+	int GetBaseStamina() const
 	{
-		CurStamina = FMath::Clamp<float>(CurStamina - amount, 0.f, MaxStamina);
-	}
-
-	void RegainStamina(float amount)
-	{
-		CurStamina = FMath::Clamp<float>(CurStamina + amount, 0.f, MaxStamina);
-	}
-
-	void AdjustCurrentHealth(float amount)
-	{
-		CurHealth = FMath::Clamp<float>(CurHealth + amount, 0.f, MaxHealth);
+		return 10.f * StaminaStat;
 	}
 
 	static FString GetClassTextFromWorldviewAndMotive(EDAWorldview WorldView, EDAMotive Motive)
@@ -299,5 +235,84 @@ struct FDACharacterAttributes
 	{
 		// TODO: Come up with a balanced formula for this
 		return Level * 100;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FDACharacterVitals
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	float MaxHealth;
+	UPROPERTY(BlueprintReadWrite)
+	float CurHealth;
+
+	UPROPERTY(BlueprintReadWrite)
+	float MaxStamina;
+	UPROPERTY(BlueprintReadWrite)
+	float CurStamina;
+
+	UPROPERTY(BlueprintReadWrite)
+	int CurrentSouls;
+	UPROPERTY(BlueprintReadWrite)
+	bool bHasLostSouls;
+	UPROPERTY(BlueprintReadWrite)
+	FVector LostSoulsLocation;
+	UPROPERTY(BlueprintReadWrite)
+	int LostSouls;
+
+	FDACharacterVitals()
+	{
+		MaxHealth = 100.f;
+		CurHealth = MaxHealth;
+
+		MaxStamina = 100.f;
+		CurStamina = MaxStamina;
+
+		CurrentSouls = 0;
+		bHasLostSouls = false;
+		LostSoulsLocation = FVector::ZeroVector;
+		LostSouls = 0;
+	}
+
+	FDACharacterVitals(FDACharacterAttributes Attributes)
+	{
+		MaxHealth = Attributes.GetBaseHealth();
+		CurHealth = MaxHealth;
+
+		MaxStamina = Attributes.GetBaseStamina();
+		CurStamina = MaxStamina;
+
+		CurrentSouls = 0;
+		bHasLostSouls = false;
+		LostSoulsLocation = FVector::ZeroVector;
+		LostSouls = 0;
+	}
+
+	void RefreshVitals()
+	{
+		CurHealth = MaxHealth;
+		CurStamina = MaxStamina;
+	}
+
+	bool HasSufficientStamina(float amount) const
+	{
+		return CurStamina >= amount;
+	}
+
+	void ConsumeStamina(float amount)
+	{
+		CurStamina = FMath::Clamp<float>(CurStamina - amount, 0.f, MaxStamina);
+	}
+
+	void RegainStamina(float amount)
+	{
+		CurStamina = FMath::Clamp<float>(CurStamina + amount, 0.f, MaxStamina);
+	}
+
+	void AdjustCurrentHealth(float amount)
+	{
+		CurHealth = FMath::Clamp<float>(CurHealth + amount, 0.f, MaxHealth);
 	}
 };

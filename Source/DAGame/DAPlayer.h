@@ -24,6 +24,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddItemsToInventory(FName ItemID, int Quantity);
 
+	UFUNCTION(BlueprintCallable)
+	void ChangeRestState(bool IsResting);
+
 	UFUNCTION()
 	virtual void Reset() override;
 

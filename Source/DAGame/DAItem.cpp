@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DAItem.h"
+#include "DAGeneratedAttributes.h"
 
 float UDAItem::ScalingFactorModifier(EDAScalingFactor Factor)
 {
@@ -18,4 +19,9 @@ float UDAItem::ScalingFactorModifier(EDAScalingFactor Factor)
 		return 0.1f;
 	}
 	return 0.f;
+}
+
+void UDAItem::ModifyGeneratedAttributes(UDAGeneratedAttributes& Attributes) const
+{
+
 }

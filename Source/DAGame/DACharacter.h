@@ -16,19 +16,6 @@ class DAGAME_API ADACharacter : public ACharacter
 public:
 	ADACharacter();
 
-protected:
-	UPROPERTY(EditAnywhere, Category = Motor)
-	float WalkSpeed;
-
-	UPROPERTY(EditAnywhere, Category = Motor)
-	float Acceleration;
-
-	UPROPERTY(EditAnywhere, Category = Motor)
-	float Decceleration;
-
-	UPROPERTY(EditAnywhere, Category = Motor)
-	float TurnRate;
-
 public:
 	UFUNCTION(BlueprintPure)
 	float GetCurrentSpeed() const;
@@ -52,7 +39,16 @@ public:
 	FORCEINLINE FDACharacterAttributes GetAttributes() const { return Attributes; }
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE int GetCurrentSouls() const { return Attributes.CurrentSouls; }
+	FORCEINLINE FDACharacterVitals GetVitals() const { return Vitals; }
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE int GetCurrentSouls() const { return Vitals.CurrentSouls; }
+
+	UFUNCTION(BlueprintPure)
+	class UDAGeneratedAttributes* GetGeneratedAttributes() const;
+
+	UFUNCTION(BlueprintCallable)
+	void RegenerateAttributes();
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> ProjectileClass;
@@ -62,6 +58,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void GainSouls(int Amount);
+
+	UFUNCTION(BlueprintCallable)
+	void ConsumeSouls(int Amount);
 
 	UFUNCTION(BlueprintCallable)
 	void HealCharacter(float Amount);
@@ -157,6 +156,8 @@ public:
 
 	void TryUse();
 
+	void TryConsumable(EDAEquipmentSlot Slot);
+
 	virtual void Reset();
 
 	virtual void ShowDetails(bool ShouldShow);
@@ -164,6 +165,18 @@ public:
 	virtual void ShowTarget(bool ShouldTarget);
 
 protected:
+	UPROPERTY(EditAnywhere, Category = Motor)
+	float WalkSpeed;
+
+	UPROPERTY(EditAnywhere, Category = Motor)
+	float Acceleration;
+
+	UPROPERTY(EditAnywhere, Category = Motor)
+	float Decceleration;
+
+	UPROPERTY(EditAnywhere, Category = Motor)
+	float TurnRate;
+
 	bool bIsRunning;
 
 	bool bIsTargetLocked;
@@ -181,6 +194,8 @@ protected:
 	FVector TargetDirection;
 
 	FVector Origin;
+
+	FDACharacterVitals Vitals;
 
 	FDACharacterAttributes Attributes;
 
@@ -207,6 +222,9 @@ protected:
 
 	UPROPERTY()
 	class UDAPlayerAnimInstance* Animation;
+
+	UPROPERTY()
+	class UDAGeneratedAttributes* GeneratedAttributes;
 
 
 	void UpdateBestTarget();

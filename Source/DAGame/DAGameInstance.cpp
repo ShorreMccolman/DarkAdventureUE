@@ -86,6 +86,8 @@ void UDAGameInstance::CreatePlayerSave(FString PlayerName, FDACharacterAttribute
 	}
 	PlayerSave->Inventory = Inventory;
 
+	PlayerSave->Vitals = FDACharacterVitals(Attributes);
+
 	PlayerSave->bIsNewPlayer = true;
 	UGameplayStatics::SaveGameToSlot(PlayerSave, PlayerID, 0);
 

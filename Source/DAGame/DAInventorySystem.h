@@ -16,13 +16,18 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FItemButtonConfirmAction, UDAItemBut
 UENUM(BlueprintType)
 enum class EDAEquipmentSlot : uint8
 {
-	EDAEquipmentSlot_None UMETA(DisplayName = "None"),
-	EDAEquipmentSlot_RightHand UMETA(DisplayName = "Right Hand"),
-	EDAEquipmentSlot_LeftHand UMETA(DisplayName = "Left Hand"),
-	EDAEquipmentSlot_RightHandAlt UMETA(DisplayName = "Right Hand Alternate"),
-	EDAEquipmentSlot_LeftHandAlt UMETA(DisplayName = "Left Hand Alternate"),
-	EDAEquipmentSlot_ArmourSet UMETA(DisplayName = "Armour Set"),
-	EDAEquipmentSlot_Consumable UMETA(DisplayName = "Consumable")
+	EDAEquipmentSlot_None = 0 UMETA(DisplayName = "None"),
+	EDAEquipmentSlot_RightHand = 1 UMETA(DisplayName = "Right Hand"),
+	EDAEquipmentSlot_LeftHand = 2 UMETA(DisplayName = "Left Hand"),
+	EDAEquipmentSlot_ArmourSet = 11 UMETA(DisplayName = "Armour Set"),
+	EDAEquipmentSlot_Ring1 = 21 UMETA(DisplayName = "Ring1"),
+	EDAEquipmentSlot_Ring2 = 22 UMETA(DisplayName = "Ring2"),
+	EDAEquipmentSlot_Ring3 = 23 UMETA(DisplayName = "Ring3"),
+	EDAEquipmentSlot_Ring4 = 24 UMETA(DisplayName = "Ring4"),
+	EDAEquipmentSlot_Consumable1 = 31 UMETA(DisplayName = "Consumable1 (Up)"),
+	EDAEquipmentSlot_Consumable2 = 32 UMETA(DisplayName = "Consumable2 (Down)"),
+	EDAEquipmentSlot_Consumable3 = 33 UMETA(DisplayName = "Consumable3 (Left)"),
+	EDAEquipmentSlot_Consumable4 = 34 UMETA(DisplayName = "Consumable4 (Right)")
 };
 
 USTRUCT(BlueprintType)
@@ -137,16 +142,31 @@ struct FDACharacterEquipment
 	FDAEquipmentItem LeftHand;
 
 	UPROPERTY()
-	FDAEquipmentItem RightHandAlt;
-
-	UPROPERTY()
-	FDAEquipmentItem LeftHandAlt;
-
-	UPROPERTY()
 	FDAEquipmentItem ArmorSet;
 
 	UPROPERTY()
-	FDAEquipmentItem Consumable;
+	FDAEquipmentItem Ring1;
+
+	UPROPERTY()
+	FDAEquipmentItem Ring2;
+
+	UPROPERTY()
+	FDAEquipmentItem Ring3;
+
+	UPROPERTY()
+	FDAEquipmentItem Ring4;
+
+	UPROPERTY()
+	FDAEquipmentItem Consumable1;
+
+	UPROPERTY()
+	FDAEquipmentItem Consumable2;
+
+	UPROPERTY()
+	FDAEquipmentItem Consumable3;
+
+	UPROPERTY()
+	FDAEquipmentItem Consumable4;
 
 	void EquipToRightHand(FName ID, FString InstanceID)
 	{
@@ -158,14 +178,24 @@ struct FDACharacterEquipment
 		LeftHand = FDAEquipmentItem(ID, InstanceID);
 	}
 
-	void EquipToRightHandAlt(FName ID, FString InstanceID)
+	void EquipToRing1(FName ID, FString InstanceID)
 	{
-		RightHandAlt = FDAEquipmentItem(ID, InstanceID);
+		Ring1 = FDAEquipmentItem(ID, InstanceID);
 	}
 
-	void EquipToLeftHandAlt(FName ID, FString InstanceID)
+	void EquipToRing2(FName ID, FString InstanceID)
 	{
-		LeftHandAlt = FDAEquipmentItem(ID, InstanceID);
+		Ring2 = FDAEquipmentItem(ID, InstanceID);
+	}
+
+	void EquipToRing3(FName ID, FString InstanceID)
+	{
+		Ring3 = FDAEquipmentItem(ID, InstanceID);
+	}
+
+	void EquipToRing4(FName ID, FString InstanceID)
+	{
+		Ring4 = FDAEquipmentItem(ID, InstanceID);
 	}
 
 	void EquipToArmourSet(FName ID, FString InstanceID)
@@ -173,9 +203,24 @@ struct FDACharacterEquipment
 		ArmorSet = FDAEquipmentItem(ID, InstanceID);
 	}
 
-	void EquipToConsumable(FName ID, FString InstanceID)
+	void EquipToConsumable1(FName ID, FString InstanceID)
 	{
-		Consumable = FDAEquipmentItem(ID, InstanceID);
+		Consumable1 = FDAEquipmentItem(ID, InstanceID);
+	}
+
+	void EquipToConsumable2(FName ID, FString InstanceID)
+	{
+		Consumable2 = FDAEquipmentItem(ID, InstanceID);
+	}
+
+	void EquipToConsumable3(FName ID, FString InstanceID)
+	{
+		Consumable3 = FDAEquipmentItem(ID, InstanceID);
+	}
+
+	void EquipToConsumable4(FName ID, FString InstanceID)
+	{
+		Consumable4 = FDAEquipmentItem(ID, InstanceID);
 	}
 
 	bool InstanceIDIsEquipped(FString ID)
@@ -183,15 +228,25 @@ struct FDACharacterEquipment
 		bool IsEquipped = false;
 		if (RightHand.InstanceID.Equals(ID))
 			IsEquipped = true;
-		if (RightHandAlt.InstanceID.Equals(ID))
-			IsEquipped = true;
 		if (LeftHand.InstanceID.Equals(ID))
 			IsEquipped = true;
-		if (LeftHandAlt.InstanceID.Equals(ID))
+		if (Ring1.InstanceID.Equals(ID))
+			IsEquipped = true;
+		if (Ring2.InstanceID.Equals(ID))
+			IsEquipped = true;
+		if (Ring3.InstanceID.Equals(ID))
+			IsEquipped = true;
+		if (Ring4.InstanceID.Equals(ID))
 			IsEquipped = true;
 		if (ArmorSet.InstanceID.Equals(ID))
 			IsEquipped = true;
-		if (Consumable.InstanceID.Equals(ID))
+		if (Consumable1.InstanceID.Equals(ID))
+			IsEquipped = true;
+		if (Consumable2.InstanceID.Equals(ID))
+			IsEquipped = true;
+		if (Consumable3.InstanceID.Equals(ID))
+			IsEquipped = true;
+		if (Consumable4.InstanceID.Equals(ID))
 			IsEquipped = true;
 
 		return IsEquipped;
@@ -349,17 +404,32 @@ struct FDACharacterInventory
 		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHand:
 			Equipment.EquipToLeftHand(ID, InstanceID);
 			break;
-		case EDAEquipmentSlot::EDAEquipmentSlot_RightHandAlt:
-			Equipment.EquipToRightHandAlt(ID, InstanceID);
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring1:
+			Equipment.EquipToRing1(ID, InstanceID);
 			break;
-		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHandAlt:
-			Equipment.EquipToLeftHandAlt(ID, InstanceID);
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring2:
+			Equipment.EquipToRing2(ID, InstanceID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring3:
+			Equipment.EquipToRing3(ID, InstanceID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring4:
+			Equipment.EquipToRing4(ID, InstanceID);
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_ArmourSet:
 			Equipment.EquipToArmourSet(ID, InstanceID);
 			break;
-		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable:
-			Equipment.EquipToConsumable(ID, InstanceID);
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable1:
+			Equipment.EquipToConsumable1(ID, InstanceID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable2:
+			Equipment.EquipToConsumable2(ID, InstanceID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable3:
+			Equipment.EquipToConsumable3(ID, InstanceID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable4:
+			Equipment.EquipToConsumable4(ID, InstanceID);
 			break;
 		default:
 			break;
@@ -377,17 +447,32 @@ struct FDACharacterInventory
 		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHand:
 			Equipment.EquipToLeftHand(ID, "");
 			break;
-		case EDAEquipmentSlot::EDAEquipmentSlot_RightHandAlt:
-			Equipment.EquipToRightHandAlt(ID, "");
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring1:
+			Equipment.EquipToRing1(ID, "");
 			break;
-		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHandAlt:
-			Equipment.EquipToLeftHandAlt(ID, "");
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring2:
+			Equipment.EquipToRing2(ID, "");
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring3:
+			Equipment.EquipToRing3(ID, "");
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring4:
+			Equipment.EquipToRing4(ID, "");
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_ArmourSet:
 			Equipment.EquipToArmourSet(ID, "");
 			break;
-		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable:
-			Equipment.EquipToConsumable(ID, "");
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable1:
+			Equipment.EquipToConsumable1(ID, "");
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable2:
+			Equipment.EquipToConsumable2(ID, "");
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable3:
+			Equipment.EquipToConsumable3(ID, "");
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable4:
+			Equipment.EquipToConsumable4(ID, "");
 			break;
 		default:
 			break;
@@ -417,14 +502,24 @@ struct FDACharacterInventory
 			InstanceID = Equipment.LeftHand.InstanceID;
 			Item = ItemManager.GetItemByID(ID);
 			break;
-		case EDAEquipmentSlot::EDAEquipmentSlot_RightHandAlt:
-			ID = Equipment.RightHandAlt.ID;
-			InstanceID = Equipment.RightHandAlt.InstanceID;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring1:
+			ID = Equipment.Ring1.ID;
+			InstanceID = Equipment.Ring1.InstanceID;
 			Item = ItemManager.GetItemByID(ID);
 			break;
-		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHandAlt:
-			ID = Equipment.LeftHandAlt.ID;
-			InstanceID = Equipment.LeftHandAlt.InstanceID;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring2:
+			ID = Equipment.Ring2.ID;
+			InstanceID = Equipment.Ring2.InstanceID;
+			Item = ItemManager.GetItemByID(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring3:
+			ID = Equipment.Ring3.ID;
+			InstanceID = Equipment.Ring3.InstanceID;
+			Item = ItemManager.GetItemByID(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring4:
+			ID = Equipment.Ring4.ID;
+			InstanceID = Equipment.Ring4.InstanceID;
 			Item = ItemManager.GetItemByID(ID);
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_ArmourSet:
@@ -432,9 +527,24 @@ struct FDACharacterInventory
 			InstanceID = Equipment.ArmorSet.InstanceID;
 			Item = ItemManager.GetItemByID(ID);
 			break;
-		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable:
-			ID = Equipment.Consumable.ID;
-			InstanceID = Equipment.Consumable.InstanceID;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable1:
+			ID = Equipment.Consumable1.ID;
+			InstanceID = Equipment.Consumable1.InstanceID;
+			Item = ItemManager.GetItemByID(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable2:
+			ID = Equipment.Consumable2.ID;
+			InstanceID = Equipment.Consumable2.InstanceID;
+			Item = ItemManager.GetItemByID(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable3:
+			ID = Equipment.Consumable3.ID;
+			InstanceID = Equipment.Consumable3.InstanceID;
+			Item = ItemManager.GetItemByID(ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable4:
+			ID = Equipment.Consumable4.ID;
+			InstanceID = Equipment.Consumable4.InstanceID;
 			Item = ItemManager.GetItemByID(ID);
 			break;
 		default:
@@ -461,17 +571,32 @@ struct FDACharacterInventory
 		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHand:
 			Item = ItemManager->GetItemByID(Equipment.LeftHand.ID);
 			break;
-		case EDAEquipmentSlot::EDAEquipmentSlot_RightHandAlt:
-			Item = ItemManager->GetItemByID(Equipment.RightHandAlt.ID);
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring1:
+			Item = ItemManager->GetItemByID(Equipment.Ring1.ID);
 			break;
-		case EDAEquipmentSlot::EDAEquipmentSlot_LeftHandAlt:
-			Item = ItemManager->GetItemByID(Equipment.LeftHandAlt.ID);
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring2:
+			Item = ItemManager->GetItemByID(Equipment.Ring2.ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring3:
+			Item = ItemManager->GetItemByID(Equipment.Ring3.ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Ring4:
+			Item = ItemManager->GetItemByID(Equipment.Ring4.ID);
 			break;
 		case EDAEquipmentSlot::EDAEquipmentSlot_ArmourSet:
 			Item = ItemManager->GetItemByID(Equipment.ArmorSet.ID);
 			break;
-		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable:
-			Item = ItemManager->GetItemByID(Equipment.Consumable.ID);
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable1:
+			Item = ItemManager->GetItemByID(Equipment.Consumable1.ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable2:
+			Item = ItemManager->GetItemByID(Equipment.Consumable2.ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable3:
+			Item = ItemManager->GetItemByID(Equipment.Consumable3.ID);
+			break;
+		case EDAEquipmentSlot::EDAEquipmentSlot_Consumable4:
+			Item = ItemManager->GetItemByID(Equipment.Consumable4.ID);
 			break;
 		default:
 			break;

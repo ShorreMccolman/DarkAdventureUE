@@ -1,18 +1,23 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DAWeaponItem.h"
-
+#include "DAGeneratedAttributes.h"
 
 UDAWeaponItem::UDAWeaponItem()
 {
 	ItemType = EDAItemType::DAItemType_Weapon;
 }
 
-void UDAWeaponItem::ModifyDamageWithAttributes(float& Damage, FDACharacterAttributes Attributes)
+void UDAWeaponItem::ModifyGeneratedAttributes(UDAGeneratedAttributes& Attributes) const
 {
-	Damage += LightAttackPower + Attributes.DamageStat * ScalingFactorModifier(DamageScaling);
-	Damage += Attributes.PracticalStat * ScalingFactorModifier(PracticalScaling);
-	Damage += Attributes.ScientificStat * ScalingFactorModifier(ScienceScaling);
-	Damage += Attributes.SpiritualStat * ScalingFactorModifier(SpiritScaling);
+	Attributes.MainWeaponLightDamage = LightAttackPower + Attributes.BaseAttributes.DamageStat * ScalingFactorModifier(DamageScaling);
+	Attributes.MainWeaponLightDamage += Attributes.BaseAttributes.PracticalStat * ScalingFactorModifier(PracticalScaling);
+	Attributes.MainWeaponLightDamage += Attributes.BaseAttributes.ScientificStat * ScalingFactorModifier(ScienceScaling);
+	Attributes.MainWeaponLightDamage += Attributes.BaseAttributes.SpiritualStat * ScalingFactorModifier(SpiritScaling);
+
+	Attributes.MainWeaponStrongDamage = StrongAttackPower + Attributes.BaseAttributes.DamageStat * ScalingFactorModifier(DamageScaling);
+	Attributes.MainWeaponLightDamage += Attributes.BaseAttributes.PracticalStat * ScalingFactorModifier(PracticalScaling);
+	Attributes.MainWeaponLightDamage += Attributes.BaseAttributes.ScientificStat * ScalingFactorModifier(ScienceScaling);
+	Attributes.MainWeaponLightDamage += Attributes.BaseAttributes.SpiritualStat * ScalingFactorModifier(SpiritScaling);
 }
 

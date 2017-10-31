@@ -14,6 +14,7 @@
 #include "DAMainGameMode.h"
 #include "DAGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "DAGeneratedAttributes.h"
 #include "Blueprint/BlueprintSupport.h"
 
 
@@ -61,10 +62,14 @@ void ADAPlayer::LoadPlayer()
 
 	Attributes = PlayerSave->Attributes;
 	Inventory = PlayerSave->Inventory;
+	Vitals = PlayerSave->Vitals;
 	SetActorRotation(PlayerSave->Facing);
 	TargetDirection = GetActorForwardVector();
 	SetActorLocation(PlayerSave->Position);
 	Origin = PlayerSave->HomePosition;
+
+	GeneratedAttributes = NewObject<UDAGeneratedAttributes>(UDAGeneratedAttributes::StaticClass());
+	RegenerateAttributes();
 
 	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
 	if (Mode) {
@@ -90,6 +95,7 @@ void ADAPlayer::SavePlayer()
 
 	PlayerSave->Attributes = Attributes;
 	PlayerSave->Inventory = Inventory;
+	PlayerSave->Vitals = Vitals;
 	PlayerSave->Position = GetActorLocation();
 	PlayerSave->Facing = GetActorRotation();
 	PlayerSave->HomePosition = Origin;
@@ -124,6 +130,13 @@ void ADAPlayer::Tick(float DeltaTime)
 	}
 }
 
+void ADAPlayer::ChangeRestState(bool IsResting)
+{
+	if (Animation) {
+		Animation->SetupNextAnimation(IsResting ? "Rest" : "Stand", false);
+	}
+}
+
 void ADAPlayer::Reset()
 {
 	Super::Reset();
@@ -135,10 +148,10 @@ void ADAPlayer::AddItemsToInventory(FName ItemID, int Quantity)
 	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
 	UDAItemManager* IM = Mode->GetItemManager();
 	if (IM) {
-		FDAInventoryItemDataPair Pair = Inventory.GetItemDataPairInSlot(*IM, EDAEquipmentSlot::EDAEquipmentSlot_Consumable);
+		FDAInventoryItemDataPair Pair = Inventory.GetItemDataPairInSlot(*IM, EDAEquipmentSlot::EDAEquipmentSlot_Consumable1);
 		FString InstID = Inventory.AddItem(ItemID, IM, Quantity);
 		if (Pair.Item.Quantity == 0 && Pair.Item.ID == ItemID) {
-			Inventory.EquipItem(ItemID, InstID,EDAEquipmentSlot::EDAEquipmentSlot_Consumable);
+			Inventory.EquipItem(ItemID, InstID,EDAEquipmentSlot::EDAEquipmentSlot_Consumable1);
 		}
 
 		Mode->RefreshHUD();

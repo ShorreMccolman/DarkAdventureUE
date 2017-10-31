@@ -30,6 +30,9 @@ public:
 	FDACharacterInventory Inventory;
 
 	UPROPERTY()
+	FDACharacterVitals Vitals;
+
+	UPROPERTY()
 	FVector HomePosition;
 
 	UPROPERTY()
