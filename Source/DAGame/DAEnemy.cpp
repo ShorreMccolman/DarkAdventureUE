@@ -7,6 +7,7 @@
 #include "TimerManager.h"
 #include "Components/WidgetComponent.h"
 #include "DAWeaponBase.h"
+#include "DAGeneratedAttributes.h"
 #include "Animation/AnimInstance.h"
 
 
@@ -29,6 +30,8 @@ void ADAEnemy::BeginPlay()
 	ShowDetails(false);
 
 	EquipWeapon("Claw", "LeftHandSocket");
+	GeneratedAttributes = NewObject<UDAGeneratedAttributes>(UDAGeneratedAttributes::StaticClass());
+	GeneratedAttributes->UpdateWithEnemyCharacter(*this);
 }
 
 // Called every frame
@@ -42,6 +45,7 @@ void ADAEnemy::Tick(float DeltaTime)
 	if (TargetEnemy) 
 	{
 		float distance = FVector::Distance(GetActorLocation(), TargetEnemy->GetActorLocation());
+		UE_LOG(LogTemp, Warning, TEXT("Distance is %f"), distance)
 		Pursue(distance, DeltaTime);
 
 		if (distance < 160.f && distance > 140.f)
@@ -105,6 +109,7 @@ void ADAEnemy::ShowDetails(bool ShouldShow)
 void ADAEnemy::NoticePlayer(ADAPlayer* Player)
 {
 	TargetEnemy = Player;
+	UE_LOG(LogTemp, Warning, TEXT("Noticed Player"))
 
 	if (Animation) 
 	{

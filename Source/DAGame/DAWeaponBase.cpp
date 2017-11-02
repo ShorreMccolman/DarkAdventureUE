@@ -2,30 +2,27 @@
 
 #include "DAWeaponBase.h"
 #include "Components/BoxComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "DACharacter.h"
 #include "Animation/AnimInstance.h"
 
-// Sets default values
 ADAWeaponBase::ADAWeaponBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+	SetRootComponent(Mesh);
+
+	BoxCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerCollider"));
+	BoxCollider->OnComponentBeginOverlap.AddDynamic(this, &ADAWeaponBase::TriggerEnter);
+	BoxCollider->SetupAttachment(Mesh);
 }
 
-// Called when the game starts or when spawned
 void ADAWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	DisableCollision();
-}
-
-// Called every frame
-void ADAWeaponBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void ADAWeaponBase::SetDAOwner(class ADACharacter* TheOwner)
@@ -35,28 +32,27 @@ void ADAWeaponBase::SetDAOwner(class ADACharacter* TheOwner)
 
 void ADAWeaponBase::DisableCollision()
 {
+	Payload = FDAWeaponPayload();
 	if (BoxCollider) {
 		BoxCollider->bGenerateOverlapEvents = false;
 	}
 }
 
-void ADAWeaponBase::EnableCollision()
+void ADAWeaponBase::EnableCollision(FDAWeaponPayload NewPayload)
 {
+	Payload = NewPayload;
 	if (BoxCollider) {
 		BoxCollider->bGenerateOverlapEvents = true;
 	}
 }
 
-float ADAWeaponBase::GetCurrentDamage(FDACharacterAttributes OwnerAttributes, FDACharacterAttributes TargetAttributes)
+void ADAWeaponBase::TriggerEnter( UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	float Damage = BaseDamage;
-
-	Damage +=  OwnerAttributes.DamageStat * StrengthModifier + OwnerAttributes.PracticalStat * DexModifier;
-
-	return BaseDamage;
-}
-
-TSubclassOf<UAnimInstance> ADAWeaponBase::GetAnimBP() const
-{
-	return AnimationBPClass;
+	UE_LOG(LogTemp, Warning, TEXT("Overlapped"))
+	if (OtherActor != DAOwner && OtherComp->ComponentHasTag("Character")) {
+		ADACharacter* Character = Cast<ADACharacter>(OtherActor);
+		if (Character) {
+			Character->GetHit(Payload);
+		}
+	}
 }

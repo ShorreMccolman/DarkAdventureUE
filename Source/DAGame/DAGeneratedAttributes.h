@@ -7,7 +7,6 @@
 #include "DAInventorySystem.h"
 #include "DAGeneratedAttributes.generated.h"
 
-
 UCLASS(Blueprintable)
 class UDAGeneratedAttributes : public UObject
 {
@@ -42,6 +41,8 @@ public:
 	float ElectricResist;
 
 	void UpdateWithCharacter(const class ADACharacter& PlayerCharacter);
+
+	void UpdateWithEnemyCharacter(const class ADAEnemy& EnemyCharacter);
 
 private:
 	void UpdateAttributesForCharacterSlot(const ADACharacter& PlayerCharacter, EDAEquipmentSlot Slot);

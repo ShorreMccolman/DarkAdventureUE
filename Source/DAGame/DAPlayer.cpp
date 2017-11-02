@@ -121,11 +121,15 @@ void ADAPlayer::Tick(float DeltaTime)
 		return;
 
 	if (bIsTargetLocked && !bIsRunning) {
-		Animation->SetIsLockedOn(true);
+		if (Animation) {
+			Animation->SetIsLockedOn(true);
+		}
 		LockedMotion(DeltaTime);
 	} 
 	else {
-		Animation->SetIsLockedOn(false);
+		if (Animation) {
+			Animation->SetIsLockedOn(false);
+		}
 		StandardMotion(DeltaTime);
 	}
 }

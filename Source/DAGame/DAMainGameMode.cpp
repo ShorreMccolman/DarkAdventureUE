@@ -60,6 +60,17 @@ void ADAMainGameMode::RefreshHUD()
 	}
 }
 
+void ADAMainGameMode::RefreshHUD(int SoulsGained)
+{
+	if (CurrentHUDWidget != nullptr) {
+		UDAHUDWidget* HUD = Cast<UDAHUDWidget>(CurrentHUDWidget);
+		if (HUD) {
+			HUD->ShowEarnedSouls(SoulsGained);
+			HUD->DoDisplayUpdate();
+		}
+	}
+}
+
 void ADAMainGameMode::QuitToMainMenu()
 {
 	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));

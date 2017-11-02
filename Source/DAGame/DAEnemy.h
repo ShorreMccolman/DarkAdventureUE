@@ -7,6 +7,36 @@
 #include "DAPickup.h"
 #include "DAEnemy.generated.h"
 
+USTRUCT(Blueprintable)
+struct FDAEnemyAttributes
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxHealth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxStamina;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MainWeaponLightDamage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MainWeaponStrongDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float OffhandDamage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float OffhandDefense;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Defense;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float FireResist;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ColdResist;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ElectricResist;
+};
+
 UCLASS()
 class DAGAME_API ADAEnemy : public ADACharacter
 {
@@ -15,6 +45,9 @@ class DAGAME_API ADAEnemy : public ADACharacter
 public:
 	// Sets default values for this character's properties
 	ADAEnemy();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FDAEnemyAttributes EnemyAttributes;
 
 	UFUNCTION()
 	virtual void Reset() override;

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DAGeneratedAttributes.h"
-#include "DACharacter.h"
+#include "DAEnemy.h"
 
 void UDAGeneratedAttributes::UpdateWithCharacter(const ADACharacter& PlayerCharacter)
 {
@@ -26,6 +26,22 @@ void UDAGeneratedAttributes::UpdateWithCharacter(const ADACharacter& PlayerChara
 	UpdateAttributesForCharacterSlot(PlayerCharacter, EDAEquipmentSlot::EDAEquipmentSlot_Ring2);
 	UpdateAttributesForCharacterSlot(PlayerCharacter, EDAEquipmentSlot::EDAEquipmentSlot_Ring3);
 	UpdateAttributesForCharacterSlot(PlayerCharacter, EDAEquipmentSlot::EDAEquipmentSlot_Ring4);
+}
+
+void UDAGeneratedAttributes::UpdateWithEnemyCharacter(const ADAEnemy& EnemyCharacter)
+{
+	FDAEnemyAttributes Atts = EnemyCharacter.EnemyAttributes;
+
+	MaxHealth = Atts.MaxHealth;
+	MaxStamina = Atts.MaxStamina;
+	MainWeaponLightDamage = Atts.MainWeaponLightDamage;
+	MainWeaponStrongDamage = Atts.MainWeaponStrongDamage;
+	OffhandDamage = Atts.OffhandDamage;
+	OffhandDefense = Atts.OffhandDefense;
+	Defense = Atts.Defense;
+	FireResist = Atts.FireResist;
+	ColdResist = Atts.ColdResist;
+	ElectricResist = Atts.ElectricResist;
 }
 
 void UDAGeneratedAttributes::UpdateAttributesForCharacterSlot(const ADACharacter& PlayerCharacter, EDAEquipmentSlot Slot)

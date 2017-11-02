@@ -20,10 +20,16 @@ public:
 	void UpdateCharacterAndDisplay(class ADACharacter* PlayerCharacter);
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void ShowEarnedSouls(int Amount);
+
+	UFUNCTION(BlueprintImplementableEvent)
 	void DoDisplayUpdate();
 	
 	
 protected:
 	UPROPERTY(BlueprintReadWrite)
 	class ADACharacter* Character;
+
+	UPROPERTY(BlueprintReadWrite)
+	int CurrentSoulDisplayAmount;
 };

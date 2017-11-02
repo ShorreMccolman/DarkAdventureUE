@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "DACharacterAttributes.h"
+#include "DACombatSystem.h"
 #include "DAWeaponBase.generated.h"
 
 UCLASS()
@@ -20,39 +21,32 @@ public:
 	void DisableCollision();
 
 	UFUNCTION(BlueprintCallable)
-	void EnableCollision();
+	void EnableCollision(FDAWeaponPayload NewPayload);
 
-	UFUNCTION(BlueprintPure)
-	float GetCurrentDamage(FDACharacterAttributes OwnerAttributes, FDACharacterAttributes TargetAttributes);
-
-	UFUNCTION()
 	void SetDAOwner(class ADACharacter* TheOwner);
 
 	UFUNCTION()
-	TSubclassOf<class UAnimInstance> GetAnimBP() const;
+	FORCEINLINE TSubclassOf<class UAnimInstance> GetAnimBP() const { return AnimationBPClass; }
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION()
+	void TriggerEnter(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	UPROPERTY()
+	FDAWeaponPayload Payload;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class USkeletalMeshComponent* Mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* BoxCollider;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float BaseDamage;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float StrengthModifier;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float DexModifier;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ADACharacter* DAOwner;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
 	TSubclassOf<class UAnimInstance> AnimationBPClass;
-	
 };

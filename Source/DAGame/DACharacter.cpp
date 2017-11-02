@@ -79,7 +79,9 @@ void ADACharacter::ShowDetails(bool ShouldShow)
 void ADACharacter::OnCharacterDeath()
 {
 	bIsDead = true;
-	Animation->KillCharacter();
+	if (Animation) {
+		Animation->KillCharacter();
+	}
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
@@ -262,10 +264,10 @@ void ADACharacter::SetCharacterRotationLock(bool Lock)
 	bShouldLockRotation = Lock;
 }
 
-void ADACharacter::GetHit(float Damage)
+void ADACharacter::GetHit(FDAWeaponPayload Payload)
 {
 	if (!bIsTakingDamage && !bIsDead) {
-		IncomingDamage = Damage;
+		IncomingDamage = FMath::Max<int>(0,Payload.NormalDamage - GeneratedAttributes->Defense);
 		bIsTakingDamage = true;
 		if (Animation) {
 			Animation->DamageCharacter();
@@ -291,10 +293,26 @@ void ADACharacter::TryAttack()
 	}
 }
 
+void ADACharacter::ExecuteAttack()
+{
+	if (Weapon) {
+		Weapon->EnableCollision(FDAWeaponPayload(GeneratedAttributes->MainWeaponLightDamage));
+		ConsumeStamina(30.f);
+	}
+}
+
 void ADACharacter::TryStrongAttack()
 {
 	if (Animation && Vitals.CurStamina > 1.f) {
 		Animation->SetupNextAnimation("StrongAttack", false);
+	}
+}
+
+void ADACharacter::ExecuteStrongAttack()
+{
+	if (Weapon) {
+		Weapon->EnableCollision(FDAWeaponPayload(GeneratedAttributes->MainWeaponStrongDamage));
+		ConsumeStamina(45.f);
 	}
 }
 
@@ -463,6 +481,11 @@ float ADACharacter::GetCurrentStaminaPercent() const
 void ADACharacter::GainSouls(int Amount)
 {
 	Vitals.CurrentSouls += Amount;
+
+	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
+	if (Mode) {
+		Mode->RefreshHUD(Amount);
+	}
 }
 
 void ADACharacter::ConsumeSouls(int Amount)
@@ -519,9 +542,9 @@ void ADACharacter::StandardMotion(float DeltaTime)
 	if (inputSquareMagnitude > 0.0f) {
 		TargetDirection = InputDirection;
 		TargetDirection.Normalize();
-		Speed = InterpolateSpeed(Speed, max, Acceleration, DeltaTime);
+		Speed = FMath::Lerp<float>(Speed, max, Acceleration * DeltaTime);
 	} else {
-		Speed = InterpolateSpeed(Speed, 0.f, Decceleration, DeltaTime);
+		Speed = FMath::Lerp<float>(Speed, 0.f, Decceleration * DeltaTime);
 	}
 
 	if (bIsTargetLocked && Speed < 300.f)
@@ -547,11 +570,11 @@ void ADACharacter::LockedMotion(float DeltaTime)
 	TargetDirection = TargetEnemy->GetActorLocation() - GetActorLocation();
 	TargetDirection.Normalize();
 
-	float Approach = FVector::DotProduct(TargetDirection, InputDirection) * 600.f;
-	float Strafe = FVector::CrossProduct(TargetDirection, InputDirection).Z * 600.f;
+	float Approach = FVector::DotProduct(TargetDirection, InputDirection) * WalkSpeed;
+	float Strafe = FVector::CrossProduct(TargetDirection, InputDirection).Z * WalkSpeed;
 
-	ApproachValue = InterpolateSpeed(ApproachValue, Approach, 2000.f, DeltaTime);
-	StrafeValue = InterpolateSpeed(StrafeValue, Strafe, 2000.f, DeltaTime);
+	ApproachValue = FMath::Lerp(ApproachValue, Approach, Acceleration * DeltaTime);
+	StrafeValue = FMath::Lerp(StrafeValue, Strafe, Acceleration * DeltaTime);
 
 	if (Animation) {
 		Animation->ApproachSpeed = ApproachValue;
@@ -583,11 +606,11 @@ void ADACharacter::Pursue(float Distance, float DeltaTime)
 	FaceTargetDirection(TargetDirection, angle, DeltaTime);
 
 	if (Distance > 150.f) {
-		Speed = InterpolateSpeed(Speed, 600.f, Acceleration, DeltaTime);
+		Speed = FMath::Lerp(Speed, WalkSpeed, Acceleration * DeltaTime);
 	} else if (Distance < 140.f) {
-		Speed = InterpolateSpeed(Speed, -100.f, Decceleration, DeltaTime);
+		Speed = FMath::Lerp(Speed, -100.f, Decceleration * DeltaTime);
 	} else {
-		Speed = InterpolateSpeed(Speed, 0.f, Decceleration, DeltaTime);
+		Speed = FMath::Lerp(Speed, 0.f, Decceleration * DeltaTime);
 	}
 
 	if (Animation)
@@ -596,7 +619,7 @@ void ADACharacter::Pursue(float Distance, float DeltaTime)
 
 void ADACharacter::HoldPosition(float DeltaTime)
 {
-	Speed = InterpolateSpeed(Speed, 0.f, Decceleration, DeltaTime);
+	Speed = FMath::Lerp(Speed, 0.f, Decceleration * DeltaTime);
 
 	if (Animation)
 		Animation->Speed = Speed;
@@ -618,17 +641,4 @@ void ADACharacter::SetIsLocked(bool ShouldLock)
 void ADACharacter::ShowTarget(bool ShouldTarget)
 {
 
-}
-
-float ADACharacter::InterpolateSpeed(float Current, float Target, float Acceleration, float DeltaTime)
-{
-	if (Current < Target + 1.f && Current > Target - 1.f) {
-		Current = Target;
-	}
-	else if (Current > Target)
-		Current -= Acceleration * DeltaTime;
-	else if (Current < Target)
-		Current += Acceleration * DeltaTime;
-
-	return Current;
 }

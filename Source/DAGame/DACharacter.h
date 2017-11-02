@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "DACharacterAttributes.h"
 #include "DAInventorySystem.h"
+#include "DACombatSystem.h"
 #include "DACharacter.generated.h"
 
 UCLASS()
@@ -69,7 +70,13 @@ public:
 	void ConsumeStamina(float Amount);
 
 	UFUNCTION(BlueprintCallable)
-	void GetHit(float Damage);    // Set the incoming damage from the weapon hit and trigger animation
+	void GetHit(FDAWeaponPayload Payload);    // Set the incoming damage from the weapon hit and trigger animation
+
+	UFUNCTION(BlueprintCallable)
+	void ExecuteAttack();
+
+	UFUNCTION(BlueprintCallable)
+	void ExecuteStrongAttack();
 
 	UFUNCTION(BlueprintCallable)
 	virtual void TriggerIncomingDamage();	// Actually apply the incoming damage, called from animation blueprint
@@ -208,7 +215,7 @@ protected:
 	virtual void OnCharacterDeath();
 
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	class ADACharacter* TargetEnemy;
 
 	UPROPERTY()
@@ -238,8 +245,6 @@ protected:
 	void Pursue(float Distance, float DeltaTime);
 
 	void HoldPosition(float DeltaTime);
-
-	float InterpolateSpeed(float Current, float Target, float Acceleration, float DeltaTime);
 
 	void SetIsLocked(bool ShouldLock);
 

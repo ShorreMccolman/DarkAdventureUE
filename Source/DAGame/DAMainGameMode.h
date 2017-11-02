@@ -26,6 +26,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RefreshHUD();
 
+	void RefreshHUD(int SoulsGained);
+
 	UFUNCTION()
 	void OpenRestMenu();
 
