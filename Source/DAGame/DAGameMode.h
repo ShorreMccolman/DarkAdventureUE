@@ -145,4 +145,5 @@ protected:
 
 	UPROPERTY()
 	class ULevelSequencePlayer* SequencePlayer;
+
 };

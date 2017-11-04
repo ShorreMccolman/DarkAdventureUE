@@ -25,6 +25,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void DoDisplayUpdate();
 	
+	UFUNCTION(BlueprintImplementableEvent)
+	void DisplayRegion(FName RegionName);
 	
 protected:
 	UPROPERTY(BlueprintReadWrite)

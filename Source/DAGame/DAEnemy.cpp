@@ -45,7 +45,6 @@ void ADAEnemy::Tick(float DeltaTime)
 	if (TargetEnemy) 
 	{
 		float distance = FVector::Distance(GetActorLocation(), TargetEnemy->GetActorLocation());
-		UE_LOG(LogTemp, Warning, TEXT("Distance is %f"), distance)
 		Pursue(distance, DeltaTime);
 
 		if (distance < 160.f && distance > 140.f)
@@ -95,6 +94,11 @@ void ADAEnemy::OnCharacterDeath()
 	TArray<FDALootDrop> Drops = RollForLootDrops(LootRolls);
 	for (auto Drop : Drops) {
 		SpawnPickup(Drop);
+	}
+
+	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (Player) {
+		Player->GainSouls(EnemyAttributes.SoulReward);
 	}
 }
 

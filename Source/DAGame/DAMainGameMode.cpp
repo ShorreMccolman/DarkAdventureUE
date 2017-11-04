@@ -12,6 +12,7 @@
 #include "EngineUtils.h" 
 #include "DAWidget.h"
 #include "DAHUDWidget.h"
+#include "DARegion.h"
 #include "LevelSequencePlayer.h"
 
 
@@ -39,12 +40,15 @@ void ADAMainGameMode::SetupHUD(ADACharacter* PlayerCharacter)
 void ADAMainGameMode::ShowHUDWidget(bool ShouldShow)
 {
 	if (ShouldShow && CurrentHUDWidget == nullptr) {
-		CurrentHUDWidget = CreateWidget<UUserWidget>(GetWorld(), HUDWidgetClass);
-		if (CurrentHUDWidget != nullptr) {
+		UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), HUDWidgetClass);
+		CurrentHUDWidget = Cast<UDAHUDWidget>(Widget);
+		if (CurrentHUDWidget) {
 			CurrentHUDWidget->AddToViewport();
+			if(CurrentRegion)
+				CurrentHUDWidget->DisplayRegion(CurrentRegion->GetRegionName());
 		}
 	}
-	else if (!ShouldShow && CurrentHUDWidget != nullptr) {
+	else if (!ShouldShow && CurrentHUDWidget) {
 		CurrentHUDWidget->RemoveFromViewport();
 		CurrentHUDWidget = nullptr;
 	}
@@ -52,22 +56,16 @@ void ADAMainGameMode::ShowHUDWidget(bool ShouldShow)
 
 void ADAMainGameMode::RefreshHUD()
 {
-	if (CurrentHUDWidget != nullptr) {
-		UDAHUDWidget* HUD = Cast<UDAHUDWidget>(CurrentHUDWidget);
-		if (HUD) {
-			HUD->DoDisplayUpdate();
-		}
+	if (CurrentHUDWidget) {
+		CurrentHUDWidget->DoDisplayUpdate();
 	}
 }
 
 void ADAMainGameMode::RefreshHUD(int SoulsGained)
 {
-	if (CurrentHUDWidget != nullptr) {
-		UDAHUDWidget* HUD = Cast<UDAHUDWidget>(CurrentHUDWidget);
-		if (HUD) {
-			HUD->ShowEarnedSouls(SoulsGained);
-			HUD->DoDisplayUpdate();
-		}
+	if (CurrentHUDWidget) {
+		CurrentHUDWidget->ShowEarnedSouls(SoulsGained);
+		CurrentHUDWidget->DoDisplayUpdate();
 	}
 }
 
@@ -132,4 +130,23 @@ void ADAMainGameMode::RestartLevel()
 	ResetLevel();
 
 	FadeIn();
+}
+
+void ADAMainGameMode::EnterRegion(ADARegion* Region)
+{
+	if (Region) 
+	{
+		CurrentRegion = Region;
+		if (CurrentHUDWidget) 
+		{
+			CurrentHUDWidget->DisplayRegion(CurrentRegion->GetRegionName());
+		}
+	}
+}
+
+void ADAMainGameMode::LeaveRegion(ADARegion* Region)
+{
+	if (Region == CurrentRegion) {
+		CurrentRegion = nullptr;
+	}
 }

@@ -214,6 +214,8 @@ protected:
 	
 	virtual void OnCharacterDeath();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UNavigationSystem* NavSystem;
 
 	UPROPERTY(EditAnywhere)
 	class ADACharacter* TargetEnemy;

@@ -267,7 +267,7 @@ void ADACharacter::SetCharacterRotationLock(bool Lock)
 void ADACharacter::GetHit(FDAWeaponPayload Payload)
 {
 	if (!bIsTakingDamage && !bIsDead) {
-		IncomingDamage = FMath::Max<int>(0,Payload.NormalDamage - GeneratedAttributes->Defense);
+		IncomingDamage = FMath::Max<int>(0,Payload.NormalDamage - 0.5f * GeneratedAttributes->Defense);
 		bIsTakingDamage = true;
 		if (Animation) {
 			Animation->DamageCharacter();
@@ -587,34 +587,38 @@ void ADACharacter::LockedMotion(float DeltaTime)
 
 void ADACharacter::Pursue(float Distance, float DeltaTime)
 {
-	UNavigationPath *tpath;
-	UNavigationSystem* system = GetWorld()->GetNavigationSystem();
-	tpath = system->FindPathToActorSynchronously(GetWorld(), GetActorLocation(), TargetEnemy);
+	NavSystem = GetWorld()->GetNavigationSystem();
+	if (NavSystem) {
+		UNavigationPath *tpath;
+		tpath = NavSystem->FindPathToActorSynchronously(GetWorld(), GetActorLocation(), TargetEnemy);
 
-	int Num = tpath->PathPoints.Num();
+		int Num = tpath->PathPoints.Num();
 
-	FVector Targ;
-	if (tpath->PathPoints.Num() > 1)
-		Targ = tpath->PathPoints[1];
-	else
-		Targ = GetActorLocation();
+		FVector Targ;
+		if (tpath->PathPoints.Num() > 1)
+			Targ = tpath->PathPoints[1];
+		else
+			Targ = GetActorLocation();
 
-	TargetDirection = Targ - GetActorLocation();
-	TargetDirection.Normalize();
+		TargetDirection = Targ - GetActorLocation();
+		TargetDirection.Normalize();
 
-	float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, GetActorForwardVector())));
-	FaceTargetDirection(TargetDirection, angle, DeltaTime);
+		float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, GetActorForwardVector())));
+		FaceTargetDirection(TargetDirection, angle, DeltaTime);
 
-	if (Distance > 150.f) {
-		Speed = FMath::Lerp(Speed, WalkSpeed, Acceleration * DeltaTime);
-	} else if (Distance < 140.f) {
-		Speed = FMath::Lerp(Speed, -100.f, Decceleration * DeltaTime);
-	} else {
-		Speed = FMath::Lerp(Speed, 0.f, Decceleration * DeltaTime);
+		if (Distance > 150.f) {
+			Speed = FMath::Lerp(Speed, WalkSpeed, Acceleration * DeltaTime);
+		}
+		else if (Distance < 140.f) {
+			Speed = FMath::Lerp(Speed, -100.f, Decceleration * DeltaTime);
+		}
+		else {
+			Speed = FMath::Lerp(Speed, 0.f, Decceleration * DeltaTime);
+		}
+
+		if (Animation)
+			Animation->Speed = Speed;
 	}
-
-	if (Animation)
-		Animation->Speed = Speed;
 }
 
 void ADACharacter::HoldPosition(float DeltaTime)

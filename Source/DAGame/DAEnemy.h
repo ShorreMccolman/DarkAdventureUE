@@ -35,6 +35,9 @@ struct FDAEnemyAttributes
 	float ColdResist;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ElectricResist;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int SoulReward;
 };
 
 UCLASS()

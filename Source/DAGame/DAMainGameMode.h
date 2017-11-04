@@ -46,6 +46,12 @@ public:
 	UFUNCTION()
 	virtual void StartButton() override;
 
+	UFUNCTION(BlueprintCallable)
+	void EnterRegion(class ADARegion* Region);
+
+	UFUNCTION(BlueprintCallable)
+	void LeaveRegion(class ADARegion* Region);
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -59,7 +65,7 @@ protected:
 	TSubclassOf<class UUserWidget> StartMenuWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
-	class UUserWidget* CurrentHUDWidget;
+	class UDAHUDWidget* CurrentHUDWidget;
 
 	UPROPERTY()
 	FTimerHandle RestTimerHandle;
@@ -69,5 +75,8 @@ protected:
 
 	UFUNCTION()
 	void RestartLevel();
+
+	UPROPERTY()
+	class ADARegion* CurrentRegion;
 	
 };
