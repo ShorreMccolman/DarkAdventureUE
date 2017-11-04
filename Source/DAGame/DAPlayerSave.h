@@ -44,5 +44,7 @@ public:
 	UPROPERTY()
 	bool bIsNewPlayer;
 	
+	UPROPERTY()
+	FName CurrentRegion;
 	
 };

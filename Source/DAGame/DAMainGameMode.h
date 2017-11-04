@@ -46,6 +46,9 @@ public:
 	UFUNCTION()
 	virtual void StartButton() override;
 
+	UFUNCTION(BlueprintPure)
+	FName GetRegionID() const;
+
 	UFUNCTION(BlueprintCallable)
 	void EnterRegion(class ADARegion* Region);
 

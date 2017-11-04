@@ -63,9 +63,7 @@ void ADAPlayer::LoadPlayer()
 	Attributes = PlayerSave->Attributes;
 	Inventory = PlayerSave->Inventory;
 	Vitals = PlayerSave->Vitals;
-	SetActorRotation(PlayerSave->Facing);
 	TargetDirection = GetActorForwardVector();
-	SetActorLocation(PlayerSave->Position);
 	Origin = PlayerSave->HomePosition;
 
 	GeneratedAttributes = NewObject<UDAGeneratedAttributes>(UDAGeneratedAttributes::StaticClass());
@@ -76,6 +74,13 @@ void ADAPlayer::LoadPlayer()
 		EquipWeaponItem(Inventory.GetItemDataPairInSlot(*Mode->GetItemManager(), EDAEquipmentSlot::EDAEquipmentSlot_RightHand), "RightHand");
 		Mode->SetupHUD(this);
 	}
+}
+
+void ADAPlayer::InitPlayer()
+{
+	SetActorLocation(PlayerSave->Position);
+	SetActorRotation(PlayerSave->Facing);
+	GetCharacterMovement()->GravityScale = 1.0f;
 }
 
 void ADAPlayer::SavePlayer()
@@ -101,6 +106,11 @@ void ADAPlayer::SavePlayer()
 	PlayerSave->HomePosition = Origin;
 	PlayerSave->bIsNewPlayer = false;
 
+	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
+	if (Mode) {
+		PlayerSave->CurrentRegion = Mode->GetRegionID();
+	}
+
 	UGameplayStatics::SaveGameToSlot(PlayerSave, PlayerSave->ID, 0);
 }
 
@@ -110,6 +120,17 @@ void ADAPlayer::BeginPlay()
 	Super::BeginPlay();
 
 	LoadPlayer();
+	
+	if (PlayerSave) {
+		FLatentActionInfo LatentInfo;
+		LatentInfo.CallbackTarget = this;
+		LatentInfo.ExecutionFunction = FName("InitPlayer");
+		LatentInfo.Linkage = 0;
+		LatentInfo.UUID = 123456;
+
+		UGameplayStatics::LoadStreamLevel(this, PlayerSave->CurrentRegion, true, true, LatentInfo);
+	}
+
 }
 
 // Called every frame

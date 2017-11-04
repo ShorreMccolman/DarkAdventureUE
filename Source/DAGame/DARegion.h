@@ -16,7 +16,10 @@ public:
 	ADARegion();
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE FName GetRegionName() const { return RegionName; }
+	FORCEINLINE FName GetRegionID() const { return RegionID; }
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE FName GetRegionName() const { return RegionDisplayName; }
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,6 +35,9 @@ protected:
 	void EndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName RegionName;
+	FName RegionID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName RegionDisplayName;
 	
 };

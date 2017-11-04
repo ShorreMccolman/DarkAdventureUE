@@ -15,8 +15,8 @@ public:
 	// Sets default values for this character's properties
 	ADAPlayer();
 
-	UFUNCTION(BlueprintCallable)
-	void LoadPlayer();
+	UFUNCTION()
+	void InitPlayer();
 
 	UFUNCTION(BlueprintCallable)
 	void SavePlayer();
@@ -60,6 +60,9 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION()
+	void LoadPlayer();
 
 	UPROPERTY(EditAnywhere)
 	class APlayerStart* PlayerStart;

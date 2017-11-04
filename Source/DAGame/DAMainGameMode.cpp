@@ -132,6 +132,15 @@ void ADAMainGameMode::RestartLevel()
 	FadeIn();
 }
 
+FName ADAMainGameMode::GetRegionID() const
+{
+	if (!CurrentRegion) {
+		return "";
+	} else {
+		return CurrentRegion->GetRegionID();
+	}
+}
+
 void ADAMainGameMode::EnterRegion(ADARegion* Region)
 {
 	if (Region) 
