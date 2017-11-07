@@ -89,6 +89,9 @@ void UDAGameInstance::CreatePlayerSave(FString PlayerName, FDACharacterAttribute
 	PlayerSave->Vitals = FDACharacterVitals(Attributes);
 
 	PlayerSave->CurrentRegion = "Region1";
+	PlayerSave->HomeRegion = "Region1";
+
+	PlayerSave->CameraZoom = 800.f;
 
 	PlayerSave->bIsNewPlayer = true;
 	UGameplayStatics::SaveGameToSlot(PlayerSave, PlayerID, 0);

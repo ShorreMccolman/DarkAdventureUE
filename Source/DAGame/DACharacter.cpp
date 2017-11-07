@@ -64,7 +64,7 @@ void ADACharacter::Reset()
 	Inventory.Reset();
 	Vitals.RefreshVitals();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	SetActorLocation(Origin);
+	SetActorLocation(OriginLocation);
 
 	if (Animation) {
 		Animation->ResetCharacter();
@@ -83,6 +83,12 @@ void ADACharacter::OnCharacterDeath()
 		Animation->KillCharacter();
 	}
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void ADACharacter::SetNewOrigin(FVector Position, FName RegionName)
+{
+	OriginLocation = Position;
+	OriginRegion = RegionName;
 }
 
 void ADACharacter::UpdateAttributes(FDACharacterAttributes NewAttributes)

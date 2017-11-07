@@ -90,6 +90,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateAttributes(FDACharacterAttributes NewAttributes);
 
+	UFUNCTION(BlueprintCallable)
+	void SetNewOrigin(FVector Position, FName RegionName);
+
 	/**********************
 	
 	INVENTORY AND EQUIPMENT
@@ -200,13 +203,15 @@ protected:
 
 	FVector TargetDirection;
 
-	FVector Origin;
-
 	FDACharacterVitals Vitals;
 
 	FDACharacterAttributes Attributes;
 
 	FDACharacterInventory Inventory;
+
+	FVector OriginLocation;
+
+	FName OriginRegion;
 
 	virtual void BeginPlay() override;
 

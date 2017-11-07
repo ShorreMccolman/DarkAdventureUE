@@ -52,6 +52,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDAEnemyAttributes EnemyAttributes;
 
+	void Init(FName RegionID, bool IsDead);
+
+	void Uninit();
+
 	UFUNCTION()
 	virtual void Reset() override;
 
@@ -66,6 +70,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void SpawnPickup(FDALootDrop Drop);
+
+	UFUNCTION()
+	FORCEINLINE FString GetInstanceID() const { return InstanceID; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -102,4 +109,10 @@ protected:
 	TArray<FDALootRolls> LootRolls;
 	
 	TArray<FDALootDrop> RollForLootDrops(const TArray<FDALootRolls>& Rolls) const;
+
+	UPROPERTY(VisibleAnywhere)
+	FString InstanceID;
+
+	UPROPERTY()
+	FName RegionID;
 };

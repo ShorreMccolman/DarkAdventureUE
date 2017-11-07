@@ -64,6 +64,12 @@ class DAGAME_API ADAPickup : public ADAInteractable
 	GENERATED_BODY()
 	
 public:
+	ADAPickup();
+
+	void Init(FName RegionID, bool IsCollected);
+
+	void Uninit();
+
 	UFUNCTION()
 	virtual void Interact() override;
 	
@@ -78,5 +84,18 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetupWithLootDrop(FDALootDrop Drop);
+
+	UFUNCTION()
+	FORCEINLINE FString GetInstanceID() const { return InstanceID; }
+
+protected:
+	UPROPERTY()
+	bool IsInstance;
+
+	UPROPERTY(VisibleAnywhere)
+	FString InstanceID;
+
+	UPROPERTY()
+	FName RegionID;
 	
 };

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "DAPlayerController.h"
-#include "DAWidget.h"
+#include "UI/DAWidget.h"
 #include "DAGameMode.generated.h"
 
 USTRUCT()

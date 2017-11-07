@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "DAGameMode.h"
+#include "DARegionData.h"
 #include "DAMainGameMode.generated.h"
 
 /**
@@ -31,6 +32,18 @@ public:
 	UFUNCTION()
 	void OpenRestMenu();
 
+	UFUNCTION()
+	void LoadRegion(FName RegionID, FLatentActionInfo LatentInfo);
+
+	UFUNCTION()
+	void UnloadRegion(FName RegionID, FLatentActionInfo LatentInfo);
+
+	UFUNCTION()
+	void SetRegionData(TArray<FDARegionData> Data);
+
+	UFUNCTION()
+	FORCEINLINE TArray<FDARegionData> GetRegionData() const { return RegionData; }
+
 	UFUNCTION(BlueprintCallable)
 	void TriggerDeathEvent();
 
@@ -38,7 +51,7 @@ public:
 	void TriggerRestEvent();
 
 	UFUNCTION(BlueprintCallable)
-	void ResetLevel();
+	void ResetLoadedRegions();
 
 	UFUNCTION(BlueprintCallable)
 	void QuitToMainMenu();
@@ -49,11 +62,17 @@ public:
 	UFUNCTION(BlueprintPure)
 	FName GetRegionID() const;
 
+	void AddLoadedRegion(ADARegion* Region);
+
 	UFUNCTION(BlueprintCallable)
 	void EnterRegion(class ADARegion* Region);
 
 	UFUNCTION(BlueprintCallable)
 	void LeaveRegion(class ADARegion* Region);
+
+	void SlayEnemy(FName RegionID, FString EnemyID);
+
+	void CollectPickup(FName RegionID, FString PickupID);
 
 protected:
 	virtual void BeginPlay() override;
@@ -76,10 +95,17 @@ protected:
 	UPROPERTY()
 	FTimerHandle DeathTimerHandle;
 
+	void InitRegionWithData(class ADARegion* Region, bool ShouldRefresh);
+
 	UFUNCTION()
 	void RestartLevel();
 
 	UPROPERTY()
 	class ADARegion* CurrentRegion;
-	
+
+	UPROPERTY()
+	TArray<class ADARegion*> LoadedRegions;
+
+	UPROPERTY()
+	TArray<FDARegionData> RegionData;
 };

@@ -6,6 +6,7 @@
 #include "GameFramework/SaveGame.h"
 #include "DACharacterAttributes.h"
 #include "DAInventorySystem.h"
+#include "DARegionData.h"
 #include "DAPlayerSave.generated.h"
 
 /**
@@ -33,18 +34,29 @@ public:
 	FDACharacterVitals Vitals;
 
 	UPROPERTY()
-	FVector HomePosition;
+	TArray<FDARegionData> RegionData;
 
 	UPROPERTY()
 	FVector Position;
 
 	UPROPERTY()
+	FName CurrentRegion;
+
+	UPROPERTY()
 	FRotator Facing;
 
 	UPROPERTY()
-	bool bIsNewPlayer;
-	
+	FRotator CameraRotation;
+
 	UPROPERTY()
-	FName CurrentRegion;
-	
+	float CameraZoom;
+
+	UPROPERTY()
+	FVector HomePosition;
+
+	UPROPERTY()
+	FName HomeRegion;
+
+	UPROPERTY()
+	bool bIsNewPlayer;
 };

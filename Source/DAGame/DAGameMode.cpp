@@ -10,10 +10,10 @@
 #include "DACharacter.h"
 #include "DAEnemy.h"
 #include "EngineUtils.h" 
-#include "DAWidget.h"
+#include "UI/DAWidget.h"
 #include "LevelSequencePlayer.h"
 #include "DAItemManager.h"
-#include "DAConfirmPopup.h"
+#include "UI/DAConfirmPopup.h"
 
 ADAGameMode::ADAGameMode()
 {

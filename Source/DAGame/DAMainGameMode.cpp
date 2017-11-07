@@ -10,8 +10,8 @@
 #include "DACharacter.h"
 #include "DAEnemy.h"
 #include "EngineUtils.h" 
-#include "DAWidget.h"
-#include "DAHUDWidget.h"
+#include "UI/DAWidget.h"
+#include "UI/DAHUDWidget.h"
 #include "DARegion.h"
 #include "LevelSequencePlayer.h"
 
@@ -30,10 +30,7 @@ void ADAMainGameMode::SetupHUD(ADACharacter* PlayerCharacter)
 {
 	ShowHUDWidget(true);
 	if (CurrentHUDWidget != nullptr) {
-		UDAHUDWidget* HUD = Cast<UDAHUDWidget>(CurrentHUDWidget);
-		if (HUD) {
-			HUD->UpdateCharacterAndDisplay(PlayerCharacter);
-		}
+		CurrentHUDWidget->UpdateCharacterAndDisplay(PlayerCharacter);
 	}
 }
 
@@ -93,8 +90,9 @@ void ADAMainGameMode::OpenRestMenu()
 	if (SequencePlayer) {
 		SequencePlayer->Pause();
 	}
+	ResetLoadedRegions();
+
 	AddMenu(RestMenuWidgetClass);
-	ResetLevel();
 }
 
 void ADAMainGameMode::TriggerRestEvent()
@@ -109,16 +107,32 @@ void ADAMainGameMode::TriggerDeathEvent()
 	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ADAMainGameMode::RestartLevel, 3.f, false);
 }
 
-void ADAMainGameMode::ResetLevel()
+void ADAMainGameMode::SlayEnemy(FName RegionID, FString EnemyID)
 {
-	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	if (Player) {
-		Player->Reset();
+	FDARegionData* Region = RegionData.FindByPredicate([RegionID](const FDARegionData& Data) {
+		return Data.RegionID == RegionID;
+	});
+	if (Region) {
+		Region->SlainEnemyIds.AddUnique(EnemyID);
 	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Slain enemy in unknown region"))
+	}
+}
 
-	for (TActorIterator<ADAEnemy> ActorItr(GetWorld()); ActorItr; ++ActorItr) {
-		ADAEnemy* Enemy = *ActorItr;
-		Enemy->Reset();
+void ADAMainGameMode::CollectPickup(FName RegionID, FString PickupID)
+{
+	if (PickupID.IsEmpty())
+		return;
+
+	FDARegionData* Region = RegionData.FindByPredicate([RegionID](const FDARegionData& Data) {
+		return Data.RegionID == RegionID;
+	});
+	if (Region) {
+		Region->CollectedItemIds.AddUnique(PickupID);
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Slain enemy in unknown region"))
 	}
 }
 
@@ -132,12 +146,74 @@ void ADAMainGameMode::RestartLevel()
 	FadeIn();
 }
 
+void ADAMainGameMode::SetRegionData(TArray<FDARegionData> Data) 
+{ 
+	RegionData = Data; 
+}
+
 FName ADAMainGameMode::GetRegionID() const
 {
 	if (!CurrentRegion) {
 		return "";
 	} else {
 		return CurrentRegion->GetRegionID();
+	}
+}
+
+void ADAMainGameMode::ResetLoadedRegions()
+{
+	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (Player) {
+		Player->Reset();
+	}
+
+	for (auto Region : LoadedRegions) {
+		InitRegionWithData(Region, true);
+	}
+}
+
+void ADAMainGameMode::LoadRegion(FName RegionID, FLatentActionInfo LatentInfo)
+{
+	UGameplayStatics::LoadStreamLevel(this, RegionID, true, true, LatentInfo);
+}
+
+void ADAMainGameMode::UnloadRegion(FName RegionID, FLatentActionInfo LatentInfo)
+{
+	int index = LoadedRegions.IndexOfByPredicate([RegionID](ADARegion* const Region) {
+		return Region->GetRegionID() == RegionID;
+	});
+	if (index != INDEX_NONE) {
+		LoadedRegions[index]->UninitRegion();
+		LoadedRegions.RemoveAt(index);
+		UGameplayStatics::UnloadStreamLevel(this, RegionID, LatentInfo);
+	}
+}
+
+void ADAMainGameMode::AddLoadedRegion(ADARegion* Region)
+{
+	if (Region)
+	{
+		LoadedRegions.AddUnique(Region);
+		InitRegionWithData(Region, false);
+	}
+}
+
+void ADAMainGameMode::InitRegionWithData(ADARegion* Region, bool ShouldRefresh)
+{
+	FName RegionID = Region->GetRegionID();
+	int index = RegionData.IndexOfByPredicate([RegionID](const FDARegionData& Data) {
+		return Data.RegionID == RegionID;
+	});
+
+	if (index != INDEX_NONE) {
+		if (ShouldRefresh)
+			RegionData[index].SlainEnemyIds.Empty();
+
+		Region->InitRegion(RegionData[index]);
+	}
+	else {
+		RegionData.Add(FDARegionData(RegionID));
+		Region->InitRegion();
 	}
 }
 

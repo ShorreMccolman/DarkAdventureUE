@@ -2,7 +2,7 @@
 
 #include "DALevelStreamer.h"
 #include "Components/BoxComponent.h"
-#include "Kismet/GameplayStatics.h"
+#include "DAMainGameMode.h"
 #include "DAPlayer.h"
 
 // Sets default values
@@ -44,10 +44,16 @@ void ADALevelStreamer::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 		LatentInfo.UUID = 123456;
 
 		if (bShouldLoad) {
-			UGameplayStatics::LoadStreamLevel(this, LevelToTrigger, true, true, LatentInfo);
+			ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
+			if (Mode) {
+				Mode->LoadRegion(LevelToTrigger, LatentInfo);
+			}
 		}
 		else {
-			UGameplayStatics::UnloadStreamLevel(this, LevelToTrigger, LatentInfo);
+			ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
+			if (Mode) {
+				Mode->UnloadRegion(LevelToTrigger, LatentInfo);
+			}
 		}
 	}
 }

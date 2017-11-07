@@ -16,6 +16,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DAGeneratedAttributes.h"
 #include "Blueprint/BlueprintSupport.h"
+#include "DARegionData.h"
 
 
 // Sets default values
@@ -58,13 +59,17 @@ void ADAPlayer::LoadPlayer()
 		PlayerSave->Position = PlayerStart->GetActorLocation();
 		PlayerSave->Facing = PlayerStart->GetActorRotation();
 		PlayerSave->HomePosition = PlayerStart->GetActorLocation();
+		PlayerSave->CameraRotation = CameraBoom->RelativeRotation;
 	}
 
 	Attributes = PlayerSave->Attributes;
 	Inventory = PlayerSave->Inventory;
 	Vitals = PlayerSave->Vitals;
-	TargetDirection = GetActorForwardVector();
-	Origin = PlayerSave->HomePosition;
+
+	SetNewOrigin(PlayerSave->HomePosition, PlayerSave->HomeRegion);
+
+	CameraBoom->TargetArmLength = PlayerSave->CameraZoom;
+	CameraBoom->SetRelativeRotation(PlayerSave->CameraRotation);
 
 	GeneratedAttributes = NewObject<UDAGeneratedAttributes>(UDAGeneratedAttributes::StaticClass());
 	RegenerateAttributes();
@@ -72,7 +77,10 @@ void ADAPlayer::LoadPlayer()
 	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
 	if (Mode) {
 		EquipWeaponItem(Inventory.GetItemDataPairInSlot(*Mode->GetItemManager(), EDAEquipmentSlot::EDAEquipmentSlot_RightHand), "RightHand");
+
 		Mode->SetupHUD(this);
+
+		Mode->SetRegionData(PlayerSave->RegionData);
 	}
 }
 
@@ -103,12 +111,18 @@ void ADAPlayer::SavePlayer()
 	PlayerSave->Vitals = Vitals;
 	PlayerSave->Position = GetActorLocation();
 	PlayerSave->Facing = GetActorRotation();
-	PlayerSave->HomePosition = Origin;
+	PlayerSave->HomePosition = OriginLocation;
+	PlayerSave->HomeRegion = OriginRegion;
+	PlayerSave->CameraRotation = CameraBoom->RelativeRotation;
+	PlayerSave->CameraZoom = CameraBoom->TargetArmLength;
 	PlayerSave->bIsNewPlayer = false;
 
 	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
 	if (Mode) {
-		PlayerSave->CurrentRegion = Mode->GetRegionID();
+		if(!Mode->GetRegionID().IsNone())
+			PlayerSave->CurrentRegion = Mode->GetRegionID();
+
+		PlayerSave->RegionData = Mode->GetRegionData();
 	}
 
 	UGameplayStatics::SaveGameToSlot(PlayerSave, PlayerSave->ID, 0);
@@ -127,8 +141,10 @@ void ADAPlayer::BeginPlay()
 		LatentInfo.ExecutionFunction = FName("InitPlayer");
 		LatentInfo.Linkage = 0;
 		LatentInfo.UUID = 123456;
-
-		UGameplayStatics::LoadStreamLevel(this, PlayerSave->CurrentRegion, true, true, LatentInfo);
+		ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
+		if (Mode) {
+			Mode->LoadRegion(PlayerSave->CurrentRegion, LatentInfo);
+		}
 	}
 
 }

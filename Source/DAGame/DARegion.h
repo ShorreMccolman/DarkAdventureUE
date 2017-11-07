@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "DARegionData.h"
 #include "DARegion.generated.h"
 
 UCLASS()
@@ -15,6 +16,12 @@ public:
 	// Sets default values for this actor's properties
 	ADARegion();
 
+	void InitRegion();
+
+	void InitRegion(FDARegionData RegionData);
+
+	void UninitRegion();
+
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE FName GetRegionID() const { return RegionID; }
 
@@ -24,6 +31,12 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<class ADAEnemy*> RegionEnemies;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<class ADAPickup*> RegionPickups;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UBoxComponent* RegionTrigger;

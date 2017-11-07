@@ -6,8 +6,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "Components/WidgetComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "DAWeaponBase.h"
 #include "DAGeneratedAttributes.h"
+#include "DAMainGameMode.h"
 #include "Animation/AnimInstance.h"
 
 
@@ -19,19 +21,16 @@ ADAEnemy::ADAEnemy()
 
 	Target = CreateDefaultSubobject<UWidgetComponent>(TEXT("Target"));
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
+
+	FGuid guid = FGuid::NewGuid();
+	InstanceID = guid.ToString();
 }
 
 // Called when the game starts or when spawned
 void ADAEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	Origin = GetActorLocation();
-	ShowDetails(false);
-
-	EquipWeapon("Claw", "LeftHandSocket");
-	GeneratedAttributes = NewObject<UDAGeneratedAttributes>(UDAGeneratedAttributes::StaticClass());
-	GeneratedAttributes->UpdateWithEnemyCharacter(*this);
+	OriginLocation = GetActorLocation();
 }
 
 // Called every frame
@@ -55,11 +54,39 @@ void ADAEnemy::Tick(float DeltaTime)
 	}
 }
 
+void ADAEnemy::Init(FName RegionID, bool IsDead)
+{
+	bIsDead = IsDead;
+	ShowDetails(false);
+	this->RegionID = RegionID;
+	EquipWeapon("Claw", "LeftHandSocket");
+
+	GeneratedAttributes = NewObject<UDAGeneratedAttributes>(UDAGeneratedAttributes::StaticClass());
+	GeneratedAttributes->UpdateWithEnemyCharacter(*this);
+
+	GetCapsuleComponent()->SetCollisionEnabled(IsDead ? ECollisionEnabled::NoCollision : ECollisionEnabled::QueryAndPhysics);
+
+	if (Animation) {
+		if (IsDead) {
+			Animation->KillCharacter();
+		}
+		else {
+			Animation->ResetCharacter();
+		}
+	}
+}
+
+void ADAEnemy::Uninit()
+{
+	if (Weapon) {
+		Weapon->Destroy();
+	}
+}
+
 void ADAEnemy::Reset()
 {
 	Super::Reset();
 
-	
 }
 
 void ADAEnemy::ShowTarget(bool ShouldTarget)
@@ -100,6 +127,11 @@ void ADAEnemy::OnCharacterDeath()
 	if (Player) {
 		Player->GainSouls(EnemyAttributes.SoulReward);
 	}
+
+	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
+	if (Mode) {
+		Mode->SlayEnemy(RegionID, InstanceID);
+	}
 }
 
 void ADAEnemy::ShowDetails(bool ShouldShow)
@@ -113,7 +145,6 @@ void ADAEnemy::ShowDetails(bool ShouldShow)
 void ADAEnemy::NoticePlayer(ADAPlayer* Player)
 {
 	TargetEnemy = Player;
-	UE_LOG(LogTemp, Warning, TEXT("Noticed Player"))
 
 	if (Animation) 
 	{

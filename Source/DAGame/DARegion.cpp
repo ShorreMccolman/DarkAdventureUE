@@ -3,6 +3,8 @@
 #include "DARegion.h"
 #include "DAMainGameMode.h"
 #include "DAPlayer.h"
+#include "DAEnemy.h"
+#include "DAPickup.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -22,6 +24,40 @@ void ADARegion::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
+	if (Mode) {
+		Mode->AddLoadedRegion(this);
+	}
+}
+
+void ADARegion::InitRegion()
+{
+	for (auto Enemy : RegionEnemies) {
+		Enemy->Init(RegionID, false);
+	}
+	for (auto Item : RegionPickups) {
+		Item->Init(RegionID, false);
+	}
+}
+
+void ADARegion::InitRegion(FDARegionData RegionData)
+{
+	for (auto Enemy : RegionEnemies) {
+		Enemy->Init(RegionID, RegionData.SlainEnemyIds.Contains<FString>(Enemy->GetInstanceID()));
+	}
+	for (auto Item : RegionPickups) {
+		Item->Init(RegionID, RegionData.CollectedItemIds.Contains<FString>(Item->GetInstanceID()));
+	}
+}
+
+void ADARegion::UninitRegion()
+{
+	for (auto Enemy : RegionEnemies) {
+		Enemy->Uninit();
+	}
+	for (auto Item : RegionPickups) {
+		Item->Uninit();
+	}
 }
 
 void ADARegion::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
