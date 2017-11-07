@@ -74,13 +74,12 @@ void ADAPlayer::LoadPlayer()
 	GeneratedAttributes = NewObject<UDAGeneratedAttributes>(UDAGeneratedAttributes::StaticClass());
 	RegenerateAttributes();
 
-	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
-	if (Mode) {
-		EquipWeaponItem(Inventory.GetItemDataPairInSlot(*Mode->GetItemManager(), EDAEquipmentSlot::EDAEquipmentSlot_RightHand), "RightHand");
+	if (GameMode) {
+		EquipWeaponItem(Inventory.GetItemDataPairInSlot(*GameMode->GetItemManager(), EDAEquipmentSlot::EDAEquipmentSlot_RightHand), "RightHand");
 
-		Mode->SetupHUD(this);
+		GameMode->SetupHUD(this);
 
-		Mode->SetRegionData(PlayerSave->RegionData);
+		GameMode->SetRegionData(PlayerSave->RegionData);
 	}
 }
 
@@ -117,12 +116,11 @@ void ADAPlayer::SavePlayer()
 	PlayerSave->CameraZoom = CameraBoom->TargetArmLength;
 	PlayerSave->bIsNewPlayer = false;
 
-	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
-	if (Mode) {
-		if(!Mode->GetRegionID().IsNone())
-			PlayerSave->CurrentRegion = Mode->GetRegionID();
+	if (GameMode) {
+		if(!GameMode->GetRegionID().IsNone())
+			PlayerSave->CurrentRegion = GameMode->GetRegionID();
 
-		PlayerSave->RegionData = Mode->GetRegionData();
+		PlayerSave->RegionData = GameMode->GetRegionData();
 	}
 
 	UGameplayStatics::SaveGameToSlot(PlayerSave, PlayerSave->ID, 0);
@@ -133,6 +131,8 @@ void ADAPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GameMode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
+
 	LoadPlayer();
 	
 	if (PlayerSave) {
@@ -141,9 +141,8 @@ void ADAPlayer::BeginPlay()
 		LatentInfo.ExecutionFunction = FName("InitPlayer");
 		LatentInfo.Linkage = 0;
 		LatentInfo.UUID = 123456;
-		ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
-		if (Mode) {
-			Mode->LoadRegion(PlayerSave->CurrentRegion, LatentInfo);
+		if (GameMode) {
+			GameMode->LoadRegion(PlayerSave->CurrentRegion, LatentInfo);
 		}
 	}
 
@@ -178,6 +177,14 @@ void ADAPlayer::ChangeRestState(bool IsResting)
 	}
 }
 
+void ADAPlayer::SnapshotOrigin()
+{
+	if (GameMode) {
+		OriginRegion = GameMode->GetRegionID();
+	}
+	OriginLocation = GetActorLocation();
+}
+
 void ADAPlayer::Reset()
 {
 	Super::Reset();
@@ -186,8 +193,7 @@ void ADAPlayer::Reset()
 
 void ADAPlayer::AddItemsToInventory(FName ItemID, int Quantity)
 {
-	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
-	UDAItemManager* IM = Mode->GetItemManager();
+	UDAItemManager* IM = GameMode->GetItemManager();
 	if (IM) {
 		FDAInventoryItemDataPair Pair = Inventory.GetItemDataPairInSlot(*IM, EDAEquipmentSlot::EDAEquipmentSlot_Consumable1);
 		FString InstID = Inventory.AddItem(ItemID, IM, Quantity);
@@ -195,7 +201,8 @@ void ADAPlayer::AddItemsToInventory(FName ItemID, int Quantity)
 			Inventory.EquipItem(ItemID, InstID,EDAEquipmentSlot::EDAEquipmentSlot_Consumable1);
 		}
 
-		Mode->RefreshHUD();
+		if(GameMode)
+			GameMode->RefreshHUD();
 	}
 }
 
@@ -232,9 +239,8 @@ void ADAPlayer::SetCurrentInteractable(ADAInteractable* Interactable)
 {
 	CurrentInteractable = Interactable;
 
-	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
-	if (Mode) {
-		Mode->RefreshHUD();
+	if (GameMode) {
+		GameMode->RefreshHUD();
 	}
 }
 

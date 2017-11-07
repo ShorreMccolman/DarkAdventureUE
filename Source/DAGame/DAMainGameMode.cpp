@@ -90,7 +90,9 @@ void ADAMainGameMode::OpenRestMenu()
 	if (SequencePlayer) {
 		SequencePlayer->Pause();
 	}
+
 	ResetLoadedRegions();
+	ResetPlayer();
 
 	AddMenu(RestMenuWidgetClass);
 }
@@ -115,9 +117,6 @@ void ADAMainGameMode::SlayEnemy(FName RegionID, FString EnemyID)
 	if (Region) {
 		Region->SlainEnemyIds.AddUnique(EnemyID);
 	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Slain enemy in unknown region"))
-	}
 }
 
 void ADAMainGameMode::CollectPickup(FName RegionID, FString PickupID)
@@ -131,9 +130,6 @@ void ADAMainGameMode::CollectPickup(FName RegionID, FString PickupID)
 	if (Region) {
 		Region->CollectedItemIds.AddUnique(PickupID);
 	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Slain enemy in unknown region"))
-	}
 }
 
 void ADAMainGameMode::RestartLevel()
@@ -141,9 +137,18 @@ void ADAMainGameMode::RestartLevel()
 	GetWorldTimerManager().ClearTimer(DeathTimerHandle);
 	GetWorldTimerManager().ClearTimer(RestTimerHandle);
 
-	ResetLevel();
+	ResetLoadedRegions();
+	ResetPlayer();
 
 	FadeIn();
+}
+
+void ADAMainGameMode::ResetPlayer()
+{
+	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (Player) {
+		Player->Reset();
+	}
 }
 
 void ADAMainGameMode::SetRegionData(TArray<FDARegionData> Data) 
@@ -162,11 +167,6 @@ FName ADAMainGameMode::GetRegionID() const
 
 void ADAMainGameMode::ResetLoadedRegions()
 {
-	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	if (Player) {
-		Player->Reset();
-	}
-
 	for (auto Region : LoadedRegions) {
 		InitRegionWithData(Region, true);
 	}

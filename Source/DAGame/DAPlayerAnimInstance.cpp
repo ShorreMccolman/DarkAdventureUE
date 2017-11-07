@@ -27,6 +27,11 @@ void UDAPlayerAnimInstance::KillCharacter()
 	NextAnimation = "Death";
 }
 
+void UDAPlayerAnimInstance::QuickDeath()
+{
+	NextAnimation = "QuickDeath";
+}
+
 void UDAPlayerAnimInstance::SetupNextAnimationUnique(FString AnimationName)
 {
 	if (NextAnimation == "" && CurrentAnimation == "") {

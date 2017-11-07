@@ -17,6 +17,7 @@ void ADARestPoint::Interact()
 
 	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (Player) {
+		Player->SnapshotOrigin();
 		Player->ChangeRestState(true);
 	}
 }

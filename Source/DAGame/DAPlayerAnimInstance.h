@@ -24,6 +24,9 @@ public:
 	void KillCharacter();
 
 	UFUNCTION()
+	void QuickDeath();
+
+	UFUNCTION()
 	void DamageCharacter();
 
 	UPROPERTY(BlueprintReadWrite)

@@ -63,12 +63,16 @@ void ADAEnemy::Init(FName RegionID, bool IsDead)
 
 	GeneratedAttributes = NewObject<UDAGeneratedAttributes>(UDAGeneratedAttributes::StaticClass());
 	GeneratedAttributes->UpdateWithEnemyCharacter(*this);
+	Vitals.MaxHealth = GeneratedAttributes->MaxHealth;
+	Vitals.CurHealth = Vitals.MaxHealth;
+	Vitals.MaxStamina = GeneratedAttributes->MaxStamina;
+	Vitals.CurStamina = Vitals.MaxStamina;
 
 	GetCapsuleComponent()->SetCollisionEnabled(IsDead ? ECollisionEnabled::NoCollision : ECollisionEnabled::QueryAndPhysics);
 
 	if (Animation) {
 		if (IsDead) {
-			Animation->KillCharacter();
+			Animation->QuickDeath();
 		}
 		else {
 			Animation->ResetCharacter();

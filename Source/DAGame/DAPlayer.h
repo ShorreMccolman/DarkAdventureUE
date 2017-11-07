@@ -28,6 +28,9 @@ public:
 	void ChangeRestState(bool IsResting);
 
 	UFUNCTION()
+	void SnapshotOrigin();
+
+	UFUNCTION()
 	virtual void Reset() override;
 
 	UFUNCTION()
@@ -64,6 +67,9 @@ protected:
 
 	UFUNCTION()
 	void LoadPlayer();
+
+	UPROPERTY()
+	class ADAMainGameMode* GameMode;
 
 	UPROPERTY(EditAnywhere)
 	class APlayerStart* PlayerStart;

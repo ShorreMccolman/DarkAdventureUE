@@ -50,6 +50,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void TriggerRestEvent();
 
+	void ResetPlayer();
+
 	UFUNCTION(BlueprintCallable)
 	void ResetLoadedRegions();
 
