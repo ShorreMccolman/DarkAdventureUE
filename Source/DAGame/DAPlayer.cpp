@@ -8,7 +8,7 @@
 #include "GameFramework/PlayerStart.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "DAPlayerAnimInstance.h"
-#include "DAInteractable.h"
+#include "DAInteractableInterface.h"
 #include "DAWeaponBase.h"
 #include "DAPlayerSave.h"
 #include "DAMainGameMode.h"
@@ -208,11 +208,15 @@ void ADAPlayer::AddItemsToInventory(FName ItemID, int Quantity)
 
 void ADAPlayer::TryInteract()
 {
-	if(CurrentInteractable)
-		CurrentInteractable->Interact();
+	if (CurrentInteractable) {
+		IDAInteractableInterface* TheInterface = Cast<IDAInteractableInterface>(CurrentInteractable);
+		if (TheInterface) {
+			TheInterface->Execute_Interact(CurrentInteractable);
+		}
+	}
 }
 
-void ADAPlayer::AddPotentialInteractable(ADAInteractable* Interactable)
+void ADAPlayer::AddPotentialInteractable(AActor* Interactable)
 {
 	PotentialInteractables.AddUnique(Interactable);
 	if (PotentialInteractables.Num() == 1) {
@@ -220,7 +224,7 @@ void ADAPlayer::AddPotentialInteractable(ADAInteractable* Interactable)
 	}
 }
 
-void ADAPlayer::RemovePotentialInteractable(ADAInteractable* Interactable)
+void ADAPlayer::RemovePotentialInteractable(AActor* Interactable)
 {
 	PotentialInteractables.Remove(Interactable);
 	if (CurrentInteractable == Interactable) 
@@ -235,7 +239,7 @@ void ADAPlayer::RemovePotentialInteractable(ADAInteractable* Interactable)
 	}
 }
 
-void ADAPlayer::SetCurrentInteractable(ADAInteractable* Interactable)
+void ADAPlayer::SetCurrentInteractable(AActor* Interactable)
 {
 	CurrentInteractable = Interactable;
 

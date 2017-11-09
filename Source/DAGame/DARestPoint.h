@@ -13,7 +13,10 @@ class ADARestPoint : public ADAInteractable
 	GENERATED_BODY()
 	
 public:	
-	UFUNCTION()
-	virtual void Interact() override;
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Interact();
+	virtual void Interact_Implementation() override;
 	
+protected:
+	virtual void BeginPlay() override;
 };

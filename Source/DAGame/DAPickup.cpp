@@ -28,7 +28,7 @@ void ADAPickup::Uninit()
 
 }
 
-void ADAPickup::Interact()
+void ADAPickup::Interact_Implementation()
 {
 	ADAPlayer* Player = Cast<ADAPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (Player) {

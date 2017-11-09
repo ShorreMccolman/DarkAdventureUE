@@ -7,8 +7,14 @@
 #include "DAMainGameMode.h"
 #include "DAPlayer.h"
 
+void ADARestPoint::BeginPlay()
+{
+	Super::BeginPlay();
 
-void ADARestPoint::Interact()
+}
+
+
+void ADARestPoint::Interact_Implementation()
 {
 	ADAMainGameMode* Mode = Cast<ADAMainGameMode>(GetWorld()->GetAuthGameMode());
 	if (Mode) {
@@ -21,5 +27,3 @@ void ADARestPoint::Interact()
 		Player->ChangeRestState(true);
 	}
 }
-
-

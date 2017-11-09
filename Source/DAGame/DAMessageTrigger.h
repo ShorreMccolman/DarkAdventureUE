@@ -16,8 +16,9 @@ class DAGAME_API ADAMessageTrigger : public ADAInteractable
 	
 	
 public:
-	UFUNCTION()
-	virtual void Interact() override;
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Interact();
+	virtual void Interact_Implementation() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OpenMessagePopupEvent();

@@ -3,7 +3,7 @@
 #include "DAMessageTrigger.h"
 
 
-void ADAMessageTrigger::Interact()
+void ADAMessageTrigger::Interact_Implementation()
 {
 	OpenMessagePopupEvent();
 }

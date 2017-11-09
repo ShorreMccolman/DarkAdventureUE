@@ -70,8 +70,9 @@ public:
 
 	void Uninit();
 
-	UFUNCTION()
-	virtual void Interact() override;
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Interact();
+	virtual void Interact_Implementation() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName ItemDropID;

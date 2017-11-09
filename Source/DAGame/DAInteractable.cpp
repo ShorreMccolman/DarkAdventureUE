@@ -16,46 +16,41 @@ ADAInteractable::ADAInteractable()
 	Trigger->SetupAttachment(Mesh);
 	Trigger->SetSphereRadius(200.f);
 	Trigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	Trigger->OnComponentBeginOverlap.AddDynamic(this, &ADAInteractable::BeginOverlap);
-	Trigger->OnComponentEndOverlap.AddDynamic(this, &ADAInteractable::EndOverlap);
 }
 
 // Called when the game starts or when spawned
 void ADAInteractable::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Trigger->OnComponentBeginOverlap.AddDynamic(this, &ADAInteractable::InteractableBeginOverlap);
+	Trigger->OnComponentEndOverlap.AddDynamic(this, &ADAInteractable::InteractableEndOverlap);
 }
 
-void ADAInteractable::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
+FString ADAInteractable::GetInteractionText_Implementation()
+{
+	return InteractText;
+}
+
+void ADAInteractable::InteractableBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
 	ADAPlayer* Player = Cast<ADAPlayer>(OtherActor);
 	if (Player && OtherComp->ComponentHasTag("Character")) {
 		Player->AddPotentialInteractable(this);
-		Activate();
+		Mesh->SetRenderCustomDepth(true);
 	}
 }
 
-void ADAInteractable::EndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void ADAInteractable::InteractableEndOverlap_Implementation(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	ADAPlayer* Player = Cast<ADAPlayer>(OtherActor);
 	if (Player && OtherComp->ComponentHasTag("Character")) {
 		Player->RemovePotentialInteractable(this);
-		Deactivate();
+		Mesh->SetRenderCustomDepth(false);
 	}
 }
 
-void ADAInteractable::Activate()
-{
-	Mesh->SetRenderCustomDepth(true);
-}
-
-void ADAInteractable::Deactivate()
-{
-	Mesh->SetRenderCustomDepth(false);
-}
-
-void ADAInteractable::Interact()
+void ADAInteractable::Interact_Implementation()
 {
 
 }

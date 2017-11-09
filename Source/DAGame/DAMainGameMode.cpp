@@ -167,6 +167,10 @@ FName ADAMainGameMode::GetRegionID() const
 
 void ADAMainGameMode::ResetLoadedRegions()
 {
+	for (auto Data : RegionData) {
+		Data.SlainEnemyIds.Empty();
+	}
+
 	for (auto Region : LoadedRegions) {
 		InitRegionWithData(Region, true);
 	}
@@ -206,9 +210,6 @@ void ADAMainGameMode::InitRegionWithData(ADARegion* Region, bool ShouldRefresh)
 	});
 
 	if (index != INDEX_NONE) {
-		if (ShouldRefresh)
-			RegionData[index].SlainEnemyIds.Empty();
-
 		Region->InitRegion(RegionData[index]);
 	}
 	else {

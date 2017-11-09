@@ -37,15 +37,15 @@ public:
 	void TryInteract();
 
 	UFUNCTION()
-	void AddPotentialInteractable(class ADAInteractable* Interactable);
+	void AddPotentialInteractable(AActor* Interactable);
 
 	UFUNCTION()
-	void RemovePotentialInteractable(class ADAInteractable* Interactable);
+	void RemovePotentialInteractable(AActor* Interactable);
 
 	UFUNCTION()
-	void SetCurrentInteractable(class ADAInteractable* Interactable);
+	void SetCurrentInteractable(AActor* Interactable);
 
-	FORCEINLINE class ADAInteractable* GetCurrentInteractable() const { return CurrentInteractable; }
+	FORCEINLINE AActor* GetCurrentInteractable() const { return CurrentInteractable; }
 
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
@@ -78,10 +78,10 @@ protected:
 	class UDAPlayerSave* PlayerSave;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class ADAInteractable* CurrentInteractable;
+	AActor* CurrentInteractable;
 
 	UPROPERTY()
-	TArray<class ADAInteractable*> PotentialInteractables;
+	TArray<AActor*> PotentialInteractables;
 
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
