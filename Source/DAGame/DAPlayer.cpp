@@ -252,7 +252,6 @@ void ADAPlayer::RotateCameraBoom(const float Magnitude)
 {
 	FRotator Rotation = CameraBoom->GetComponentRotation();
 	Rotation.Yaw = Rotation.Yaw + Magnitude;
-
 	CameraBoom->SetWorldRotation(Rotation);
 }
 
@@ -261,4 +260,9 @@ void ADAPlayer::ZoomCameraBoom(const float Magnitude)
 	float Zoom = CameraBoom->TargetArmLength + Magnitude;
 
 	CameraBoom->TargetArmLength = FMath::Clamp(Zoom, 600.f, 1200.f);
+
+	FRotator Rotation = CameraBoom->GetComponentRotation();
+	Rotation.Pitch = - CameraBoom->TargetArmLength / 60.f - 40.f;
+
+	CameraBoom->SetWorldRotation(Rotation);
 }

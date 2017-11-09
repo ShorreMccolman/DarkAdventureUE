@@ -28,12 +28,15 @@ void ADAPlayerControllerPlay::BeginPlay()
 	SetDAControlMode(EDAControlMode::DAControlMode_Play);
 }
 
+float RotVal, ZoomVal;
 void ADAPlayerControllerPlay::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	DACharacter->RotateCameraBoom(GetInputAxisValue("TargetX") * DeltaTime * 100.f);
-	DACharacter->ZoomCameraBoom(GetInputAxisValue("TargetY") * DeltaTime * 1000.f);
+	RotVal = FMath::Lerp<float>(RotVal, GetInputAxisValue("TargetX"), 2.f * DeltaTime);
+	DACharacter->RotateCameraBoom(RotVal);
+	ZoomVal = FMath::Lerp<float>(ZoomVal, GetInputAxisValue("TargetY"), 10.f * DeltaTime);
+	DACharacter->ZoomCameraBoom(ZoomVal * 12.f);
 
 	const float ForwardValue = GetInputAxisValue("MoveY");
 	const float RightValue = GetInputAxisValue("MoveX");
