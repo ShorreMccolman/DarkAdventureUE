@@ -362,20 +362,6 @@ void ADACharacter::TryRoll()
 	}
 }
 
-void ADACharacter::ToggleLock()
-{
-	bool ShouldLock = !bIsTargetLocked;
-
-	if (ShouldLock)
-		UpdateBestTarget();
-
-	if (!TargetEnemy) {
-		ShouldLock = false;
-	}
-	
-	SetIsLocked(ShouldLock);
-}
-
 void ADACharacter::AddPotentialTarget(ADACharacter *Target)
 {
 	PotentialTargets.Add(Target);
@@ -633,6 +619,24 @@ void ADACharacter::HoldPosition(float DeltaTime)
 
 	if (Animation)
 		Animation->Speed = Speed;
+}
+
+//	********************
+//	Locking On Mechanics
+//	********************
+
+void ADACharacter::ToggleLock()
+{
+	bool ShouldLock = !bIsTargetLocked;
+
+	if (ShouldLock)
+		UpdateBestTarget();
+
+	if (!TargetEnemy) {
+		ShouldLock = false;
+	}
+
+	SetIsLocked(ShouldLock);
 }
 
 void ADACharacter::SetIsLocked(bool ShouldLock)

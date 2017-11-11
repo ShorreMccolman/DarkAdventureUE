@@ -29,14 +29,36 @@ void ADAPlayerControllerPlay::BeginPlay()
 }
 
 float RotVal, ZoomVal;
+bool bWasLocked;
 void ADAPlayerControllerPlay::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	RotVal = FMath::Lerp<float>(RotVal, GetInputAxisValue("TargetX"), 2.f * DeltaTime);
-	DACharacter->RotateCameraBoom(RotVal);
-	ZoomVal = FMath::Lerp<float>(ZoomVal, GetInputAxisValue("TargetY"), 10.f * DeltaTime);
-	DACharacter->ZoomCameraBoom(ZoomVal * 12.f);
+	bool IsLocked = DACharacter->IsTargetLocked();
+	if (!bWasLocked && IsLocked) {
+		RotVal = CameraBoom->RelativeRotation.Yaw;
+		bWasLocked = IsLocked;
+	}
+	else if (bWasLocked && !IsLocked) {
+		RotVal = 0.f;
+		bWasLocked = IsLocked;
+	}
+
+	if (IsLocked) {
+		RotVal = FMath::Lerp<float>(RotVal, DACharacter->GetActorRotation().Yaw, 5.f * DeltaTime);
+		FRotator Rot = CameraBoom->RelativeRotation;
+		Rot.Yaw = RotVal;
+		CameraBoom->SetRelativeRotation(Rot);
+
+		ZoomVal = FMath::Lerp<float>(ZoomVal, -1.f, 10.f * DeltaTime);
+		DACharacter->ZoomCameraBoom(ZoomVal * 6.f);
+	}
+	else {
+		RotVal = FMath::Lerp<float>(RotVal, GetInputAxisValue("TargetX"), 2.f * DeltaTime);
+		DACharacter->RotateCameraBoom(RotVal);
+		ZoomVal = FMath::Lerp<float>(ZoomVal, GetInputAxisValue("TargetY"), 10.f * DeltaTime);
+		DACharacter->ZoomCameraBoom(ZoomVal * 12.f);
+	}
 
 	const float ForwardValue = GetInputAxisValue("MoveY");
 	const float RightValue = GetInputAxisValue("MoveX");

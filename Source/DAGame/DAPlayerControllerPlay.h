@@ -23,7 +23,6 @@ public:
 	virtual void SetupInputComponent() override;
 
 protected:
-
 	UFUNCTION()
 	void PressLock();
 

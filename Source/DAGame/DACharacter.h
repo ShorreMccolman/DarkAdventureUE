@@ -154,6 +154,9 @@ public:
 
 	void SetIsRunning(bool ShouldRun);
 
+	UFUNCTION()
+	FORCEINLINE bool IsTargetLocked() const { return bIsTargetLocked; }
+
 	void ToggleLock();
 
 	void TryRoll();
