@@ -48,7 +48,6 @@ void ADAWeaponBase::EnableCollision(FDAWeaponPayload NewPayload)
 
 void ADAWeaponBase::TriggerEnter( UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Overlapped"))
 	if (OtherActor != DAOwner && OtherComp->ComponentHasTag("Character")) {
 		ADACharacter* Character = Cast<ADACharacter>(OtherActor);
 		if (Character) {
