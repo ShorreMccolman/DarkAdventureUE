@@ -138,7 +138,8 @@ void ADACharacter::EquipWeaponItem(FDAInventoryItemDataPair Pair, FName SocketNa
 			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, SocketName);
 			Weapon->DisableCollision();
 			Weapon->SetDAOwner(this);
-			GetMesh()->SetAnimInstanceClass(Weapon->GetAnimBP());
+			if(Weapon->GetAnimBP())
+				GetMesh()->SetAnimInstanceClass(Weapon->GetAnimBP());
 			Animation = Cast<UDAPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 		}
 	}
@@ -164,7 +165,8 @@ void ADACharacter::EquipWeapon(FName ID, FName SocketName)
 				Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, SocketName);
 				Weapon->DisableCollision();
 				Weapon->SetDAOwner(this);
-				GetMesh()->SetAnimInstanceClass(Weapon->GetAnimBP());
+				if (Weapon->GetAnimBP())
+					GetMesh()->SetAnimInstanceClass(Weapon->GetAnimBP());
 				Animation = Cast<UDAPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 			}
 		}

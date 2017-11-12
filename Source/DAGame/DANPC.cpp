@@ -47,6 +47,6 @@ void ADANPC::InteractableEndOverlap_Implementation(UPrimitiveComponent* Overlapp
 
 void ADANPC::Interact_Implementation()
 {
-
+	OpenDialogPopupEvent();
 }
 

@@ -36,7 +36,8 @@ void ADARegion::InitRegion()
 		Enemy->Init(RegionID, false);
 	}
 	for (auto Item : RegionPickups) {
-		Item->Init(RegionID, false);
+		if(Item)
+			Item->Init(RegionID, false);
 	}
 }
 
@@ -46,7 +47,8 @@ void ADARegion::InitRegion(FDARegionData RegionData)
 		Enemy->Init(RegionID, RegionData.SlainEnemyIds.Contains<FString>(Enemy->GetInstanceID()));
 	}
 	for (auto Item : RegionPickups) {
-		Item->Init(RegionID, RegionData.CollectedItemIds.Contains<FString>(Item->GetInstanceID()));
+		if (Item)
+			Item->Init(RegionID, RegionData.CollectedItemIds.Contains<FString>(Item->GetInstanceID()));
 	}
 }
 
@@ -56,7 +58,8 @@ void ADARegion::UninitRegion()
 		Enemy->Uninit();
 	}
 	for (auto Item : RegionPickups) {
-		Item->Uninit();
+		if (Item)
+			Item->Uninit();
 	}
 }
 

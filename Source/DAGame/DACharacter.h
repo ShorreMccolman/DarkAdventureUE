@@ -144,6 +144,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE class ADAWeaponBase* GetEquippedWeapon() const { return Weapon; };
 
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE class ADACharacter* GetTargetEnemy() const { return TargetEnemy; }
+
 	/*******************
 	
 	CHARACTER MOVEMENT

@@ -167,8 +167,8 @@ FName ADAMainGameMode::GetRegionID() const
 
 void ADAMainGameMode::ResetLoadedRegions()
 {
-	for (auto Data : RegionData) {
-		Data.SlainEnemyIds.Empty();
+	for (auto &Region : RegionData) {
+		Region.SlainEnemyIds.Empty();
 	}
 
 	for (auto Region : LoadedRegions) {

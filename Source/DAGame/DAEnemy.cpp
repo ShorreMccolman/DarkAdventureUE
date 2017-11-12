@@ -10,7 +10,7 @@
 #include "DAWeaponBase.h"
 #include "DAGeneratedAttributes.h"
 #include "DAMainGameMode.h"
-#include "Animation/AnimInstance.h"
+#include "DAPlayerAnimInstance.h"
 
 
 // Sets default values
@@ -20,7 +20,10 @@ ADAEnemy::ADAEnemy()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Target = CreateDefaultSubobject<UWidgetComponent>(TEXT("Target"));
+	Target->SetupAttachment(GetCapsuleComponent());
+
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
+	HealthBar->SetupAttachment(GetCapsuleComponent());
 
 	FGuid guid = FGuid::NewGuid();
 	InstanceID = guid.ToString();

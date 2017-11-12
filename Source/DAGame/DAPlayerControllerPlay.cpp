@@ -38,16 +38,16 @@ void ADAPlayerControllerPlay::Tick(float DeltaTime)
 	if (!bWasLocked && IsLocked) {
 		RotVal = CameraBoom->RelativeRotation.Yaw;
 		PitchVal = CameraBoom->RelativeRotation.Pitch;
+		ZoomVal = CameraBoom->TargetArmLength;
 		bWasLocked = IsLocked;
 	}
 	else if (bWasLocked && !IsLocked) {
 		RotVal = 0.f;
+		ZoomVal = 0.f;
 		bWasLocked = IsLocked;
 	}
 
 	if (IsLocked) {
-
-		
 		if (RotVal - DACharacter->GetActorRotation().Yaw > 180.f) {
 			RotVal -= 360.f;
 		}
@@ -55,7 +55,6 @@ void ADAPlayerControllerPlay::Tick(float DeltaTime)
 			RotVal += 360.f;
 		}
 		
-
 		RotVal = FMath::Lerp<float>(RotVal, DACharacter->GetActorRotation().Yaw, 5.f * DeltaTime);
 		PitchVal = FMath::Lerp<float>(PitchVal, -60.f, 5.f * DeltaTime);
 		FRotator Rot = CameraBoom->RelativeRotation;
@@ -63,8 +62,11 @@ void ADAPlayerControllerPlay::Tick(float DeltaTime)
 		Rot.Pitch = PitchVal;
 		CameraBoom->SetRelativeRotation(Rot);
 
-		ZoomVal = FMath::Lerp<float>(ZoomVal, -1.f, 10.f * DeltaTime);
-		DACharacter->ZoomCameraBoom(ZoomVal * 6.f);
+		float distance = FVector::Distance(DACharacter->GetActorLocation(),DACharacter->GetTargetEnemy()->GetActorLocation());
+		distance = FMath::Clamp((distance / 200.f - 1.f) * 400.f + 600.f, 600.f, 1200.f);
+
+		ZoomVal = FMath::Lerp<float>(ZoomVal, distance, 2.f * DeltaTime);
+		CameraBoom->TargetArmLength = ZoomVal;
 	}
 	else {
 		RotVal = FMath::Lerp<float>(RotVal, GetInputAxisValue("TargetX"), 2.f * DeltaTime);
@@ -75,6 +77,7 @@ void ADAPlayerControllerPlay::Tick(float DeltaTime)
 		PitchVal = FMath::Lerp<float>(PitchVal, (1200.f - CameraBoom->TargetArmLength) / 60.f - 60.f, 10.f * DeltaTime);
 		FRotator Rotation = CameraBoom->GetComponentRotation();
 		Rotation.Pitch = PitchVal;
+		Rotation.Roll = 0.f;
 		CameraBoom->SetWorldRotation(Rotation);
 	}
 
