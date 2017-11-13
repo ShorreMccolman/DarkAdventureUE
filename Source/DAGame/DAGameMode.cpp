@@ -27,7 +27,7 @@ void ADAGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FStringAssetReference FISequenceName("/Game/Sequences/FadeIn");
+	FStringAssetReference FISequenceName("/Game/UI/Sequences/FadeIn");
 	FadeInSequence = Cast<ULevelSequence>(FISequenceName.TryLoad());
 	if (FadeInSequence) {
 		FMovieSceneSequencePlaybackSettings Settings;

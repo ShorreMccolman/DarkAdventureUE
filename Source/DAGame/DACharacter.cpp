@@ -1,18 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DACharacter.h"
-#include "DAEnemy.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "DAPlayerAnimInstance.h"
-#include "DAWeaponBase.h"
+#include "GameFramework/PlayerStart.h"
 #include "AI/Navigation/NavigationSystem.h"
 #include "AI/Navigation/NavigationPath.h"
+#include "DAPlayerAnimInstance.h"
+#include "DAWeaponBase.h"
 #include "DAMainGameMode.h"
-#include "GameFramework/PlayerStart.h"
 #include "DAItemManager.h"
 #include "DAItem.h"
 #include "DAConsumableItem.h"
@@ -27,6 +27,10 @@ ADACharacter::ADACharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	TargetRangeTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("TargetRange"));
+	TargetRangeTrigger->SetupAttachment(GetCapsuleComponent());
+	TargetRangeTrigger->SetSphereRadius(500.f);
 
 	bIsDead = false;
 }
@@ -549,7 +553,7 @@ void ADACharacter::StandardMotion(float DeltaTime)
 
 	if (inputSquareMagnitude > 0.f) {
 		float angle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(TargetDirection, GetActorForwardVector())));
-		if (angle > 140.f) {
+		if (angle > 150.f) {
 			if (Animation) {
 				Animation->SetupNextAnimationUnique("TurnAround");
 			}
@@ -644,6 +648,7 @@ void ADACharacter::ToggleLock()
 void ADACharacter::SetIsLocked(bool ShouldLock)
 {
 	bIsTargetLocked = ShouldLock;
+	TargetRangeTrigger->SetSphereRadius(ShouldLock ? LockedTargetRange : TargetRange);
 
 	if (TargetEnemy) {
 		TargetEnemy->ShowTarget(bIsTargetLocked);

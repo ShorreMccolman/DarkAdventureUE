@@ -193,6 +193,12 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Motor)
 	float TurnRate;
 
+	UPROPERTY(EditAnywhere, Category = Motor)
+	float TargetRange;
+
+	UPROPERTY(EditAnywhere, Category = Motor)
+	float LockedTargetRange;
+
 	bool bIsRunning;
 
 	bool bIsTargetLocked;
@@ -246,6 +252,8 @@ protected:
 	UPROPERTY()
 	class UDAGeneratedAttributes* GeneratedAttributes;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class USphereComponent* TargetRangeTrigger;
 
 	void UpdateBestTarget();
 
