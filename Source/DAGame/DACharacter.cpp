@@ -360,6 +360,13 @@ void ADACharacter::TryConsumable(EDAEquipmentSlot Slot)
 	}
 }
 
+void ADACharacter::ForceCurrentOrientation()
+{
+	if (bIsTargetLocked) {
+		FRotator Rot = InputDirection.ToOrientationRotator();
+		SetActorRotation(Rot);
+	}
+}
 
 void ADACharacter::TryRoll()
 {
@@ -585,7 +592,7 @@ void ADACharacter::LockedMotion(float DeltaTime)
 
 void ADACharacter::Pursue(float Distance, float DeltaTime)
 {
-	NavSystem = GetWorld()->GetNavigationSystem();
+	UNavigationSystem *NavSystem = GetWorld()->GetNavigationSystem();
 	if (NavSystem) {
 		UNavigationPath *tpath;
 		tpath = NavSystem->FindPathToActorSynchronously(GetWorld(), GetActorLocation(), TargetEnemy);

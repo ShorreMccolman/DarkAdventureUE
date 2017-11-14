@@ -7,10 +7,7 @@
 
 ADANPC::ADANPC()
 {
-	Trigger = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
-	Trigger->SetupAttachment(GetMesh());
-	Trigger->SetSphereRadius(200.f);
-	Trigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
 }
 
 // Called when the game starts or when spawned
@@ -18,8 +15,8 @@ void ADANPC::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Trigger->OnComponentBeginOverlap.AddDynamic(this, &ADANPC::InteractableBeginOverlap);
-	Trigger->OnComponentEndOverlap.AddDynamic(this, &ADANPC::InteractableEndOverlap);
+	TargetRangeTrigger->OnComponentBeginOverlap.AddDynamic(this, &ADANPC::InteractableBeginOverlap);
+	TargetRangeTrigger->OnComponentEndOverlap.AddDynamic(this, &ADANPC::InteractableEndOverlap);
 }
 
 FString ADANPC::GetInteractionText_Implementation()

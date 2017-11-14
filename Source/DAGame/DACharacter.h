@@ -17,7 +17,24 @@ class DAGAME_API ADACharacter : public ACharacter
 public:
 	ADACharacter();
 
-public:
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE int GetCurrentHeals() const { return Inventory.Heals.Quantity; }
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE FDACharacterAttributes GetAttributes() const { return Attributes; }
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE FDACharacterVitals GetVitals() const { return Vitals; }
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE int GetCurrentSouls() const { return Vitals.CurrentSouls; }
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool IsTargetLocked() const { return bIsTargetLocked; }
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool IsRotationLocked() const { return bShouldLockRotation; }
+
 	UFUNCTION(BlueprintPure)
 	float GetCurrentSpeed() const;
 
@@ -34,25 +51,10 @@ public:
 	float GetCurrentStaminaPercent() const;
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE int GetCurrentHeals() const { return Inventory.Heals.Quantity; }
-
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE FDACharacterAttributes GetAttributes() const { return Attributes; }
-
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE FDACharacterVitals GetVitals() const { return Vitals; }
-
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE int GetCurrentSouls() const { return Vitals.CurrentSouls; }
-
-	UFUNCTION(BlueprintPure)
 	class UDAGeneratedAttributes* GetGeneratedAttributes() const;
 
 	UFUNCTION(BlueprintCallable)
 	void RegenerateAttributes();
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> ProjectileClass;
 
 	UFUNCTION(BlueprintCallable)
 	void SetCharacterRotationLock(bool Lock);
@@ -153,12 +155,12 @@ public:
 	
 	*******************/
 
+	UFUNCTION(BlueprintCallable)
+	void ForceCurrentOrientation();
+
 	void SetInputDirection(FVector Input);
 
 	void SetIsRunning(bool ShouldRun);
-
-	UFUNCTION()
-	FORCEINLINE bool IsTargetLocked() const { return bIsTargetLocked; }
 
 	void ToggleLock();
 
@@ -211,6 +213,14 @@ protected:
 
 	float IncomingDamage;
 
+	float Speed;
+
+	float StrafeValue;
+
+	float ApproachValue;
+
+	float StaminaBuffer;
+
 	FVector InputDirection;
 
 	FVector TargetDirection;
@@ -225,20 +235,17 @@ protected:
 
 	FName OriginRegion;
 
-	virtual void BeginPlay() override;
+	UPROPERTY(EditAnywhere, Category = Temp)
+	TSubclassOf<AActor> ProjectileClass;
 
-	virtual void Tick(float DeltaTime) override;
-	
-	virtual void OnCharacterDeath();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UNavigationSystem* NavSystem;
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	class ADACharacter* TargetEnemy;
 
 	UPROPERTY()
 	TArray<class ADACharacter*> PotentialTargets;
+
+	UPROPERTY()
+	FDAInventoryItemDataPair QueuedItem;
 
 	UPROPERTY()
 	class ADAWeaponBase* Weapon;
@@ -255,6 +262,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USphereComponent* TargetRangeTrigger;
 
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
+
+	virtual void OnCharacterDeath();
+
 	void UpdateBestTarget();
 
 	void FaceTargetDirection(FVector Target, float angle, float DeltaTime);
@@ -268,17 +281,5 @@ protected:
 	void HoldPosition(float DeltaTime);
 
 	void SetIsLocked(bool ShouldLock);
-
-private:
-	float Speed;
-
-	float StrafeValue;
-
-	float ApproachValue;
-
-	float StaminaBuffer;
-
-	UPROPERTY()
-	FDAInventoryItemDataPair QueuedItem;
 	
 };

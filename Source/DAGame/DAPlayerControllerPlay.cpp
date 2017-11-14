@@ -48,37 +48,38 @@ void ADAPlayerControllerPlay::Tick(float DeltaTime)
 	}
 
 	if (IsLocked) {
-		if (RotVal - DACharacter->GetActorRotation().Yaw > 180.f) {
+		FVector TargetDirection = DACharacter->GetTargetEnemy()->GetActorLocation() - DACharacter->GetActorLocation();
+		TargetDirection.Z = 0.f;
+		FRotator TargetRotation = TargetDirection.ToOrientationRotator();
+
+		if (RotVal - TargetRotation.Yaw > 180.f) {
 			RotVal -= 360.f;
 		}
-		else if (DACharacter->GetActorRotation().Yaw - RotVal > 180.f) {
+		else if (TargetRotation.Yaw - RotVal > 180.f) {
 			RotVal += 360.f;
 		}
-		
-		RotVal = FMath::Lerp<float>(RotVal, DACharacter->GetActorRotation().Yaw, 5.f * DeltaTime);
+
+		RotVal = FMath::Lerp<float>(RotVal, TargetRotation.Yaw, 5.f * DeltaTime);
 		PitchVal = FMath::Lerp<float>(PitchVal, -60.f, 5.f * DeltaTime);
-		FRotator Rot = CameraBoom->RelativeRotation;
-		Rot.Yaw = RotVal;
-		Rot.Pitch = PitchVal;
-		CameraBoom->SetRelativeRotation(Rot);
+		CameraBoom->SetRelativeRotation(FRotator::MakeFromEuler(FVector(0.f, PitchVal, RotVal)));
 
-		float distance = FVector::Distance(DACharacter->GetActorLocation(),DACharacter->GetTargetEnemy()->GetActorLocation());
+		float distance = TargetDirection.Size();
 		distance = FMath::Clamp((distance / 200.f - 1.f) * 400.f + 600.f, 600.f, 1200.f);
-
 		ZoomVal = FMath::Lerp<float>(ZoomVal, distance, 2.f * DeltaTime);
 		CameraBoom->TargetArmLength = ZoomVal;
 	}
 	else {
-		RotVal = FMath::Lerp<float>(RotVal, GetInputAxisValue("TargetX"), 2.f * DeltaTime);
-		DACharacter->RotateCameraBoom(RotVal);
-		ZoomVal = FMath::Lerp<float>(ZoomVal, GetInputAxisValue("TargetY"), 10.f * DeltaTime);
-		DACharacter->ZoomCameraBoom(ZoomVal * 12.f);
-
-		PitchVal = FMath::Lerp<float>(PitchVal, (1200.f - CameraBoom->TargetArmLength) / 60.f - 60.f, 10.f * DeltaTime);
 		FRotator Rotation = CameraBoom->GetComponentRotation();
+		RotVal = FMath::Lerp<float>(RotVal, GetInputAxisValue("TargetX"), 2.f * DeltaTime);
+		Rotation.Yaw = Rotation.Yaw + RotVal;
+		PitchVal = FMath::Lerp<float>(PitchVal, (1200.f - CameraBoom->TargetArmLength) / 60.f - 60.f, 10.f * DeltaTime);
 		Rotation.Pitch = PitchVal;
 		Rotation.Roll = 0.f;
 		CameraBoom->SetWorldRotation(Rotation);
+
+		ZoomVal = FMath::Lerp<float>(ZoomVal, GetInputAxisValue("TargetY"), 10.f * DeltaTime);
+		float Zoom = CameraBoom->TargetArmLength + ZoomVal * 12.f;
+		CameraBoom->TargetArmLength = FMath::Clamp(Zoom, 600.f, 1200.f);
 	}
 
 	const float ForwardValue = GetInputAxisValue("MoveY");

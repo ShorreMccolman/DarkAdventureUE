@@ -42,7 +42,4 @@ protected:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void InteractableEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	virtual void InteractableEndOverlap_Implementation(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class USphereComponent* Trigger;
 };

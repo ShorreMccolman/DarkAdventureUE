@@ -219,9 +219,7 @@ void ADAPlayer::TryInteract()
 void ADAPlayer::AddPotentialInteractable(AActor* Interactable)
 {
 	PotentialInteractables.AddUnique(Interactable);
-	if (PotentialInteractables.Num() == 1) {
-		SetCurrentInteractable(Interactable);
-	}
+	SetCurrentInteractable(Interactable);
 }
 
 void ADAPlayer::RemovePotentialInteractable(AActor* Interactable)
@@ -231,7 +229,7 @@ void ADAPlayer::RemovePotentialInteractable(AActor* Interactable)
 	{
 		if (PotentialInteractables.Num() > 0) 
 		{
-			SetCurrentInteractable(PotentialInteractables[0]);
+			SetCurrentInteractable(PotentialInteractables.Last(0));
 		}
 		else {
 			SetCurrentInteractable(nullptr);
@@ -246,18 +244,4 @@ void ADAPlayer::SetCurrentInteractable(AActor* Interactable)
 	if (GameMode) {
 		GameMode->RefreshHUD();
 	}
-}
-
-void ADAPlayer::RotateCameraBoom(const float Magnitude)
-{
-	FRotator Rotation = CameraBoom->GetComponentRotation();
-	Rotation.Yaw = Rotation.Yaw + Magnitude;
-	CameraBoom->SetWorldRotation(Rotation);
-}
-
-void ADAPlayer::ZoomCameraBoom(const float Magnitude)
-{
-	float Zoom = CameraBoom->TargetArmLength + Magnitude;
-
-	CameraBoom->TargetArmLength = FMath::Clamp(Zoom, 600.f, 1200.f);
 }
